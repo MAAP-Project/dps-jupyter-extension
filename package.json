@@ -1,5 +1,5 @@
 {
-  "name": "@maap-project/dps_jupyter_extension",
+  "name": "@maap-jupyterlab/dps_jupyter_extension",
   "version": "0.1.0",
   "description": "A JupyterLab extension for submitting and viewing jobs.",
   "keywords": [
