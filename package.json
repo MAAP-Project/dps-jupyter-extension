@@ -1,5 +1,5 @@
 {
-  "name": "dps_jupyter_extension",
+  "name": "@maap-project/dps_jupyter_extension",
   "version": "0.1.0",
   "description": "A JupyterLab extension for submitting and viewing jobs.",
   "keywords": [
@@ -9,9 +9,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/github_username/dps_jupyter_extension",
+  "homepage": "https://github.com/MAAP-Project/dps-jupyter-extension",
   "bugs": {
-    "url": "https://github.com/github_username/dps_jupyter_extension/issues"
+    "url": "https://github.com/MAAP-Project/dps-jupyter-extension.git/issues"
   },
   "license": "Apache 2.0",
   "author": {
@@ -27,7 +27,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/github_username/dps_jupyter_extension.git"
+    "url": "https://github.com/MAAP-Project/dps-jupyter-extension.git"
   },
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",
