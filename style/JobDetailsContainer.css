@@ -1,0 +1,22 @@
+.job-details-container {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+}
+
+.jobs-overview-container {
+    margin: 1rem;
+}
+
+.pagination {
+    justify-content: flex-end;
+}
+
+.nav-menu {
+    margin-bottom: 1rem;
+}
+
+.no-job-selected {
+    font-style: italic;
+    color: grey;
+}

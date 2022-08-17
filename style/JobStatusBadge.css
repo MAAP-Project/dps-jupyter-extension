@@ -1,0 +1,11 @@
+.job-failed {
+    background-color: red !important;
+}
+
+.job-succeeded {
+    background-color: royalblue !important;
+}
+
+/* .job-status-bdg {
+    border-radius: 20px;
+} */
