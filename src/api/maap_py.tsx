@@ -17,7 +17,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'dps-jupyter-server-extension', // API Namespace
+    'jupyter-server-extension', // API Namespace
     endPoint
   );
 
@@ -47,7 +47,7 @@ export async function requestAPI<T>(
 
 export async function getJobs(username:string) {
   console.log("mlucas: in async jobs function")
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/listJobs');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listJobs');
   console.log(requestUrl.href)
   
   requestUrl.searchParams.append("username", username);
@@ -75,7 +75,7 @@ export async function getAlgorithms() {
   console.log("mlucas: in async jobs function")
   console.log("Getting algorithms")
   let algorithms_tmp: any[] = []
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/listAlgorithms');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listAlgorithms');
   //console.log(requestUrl)
 
   //requestUrl.searchParams.append("username", "anonymous");
@@ -102,7 +102,7 @@ export async function getAlgorithms() {
 }
 
 export async function describeAlgorithms(algo_id: string) {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/describeAlgorithms');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/describeAlgorithms');
   var body: any = {}
   //requestUrl.searchParams.append("username", "anonymous");
   //requestUrl.searchParams.append("proxy-ticket", "");
@@ -121,7 +121,7 @@ export async function describeAlgorithms(algo_id: string) {
 }
 
 export async function getJobStatus(job_id:string) {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/getJobStatus');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getJobStatus');
   requestUrl.searchParams.append("job_id", job_id);
   let response : any = await fetch(requestUrl.href, {
     headers: {
@@ -144,7 +144,7 @@ export async function getJobStatus(job_id:string) {
 
 
 export async function getCMRCollections() {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/getCMRCollections');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getCMRCollections');
   var collections: any[] = []
   await fetch(requestUrl.href, {
     headers: {
@@ -171,7 +171,7 @@ export async function getCMRCollections() {
 export async function submitJob(data:any) {
   console.log("Job submission data:")
   console.log(data)
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/submitJob');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/submitJob');
   Object.keys(data).map((key, index) => ( 
     requestUrl.searchParams.append(key, data[key])
   ))
@@ -197,7 +197,7 @@ export async function submitJob(data:any) {
 
 export async function getResources() {
   var resources: any[] = []
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/getQueues');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getQueues');
   await fetch(requestUrl.href, {
     headers: {
       'Content-Type': 'application/json'
@@ -219,7 +219,7 @@ export async function getResources() {
 }
 
 export async function getJobResult(job_id:any) {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/getJobResult');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getJobResult');
   requestUrl.searchParams.append("job_id", job_id);
   console.log("Request url for get result: ", requestUrl)
   // print request url and test it out on postman to make sure it works
@@ -242,7 +242,7 @@ export async function getJobResult(job_id:any) {
 
 
 export async function getJobMetrics(job_id:any) {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/getJobMetrics');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getJobMetrics');
   requestUrl.searchParams.append("job_id", job_id);
   console.log("Request url for get result: ", requestUrl)
   // print request url and test it out on postman to make sure it works
@@ -265,7 +265,7 @@ export async function getJobMetrics(job_id:any) {
 
 
 export async function getUserJobs(username:any) {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'dps-jupyter-server-extension/listUserJobs');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listUserJobs');
   requestUrl.searchParams.append("username", username);
   console.log("Request url: ", requestUrl)
   // print request url and test it out on postman to make sure it works
