@@ -18,9 +18,9 @@ export const JobsOverviewContainer = (): JSX.Element => {
     const dispatch = useDispatch()
 
     const { itemSize } = useSelector(selectJobsContainer)
-    const { userJobIDs, userJobStatuses, selectedJob } = useSelector(selectJobs)
+    const { userJobIDs, userJobStatuses, selectedJob, userJobInfo, formattedJobsInfo } = useSelector(selectJobs)
 
-    const { setUserJobIDs, setUserJobs, setJobStatuses, setSelectedJob } = jobsActions
+    const { setUserJobIDs, setUserJobs, setJobStatuses, setSelectedJob, setUserJobInfo, setFormattedJobsInfo } = jobsActions
 
     // Local component variables
     const [refreshTimestamp, setRefreshTimestamp] = useState(null)
@@ -28,11 +28,43 @@ export const JobsOverviewContainer = (): JSX.Element => {
     useEffect(() => {
         // List all jobs for a given user
         let response = getUserJobs("anonymous")
+        
         response.then((data) => {
-            dispatch(setUserJobIDs(data["response"]["jobs"]))
+            console.log("First call")
+            dispatch(setUserJobInfo(data["response"]["jobs"]))
+            //dispatch(setUserJobIDs(data["response"]["jobs"]))
         })
 
     }, []);
+
+
+    useEffect(() => {
+        console.log("Updating job info...")
+        let tmpJobsInfo = []
+        userJobInfo.map(job => {
+            let tmpJob = Object.entries(job)
+            let id = tmpJob[0][0]
+            let data = tmpJob[0][1]
+        
+            
+            let tmp = { 'jobID': null, 'status': null, 'info': null, 'metrics': null, 'tag': null, 'algorithm': null, 'starttime': null,
+                        'timeend': null, 'duration': null, 'ec2_instance_type': null }
+            tmp.jobID = id
+            tmp.status = data['status']
+            tmp.info = data['job']['job_info']
+            tmp.metrics = data['job']['job_info']['metrics']
+            tmp.tag = data['tags']
+            tmp.algorithm = data['type']
+            tmp.starttime = data['job']['job_info']['time_start']
+            tmp.timeend = data['job']['job_info']['time_end']
+            tmp.duration = data['job']['job_info']['duration']
+            tmp.ec2_instance_type = data['job']['job_info']['facts']['ec2_instance_type']
+            console.log(data)
+            tmpJobsInfo = [...tmpJobsInfo, tmp]
+            //console.log(tmpJobsInfo)
+            dispatch(setFormattedJobsInfo(tmpJobsInfo))
+        })
+    }, [userJobInfo]);
 
 
     const getStatuses = () => {
@@ -80,15 +112,22 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
 
     const handleRowClick = (row) => {
-        userJobStatuses.map(job => {
-            if (job["jobID"] === row.values.jobID) {
+        formattedJobsInfo.map(job => {
+            if (job['jobID'] === row.values.jobID) {
                 dispatch(setSelectedJob({ rowIndex: row.index, jobID: row.values.jobID, jobInfo: job }))
                 return
             }
         })
+        // userJobStatuses.map(job => {
+        //     if (job["jobID"] === row.values.jobID) {
+        //         dispatch(setSelectedJob({ rowIndex: row.index, jobID: row.values.jobID, jobInfo: job }))
+        //         return
+        //     }
+        // })
     }
 
-    const data = useMemo(() => userJobStatuses, [userJobStatuses])
+    //const data = useMemo(() => userJobStatuses, [userJobStatuses])
+    const data = useMemo(() => formattedJobsInfo, [formattedJobsInfo])
 
 
     const columns = useMemo(
@@ -112,9 +151,10 @@ export const JobsOverviewContainer = (): JSX.Element => {
             },
             {
                 Header: 'Start Time',
-                accessor: (row) => {
-                    return row['metrics']['metrics']['job_start_time']
-                }
+                accessor: 'starttime' as const
+                // accessor: (row) => {
+                //     return row['metrics']['metrics']['job_start_time']
+                // }
             }
         ],
         []

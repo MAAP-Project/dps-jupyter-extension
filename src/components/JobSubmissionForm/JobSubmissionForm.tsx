@@ -167,7 +167,7 @@ export const JobSubmissionForm = () => {
                 </Form.Group>
 
                 {selectedAlgorithmMetadata ?
-
+                    
                     // If user has selected an algorithm, render inputs and CMR info
                     <><h5>2. Algorithm Inputs</h5>
                         {Array.isArray(selectedAlgorithmMetadata.inputs) ? 

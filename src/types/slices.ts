@@ -12,7 +12,9 @@ export interface IJobsSlice {
   userJobIDs: [],
   userJobs: [],
   userJobStatuses: [],
-  selectedJob: any
+  selectedJob: any,
+  userJobInfo: any,
+  formattedJobsInfo: any
 }
 
 export interface IAlgorithmsSlice {

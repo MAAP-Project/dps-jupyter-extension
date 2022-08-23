@@ -150,3 +150,11 @@ tr:hover {
 .selected-row {
   background-color: #E7F1FF !important;
 }
+
+/* 
+  See issue:
+  https://app.zenhub.com/workspaces/maap-platform-5ee7f0d1f440de0024cd359b/issues/maap-project/zenhub/514
+*/
+.Toastify__toast {
+  overflow: auto !important;
+}

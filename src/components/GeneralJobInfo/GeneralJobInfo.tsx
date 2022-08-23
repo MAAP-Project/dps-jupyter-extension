@@ -34,19 +34,19 @@ export const GeneralJobInfo = (): JSX.Element => {
                 </tr>
                 <tr>
                     <td>Start Time</td>
-                    <td>{selectedJob.jobInfo.metrics.metrics.job_start_time}</td>
+                    <td>{selectedJob.jobInfo.starttime}</td>
                 </tr>
                 <tr>
                     <td>End Time</td>
-                    <td>{selectedJob.jobInfo.metrics.metrics.job_end_time}</td>
+                    <td>{selectedJob.jobInfo.timeend}</td>
                 </tr>
                 <tr>
                     <td>Duration</td>
-                    <td>{selectedJob.jobInfo.metrics.metrics.job_duration_seconds}</td>
+                    <td>{selectedJob.jobInfo.duration}</td>
                 </tr>
                 <tr>
                     <td>Worker</td>
-                    <td>{selectedJob.jobInfo.metrics.metrics.machine_type}</td>
+                    <td>{selectedJob.jobInfo.ec2_instance_type}</td>
                 </tr>
                 <tr>
                     <td>Products</td>
@@ -54,7 +54,7 @@ export const GeneralJobInfo = (): JSX.Element => {
                 </tr>
                 <tr>
                     <td className='align-top'>Error</td>
-                    <td className='block-text'>{getError()}</td>
+                    {/* <td className='block-text'>{getError()}</td> */}
                 </tr>
             </tbody>
         </table>
