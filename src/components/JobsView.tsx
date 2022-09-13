@@ -1,10 +1,9 @@
 import React from 'react'
 import SplitPane, { Pane } from 'react-split-pane'
-import { JobDetailsContainer } from '../JobDetailsContainer/JobDetailsContainer'
-import { JobsOverviewContainer } from '../JobsOverviewContainer/JobsOverviewContainer'
-import { JobsContainerActions } from '../../redux/slices/JobsContainerSlice'
+import { JobDetailsContainer } from './JobDetailsContainer'
+import { JobsOverviewContainer } from './JobsOverviewContainer'
+import { JobsContainerActions } from '../redux/slices/JobsContainerSlice'
 import { useDispatch } from 'react-redux'
-import '../../../style/base.css'
 
 export const JobsView = (): JSX.Element => {
 

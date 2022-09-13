@@ -120,6 +120,10 @@ tr {
   vertical-align: middle;
 }
 
+th {
+  vertical-align: baseline;
+}
+
 .clickable:hover {
   cursor: pointer;
 }
@@ -151,10 +155,34 @@ tr:hover {
   background-color: #E7F1FF !important;
 }
 
+.subtext {
+  font-style: italic;
+  color: grey;
+}
+
 /* 
   See issue:
   https://app.zenhub.com/workspaces/maap-platform-5ee7f0d1f440de0024cd359b/issues/maap-project/zenhub/514
 */
 .Toastify__toast {
   overflow: auto !important;
+}
+
+.content-padding {
+  padding: 1rem 0
+}
+
+.hide-content {
+  overflow: hidden;
+  max-width: 80vw;
+  text-overflow: ellipsis;
+}
+
+.show-content {
+  text-overflow: unset;
+  white-space: break-spaces;
+}
+
+.loader {
+  text-align: center;
 }

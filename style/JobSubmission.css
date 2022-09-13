@@ -34,14 +34,9 @@ hr {
 
 .cmr {
     display: flex;
-    align-items: baseline;
+    align-items: stretch;
     flex-direction: column;
     max-width: 60vh;
-}
-
-.run-command {
-    background-color: var(--ADE-dark-grey);
-    padding: 1rem;
 }
 
 .btn-toolbar > .btn {

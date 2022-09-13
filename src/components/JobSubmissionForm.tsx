@@ -1,17 +1,16 @@
 import React from 'react'
 import { Button, ButtonToolbar, Form } from 'react-bootstrap'
-import { AlgorithmDetailsBox } from '../AlgorithmDetailsBox/AlgorithmDetailsBox'
-import '../../../style/JobSubmission.css'
-import { AlertBox } from '../Alerts/Alerts'
+import { AlgorithmDetailsBox } from './AlgorithmDetailsBox'
+import { AlertBox } from './Alerts'
 import { useSelector, useDispatch } from 'react-redux'
 import AsyncSelect from 'react-select/async';
 import { useEffect, useState } from 'react'
-import { selectCMRSwitch, CMRSwitchActions } from '../../redux/slices/CMRSwitchSlice'
-import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob } from '../../api/maap_py'
-import { algorithmsActions, selectAlgorithms } from '../../redux/slices/algorithmsSlice'
-import { parseScienceKeywords } from '../../utils/ogc_parsers'
-import { JupyterToast } from '../Toasts/Toasts'
+import { selectCMRSwitch, CMRSwitchActions } from '../redux/slices/CMRSwitchSlice'
+import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob } from '../api/maap_py'
+import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsSlice'
+import { parseScienceKeywords } from '../utils/ogc_parsers'
 import { INotification } from 'jupyterlab_toastify'
+import '../../style/JobSubmission.css'
 
 
 export const JobSubmissionForm = () => {
@@ -28,7 +27,7 @@ export const JobSubmissionForm = () => {
 
     // Local state variables
     const [jobTag, setJobTag] = useState('')
-    const [didSubmit, setDidSubmit] = useState(false)
+    //const [didSubmit, setDidSubmit] = useState(false)
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -40,29 +39,28 @@ export const JobSubmissionForm = () => {
     }, [selectedAlgorithm]);
 
 
-    // Update selected algorithm
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
     }
 
-    // Update selected resource/queue
     const handleResourceChange = value => {
         dispatch(setResource(value))
     }
 
-    // Update selected CMR collection
     const handleCMRCollectionChange = value => {
         dispatch(setCMRCollection(value))
     }
 
 
-    const getJobParams = () => {
+    const onSubmit = (event: any) => {
+        event.preventDefault()
+
         var jobParams = {
-            "algo_id": null,
-            "version": null,
-            "queue": null,
-            "username": null,
-            "identifier": null
+            algo_id: null,
+            version: null,
+            queue: null,
+            username: null,
+            identifier: null
         }
         
         if (selectedAlgorithm) {
@@ -77,12 +75,18 @@ export const JobSubmissionForm = () => {
 
         jobParams.username = 'anonymous'
         jobParams.identifier = jobTag
-        return jobParams
-    }
 
-    const onSubmit = (event: any) => {
-        event.preventDefault()
-        let jobParams = getJobParams()
+        console.log("Test form:")
+        let data = new FormData(event.target)
+        console.log(data)
+
+        for (const input of data.entries()) {
+            jobParams[input[0]] = input[1]
+            //inputs[input[0]] = input[1]
+        }
+
+        console.log("Final inputs")
+        console.log(jobParams)
 
         let formValidation = validateForm(jobParams)
 

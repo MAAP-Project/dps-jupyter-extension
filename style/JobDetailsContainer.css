@@ -8,15 +8,6 @@
     margin: 1rem;
 }
 
-.pagination {
-    justify-content: flex-end;
-}
-
 .nav-menu {
     margin-bottom: 1rem;
-}
-
-.no-job-selected {
-    font-style: italic;
-    color: grey;
 }

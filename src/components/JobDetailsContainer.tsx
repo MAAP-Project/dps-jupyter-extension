@@ -1,11 +1,11 @@
 import React from 'react'
 import { Nav, Tab } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import '../../../style/JobDetailsContainer.css'
-import { GeneralJobInfo } from '../GeneralJobInfo/GeneralJobInfo'
-import { InputsJobDetailsTable } from '../InputsJobDetailsTable/InputsJobDetailsTable'
-import { selectJobs } from '../../redux/slices/jobsSlice'
-import { MetricsJobDetailsTable } from '../MetricsJobDetailsTable/MetricsJobDetailsTable'
+import { GeneralJobInfoTable } from './GeneralJobInfoTable'
+import { InputsJobInfoTable } from './InputsJobInfoTable'
+import { selectJobs } from '../redux/slices/jobsSlice'
+import { MetricsJobInfoTable } from './MetricsJobInfoTable'
+import '../../style/JobDetailsContainer.css'
 
 export const JobDetailsContainer = (): JSX.Element => {
 
@@ -27,15 +27,15 @@ export const JobDetailsContainer = (): JSX.Element => {
                         <Nav.Link eventKey="metrics">Metrics</Nav.Link>
                     </Nav.Item>
                 </Nav>
-                <Tab.Content>
+                <Tab.Content className="content-padding">
                     <Tab.Pane eventKey="general">
-                        {selectedJob ? <GeneralJobInfo /> : <span className='no-job-selected'>No job selected</span>}
+                        {selectedJob ? <GeneralJobInfoTable /> : <div className='subtext'>No job selected</div>}
                     </Tab.Pane>
                     <Tab.Pane eventKey="inputs">
-                        {selectedJob ? <InputsJobDetailsTable /> : <span className='no-job-selected'>No job selected</span>}
+                        {selectedJob ? <InputsJobInfoTable /> : <span className='subtext'>No job selected</span>}
                     </Tab.Pane>
                     <Tab.Pane eventKey="metrics">
-                        {selectedJob ? <MetricsJobDetailsTable /> : <span className='no-job-selected'>No job selected</span>}
+                        {selectedJob ? <MetricsJobInfoTable /> : <span className='subtext'>No job selected</span>}
                     </Tab.Pane>
                 </Tab.Content>
             </Tab.Container>

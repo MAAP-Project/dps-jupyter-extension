@@ -40,3 +40,5 @@ const _getAllValues = (keywords: any, scienceKeywords : string[]) => {
         }
     }
 }
+
+export const delay = ms => new Promise(res => setTimeout(res, ms));

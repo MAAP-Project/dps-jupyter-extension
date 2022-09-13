@@ -1,9 +1,9 @@
 import React from 'react'
-import { EXTENSION_CSS_CLASSNAME } from '../../enums'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import { Tabs, Tab } from 'react-bootstrap'
-import { JobSubmissionForm } from '../JobSubmissionForm/JobSubmissionForm'
-import { JobsView } from '../JobsView/JobsView'
+import { JobSubmissionForm } from './JobSubmissionForm'
+import { JobsView } from './JobsView'
+import { EXTENSION_CSS_CLASSNAME } from '../enums'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const JobsApp = (): JSX.Element => {
   return (

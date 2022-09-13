@@ -1,11 +1,15 @@
-.job-failed {
+span.job-failed {
     background-color: red !important;
 }
 
-.job-succeeded {
+span.job-succeeded {
     background-color: royalblue !important;
 }
 
-/* .job-status-bdg {
-    border-radius: 20px;
-} */
+span.job-running {
+    background-color: green !important;
+}
+
+span.job-accepted {
+    background-color: lightskyblue !important;
+}

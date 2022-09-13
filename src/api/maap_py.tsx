@@ -204,8 +204,6 @@ export async function getResources() {
     }
   }).then((response) => response.json())
     .then((data) => {
-      console.log("The queue info")
-      console.log(data)
 
       data["response"].forEach((item: any) => {
         let resource: any = {}
