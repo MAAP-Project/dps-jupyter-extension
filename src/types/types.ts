@@ -2,16 +2,21 @@
  * IJob
  */
 export interface IJob {
+  payload_id?: string,
   job_id?: string,
   tags?: string[],
   name?: string,
+  container_image_url?: string,
+  container_image_name?: string,
   job_type?: string,
   username?: string,
   command?: string,
-  disk_usage?: string
+  disk_usage?: string,
   params?: [],
   ec2_instance_type?: string,
-  ec2_instance_id?: string
+  ec2_instance_id?: string,
+  ec2_availability_zone?: string,
+  job_dir_size?: string,
   time_end?: string,
   time_start?: string,
   time_queued?: string,

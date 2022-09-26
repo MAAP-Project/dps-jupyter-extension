@@ -53,8 +53,8 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
     const handleRowClick = (row) => {
         userJobInfo.map(job => {
-            if (job['job_id'] === row.values.job_id) {
-                dispatch(setSelectedJob({ rowIndex: row.index, jobID: row.values.job_id, jobInfo: job }))
+            if (job['payload_id'] === row.values.payload_id) {
+                dispatch(setSelectedJob({ rowIndex: row.index, jobID: row.values.payload_id, jobInfo: job }))
                 return
             }
         })
@@ -81,8 +81,8 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 Cell: ({ cell: { row: { values: { status } } } }: any) => <JobStatusBadge status={status} />,
             },
             {
-                Header: 'Job ID',
-                accessor: 'job_id' as const,
+                Header: 'Payload ID',
+                accessor: 'payload_id' as const,
                 disableSortBy: true,
             },
             {

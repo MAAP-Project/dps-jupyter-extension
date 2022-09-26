@@ -10,7 +10,7 @@ export const parseJobData = (data: any) => {
         let tmp = Object.entries(job)
 
         if (tmp[0][0]) {
-            tmpJob.job_id = tmp[0][0]
+            tmpJob.payload_id = tmp[0][0]
         }
 
         if (tmp[0][1]) {
@@ -22,6 +22,8 @@ export const parseJobData = (data: any) => {
 
             if (tmp[0][1]['job']) {
                 tmpJob.username = tmp[0][1]['job']['username']
+                tmpJob.job_id = tmp[0][1]['job']['job_id']
+                
 
                 if (tmp[0][1]['job']['job_info']) {
                     tmpJob.queue = tmp[0][1]['job']['job_info']['job_queue']
@@ -33,6 +35,11 @@ export const parseJobData = (data: any) => {
                     if (tmp[0][1]['job']['job_info']['facts']) {
                         tmpJob.ec2_instance_id = tmp[0][1]['job']['job_info']['facts']['ec2_instance_id']
                         tmpJob.ec2_instance_type = tmp[0][1]['job']['job_info']['facts']['ec2_instance_type']
+                        tmpJob.ec2_availability_zone = tmp[0][1]['job']['job_info']['facts']['ec2_placement_availability_zone']
+                    }
+
+                    if (tmp[0][1]['job']['job_info']['metrics']) {
+                        tmpJob.job_dir_size = tmp[0][1]['job']['job_info']['metrics']['job_dir_size']
                     }
                 }
             }
@@ -40,6 +47,9 @@ export const parseJobData = (data: any) => {
             if (tmp[0][1]['job']['context']) {
                 tmpJob.command = tmp[0][1]['job']['context']['_command']
                 tmpJob.disk_usage = tmp[0][1]['job']['context']['_disk_usage']
+                tmpJob.container_image_name = tmp[0][1]['job']['context']['container_image_name']
+                tmpJob.container_image_url = tmp[0][1]['job']['context']['container_image_url']
+
 
                 if (tmp[0][1]['job']['context']['job_specification']) {
                     tmpJob.params = tmp[0][1]['job']['context']['job_specification']['params']

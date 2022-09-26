@@ -5,12 +5,16 @@
 
 import { IJobInfoTable } from "../types/types";
 
- export const GENERAL_JOBS_INFO: IJobInfoTable[] = [
-     {
-         header: "Tag",
-         accessor: "tags"
-     },
-     {
+export const GENERAL_JOBS_INFO: IJobInfoTable[] = [
+    {
+        header: "Tag",
+        accessor: "tags"
+    },
+    {
+        header: "Payload ID",
+        accessor: "payload_id"
+    },
+    {
         header: "Job ID",
         accessor: "job_id"
     },
@@ -31,8 +35,12 @@ import { IJobInfoTable } from "../types/types";
         accessor: "time_end"
     },
     {
-        header: "Duration",
+        header: "Duration (s)",
         accessor: "duration"
+    },
+    {
+        header: "Resource",
+        accessor: "queue"
     },
     {
         header: "Products",
@@ -42,4 +50,4 @@ import { IJobInfoTable } from "../types/types";
         header: "Errors",
         accessor: "error"
     }
- ]
+]

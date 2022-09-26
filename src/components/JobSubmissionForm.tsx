@@ -251,7 +251,7 @@ export const JobSubmissionForm = () => {
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                 </ButtonToolbar>
             </Form>
-            <AlgorithmDetailsBox />
+            {/* <AlgorithmDetailsBox /> */}
         </div>
     )
 }
