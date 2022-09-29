@@ -35,7 +35,7 @@ export const GENERAL_JOBS_INFO: IJobInfoTable[] = [
         accessor: "time_end"
     },
     {
-        header: "Duration (s)",
+        header: "Duration",
         accessor: "duration"
     },
     {

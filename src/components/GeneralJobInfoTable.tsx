@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectJobs } from '../redux/slices/jobsSlice'
 import { GENERAL_JOBS_INFO } from '../templates/GeneralJobInfoTable'
+import { secondsToReadableString } from '../utils/utils'
 
 export const GeneralJobInfoTable = (): JSX.Element => {
 
@@ -22,6 +23,13 @@ export const GeneralJobInfoTable = (): JSX.Element => {
                                 <th>{field.header}</th>
                                 <td>
                                     <div onClick={() => setExpandError(!expandError)} className={expandError ? "show-content clickable" : "hide-content clickable"}>{selectedJob['jobInfo'][field.accessor]}</div>
+                                </td>
+                            </tr>
+                            case "duration": return <tr>
+                                <th>{field.header}</th>
+                                <td>
+                                    {console.log(selectedJob['jobInfo'][field.accessor])}
+                                    {secondsToReadableString(selectedJob['jobInfo'][field.accessor])}
                                 </td>
                             </tr>
                             default: return <tr>

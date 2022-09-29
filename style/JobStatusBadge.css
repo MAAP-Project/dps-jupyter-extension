@@ -2,11 +2,11 @@ span.job-failed {
     background-color: red !important;
 }
 
-span.job-succeeded {
+span.job-started {
     background-color: royalblue !important;
 }
 
-span.job-running {
+span.job-completed {
     background-color: green !important;
 }
 
