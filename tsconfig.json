@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "composite": true,
     "declaration": true,
     "esModuleInterop": true,
@@ -11,14 +12,19 @@
     "noEmitOnError": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
+    "paths": {
+      "react-table": ["types/react-table/index.d.ts"]
+    },
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "outDir": "lib",
     "rootDir": "src",
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": false,
     "target": "es2020",
-    "types": []
+    "types": [],
+    "typeRoots" : ["./node_modules/@types", "./src/types"]
   },
   "include": ["src/*", "src/**/*"]
 }

@@ -9,8 +9,8 @@ import { selectCMRSwitch, CMRSwitchActions } from '../redux/slices/CMRSwitchSlic
 import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob } from '../api/maap_py'
 import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsSlice'
 import { parseScienceKeywords } from '../utils/ogc_parsers'
-import { INotification } from 'jupyterlab_toastify'
 import '../../style/JobSubmission.css'
+import { INotification } from 'jupyterlab_toastify'
 
 
 export const JobSubmissionForm = () => {

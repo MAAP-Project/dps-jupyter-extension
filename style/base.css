@@ -7,6 +7,7 @@
   --ADE-font-weight: 500;
   --ADE-light-grey: #F8F9FA;
   --ADE-dark-grey: #DEE2E6;
+  --ADE-hover: #E7F1FF;
 }
 
 /* Split pane */
@@ -137,14 +138,6 @@ td, th {
   white-space: nowrap;
 }
 
-tr:hover {
-  background-color: #E7F1FF !important;
-}
-
-.table>thead:hover {
-  background-color: white;
-}
-
 .overview-footer {
   display: flex;
   justify-content: space-between;
@@ -152,7 +145,7 @@ tr:hover {
 }
 
 .selected-row {
-  background-color: #E7F1FF !important;
+  background-color: #E7F1FA !important;
 }
 
 .subtext {

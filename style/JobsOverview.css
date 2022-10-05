@@ -1,0 +1,7 @@
+tr:hover {
+    background-color: #E7F1FF;
+}
+  
+thead>tr:hover {
+    background-color: var(--bs-table-bg);
+}
