@@ -6,12 +6,40 @@ import { Button, FormControl, InputGroup, Spinner, Table } from 'react-bootstrap
 import { getUserJobs } from '../api/maap_py';
 import { jobsActions, selectJobs } from '../redux/slices/jobsSlice';
 import { BsArrowClockwise } from 'react-icons/bs'
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage, MdFirstPage, MdKeyboardArrowUp } from "react-icons/md";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdLastPage, MdFirstPage, MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { JobStatusBadge } from './JobStatusBadge';
 import { parseJobData } from '../utils/mapping'
 import { Search } from 'react-bootstrap-icons';
 import "../../style/JobsOverview.css"
 
+const GlobalFilter = ({
+    preGlobalFilteredRows,
+    globalFilter,
+    setGlobalFilter,
+}: any) => {
+    const [value, setValue] = React.useState(globalFilter)
+    const onChange = useAsyncDebounce(value => {
+        setGlobalFilter(value || undefined)
+    }, 200)
+
+
+    return (
+            <InputGroup className="mb-3">
+                <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
+                <FormControl
+                    key="globalSearch"
+                    placeholder={`Search records...`}
+                    aria-label="Search"
+                    aria-describedby="basic-addon1"
+                    value={value || ""}
+                    onChange={e => {
+                        setValue(e.target.value);
+                        onChange(e.target.value);
+                    }}
+                />
+            </InputGroup>
+    )
+}
 
 export const JobsOverviewContainer = (): JSX.Element => {
 
@@ -51,37 +79,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
         setPageSize(itemSize)
     }, [itemSize]);
 
-
-    const GlobalFilter = ({
-        preGlobalFilteredRows,
-        globalFilter,
-        setGlobalFilter,
-    }: any) => {
-        const count = preGlobalFilteredRows.length
-        const [value, setValue] = React.useState(globalFilter)
-        const onChange = useAsyncDebounce(value => {
-            setGlobalFilter(value || undefined)
-        }, 200)
-
-
-        return (
-            <span>
-                <InputGroup className="mb-3">
-                    <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
-                    <FormControl
-                        placeholder={`Search ${count} records...`}
-                        aria-label="Search"
-                        aria-describedby="basic-addon1"
-                        value={value || ""}
-                        onChange={e => {
-                            setValue(e.target.value);
-                            onChange(e.target.value);
-                        }}
-                    />
-                </InputGroup>
-            </span>
-        )
-    }
 
     const handleRowClick = (row) => {
         userJobInfo.map(job => {
@@ -130,7 +127,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 Header: 'Start Time',
                 accessor: 'time_start' as const,
                 sortType: dateSort,
-                isSortedDesc: false
+                
             }
         ],
 
@@ -157,7 +154,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
         setPageSize,
         visibleColumns,
         state: { pageIndex, pageSize, sortBy }
-    } = useTable({ columns, data: data, initialState: { pageIndex: 0, pageSize: itemSize } }, useGlobalFilter, useSortBy, usePagination)
+    } = useTable({ columns, data: data, disableSortRemove: true, initialState: { pageIndex: 0, pageSize: itemSize } }, useGlobalFilter, useSortBy, usePagination)
 
     return (
         <div>
@@ -175,7 +172,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
                                     preGlobalFilteredRows={preGlobalFilteredRows}
                                     globalFilter={state.globalFilter}
                                     setGlobalFilter={setGlobalFilter}
-                                    key="search"
                                 />
                             </th>
                         </tr>
@@ -185,7 +181,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
                                     <th {...column.getHeaderProps()}
                                     >
                                         <span {...column.getSortByToggleProps()}>
-                                            {column.canSort ? (column.isSortedDesc ? <MdKeyboardArrowUp size={24} /> : <MdKeyboardArrowRight size={24} />) : ""}
+                                            {column.canSort ? (column.isSortedDesc ? <MdKeyboardArrowUp size={24} /> : <MdKeyboardArrowDown size={24} />) : ""}
                                         </span>
                                         {column.render('Header')}
                                     </th>
