@@ -3,6 +3,20 @@ import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/appu
 import { EXTENSION_ID, EXTENSION_NAME, OPEN_COMMAND } from './enums'
 import { ReactAppWidget } from './classes/App'
 
+// export var getUserInfo = function(callback) {
+//   console.log("Window creds:")
+//   console.log(window.parent);
+//   // window.parent.loadUserInfo().success(function(profile) {
+//   //   console.log(profile);
+//   //   // key = profile['public_ssh_keys'];
+//   //   callback(profile);
+
+//   // }).error(function() {
+//   //   console.log('Failed to load profile.');
+//   //   return "error";
+//   // });
+// };
+
 export const activate = (app: JupyterFrontEnd, palette: ICommandPalette, restorer: ILayoutRestorer): void => {
   console.log(`JupyterLab extension ${EXTENSION_ID} is activated!`)
 
@@ -28,6 +42,19 @@ export const activate = (app: JupyterFrontEnd, palette: ICommandPalette, restore
         // Attach the widget to the main work area if it's not there
         app.shell.add(widget, 'main')
       }
+
+      // getUserInfo(function (profile: any) {
+      //   let uname, ticket = ""
+      //   if (profile['cas:username'] === undefined) {
+      //     console.log("Profile failed")
+      //   } else {
+      //     uname = profile['cas:username'];
+      //     ticket = profile['proxyGrantingTicket'];
+      //     console.log("Got profile: ")
+      //     console.log(uname)
+      //     // callback(uname, ticket);
+      //   }
+      // });
 
       // Activate the widget
       app.shell.activateById(widget.id)

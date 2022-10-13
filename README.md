@@ -1,31 +1,31 @@
-# dps_jupyter_extension
+# DPS Jupyter Extension
 
-[![Github Actions Status](https://github.com/github_username/dps_jupyter_extension/workflows/Build/badge.svg)](https://github.com/github_username/dps_jupyter_extension/actions/workflows/build.yml)
-A JupyterLab extension.
+Frontend extension that allows users to interact with the Data Processing System (DPS) by viewing and submitting jobs.  
 
+To activate the UI, navigate to `View -> Activate Command Palette -> View & Submit Jobs`.
+&nbsp;
 ## Requirements
 
-- JupyterLab >= 3.0
-
+- JupyterLab >= 3.4
+- [jupyter-server-extension](https://github.com/MAAP-Project/jupyter-server-extension)  
+&nbsp;
 ## Install
 
 To install the extension, execute:
 
 ```bash
-pip install dps_jupyter_extension
-```
-
+jupyter labextension install @maap-jupyterlab/dps-jupyter-extension
+```  
+&nbsp;
 ## Uninstall
 
 To remove the extension, execute:
 
 ```bash
-pip uninstall dps_jupyter_extension
-```
-
-## Contributing
-
-### Development install
+jupyter labextension uninstall @maap-jupyterlab/dps-jupyter-extension
+```  
+&nbsp;
+## Development install
 
 Note: You will need NodeJS to build the extension package.
 
@@ -59,9 +59,9 @@ By default, the `jlpm build` command generates the source maps for this extensio
 
 ```bash
 jupyter lab build --minimize=False
-```
-
-### Development uninstall
+```  
+&nbsp;
+## Development uninstall
 
 ```bash
 pip uninstall dps_jupyter_extension
@@ -69,8 +69,7 @@ pip uninstall dps_jupyter_extension
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `dps_jupyter_extension` within that folder.
-
-### Packaging the extension
-
-See [RELEASE](RELEASE.md)
+folder is located. Then you can remove the symlink named `dps_jupyter_extension` within that folder.  
+&nbsp;
+## Questions?
+Refer to the [Q&A discussion board](https://github.com/MAAP-Project/dps-jupyter-extension/discussions).
