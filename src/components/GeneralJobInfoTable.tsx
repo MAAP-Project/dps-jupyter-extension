@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectJobs } from '../redux/slices/jobsSlice'
 import { GENERAL_JOBS_INFO } from '../templates/GeneralJobInfoTable'
-import { secondsToReadableString } from '../utils/utils'
+import { getProducts, secondsToReadableString } from '../utils/utils'
 
 export const GeneralJobInfoTable = (): JSX.Element => {
 
@@ -19,6 +19,13 @@ export const GeneralJobInfoTable = (): JSX.Element => {
                 {GENERAL_JOBS_INFO.map((field) => {
                     {
                         switch (field.accessor) {
+                            case "products": return <tr>
+                                {console.log(selectedJob['jobInfo'][field.accessor])}
+                                <th>{field.header}</th>
+                                <td style={{ whiteSpace : 'pre' }}>
+                                    {getProducts(selectedJob['jobInfo'][field.accessor])}
+                                </td>
+                            </tr>
                             case "error": return <tr>
                                 <th>{field.header}</th>
                                 <td>

@@ -9,12 +9,14 @@ export const parseJobData = (data: any) => {
         let tmpJob: IJob = {}
         let tmp = Object.entries(job)
 
+        
+
         if (tmp[0][0]) {
             tmpJob.payload_id = tmp[0][0]
         }
 
         if (tmp[0][1]) {
-            tmpJob.name = tmp[0][1]['name']
+            tmpJob.name = ""
             tmpJob.job_type = tmp[0][1]['type']
             tmpJob.status = tmp[0][1]['status']
             tmpJob.tags = tmp[0][1]['tags']
@@ -40,6 +42,10 @@ export const parseJobData = (data: any) => {
 
                     if (tmp[0][1]['job']['job_info']['metrics']) {
                         tmpJob.job_dir_size = tmp[0][1]['job']['job_info']['metrics']['job_dir_size']
+
+                        if (tmp[0][1]['job']['job_info']['metrics']['products_staged']) {
+                            tmpJob.products = tmp[0][1]['job']['job_info']['metrics']['products_staged']
+                        }
                     }
                 }
             }
@@ -56,9 +62,6 @@ export const parseJobData = (data: any) => {
                 }
             }
         }
-
-        // TODO: run a job that produces products.
-        tmpJob.products = ''
         
         tmpJobs.push(tmpJob)
 

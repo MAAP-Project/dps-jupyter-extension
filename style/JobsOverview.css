@@ -2,3 +2,12 @@
 thead>tr:hover {
     background-color: var(--bs-table-bg) !important;
 }
+
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.margin-1rem {
+    margin: 1rem;
+}

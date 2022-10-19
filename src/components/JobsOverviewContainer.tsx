@@ -27,6 +27,7 @@ const GlobalFilter = ({
             <InputGroup className="mb-3">
                 <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
                 <FormControl
+                    type="search"
                     key="globalSearch"
                     placeholder={`Search records...`}
                     aria-label="Search"
@@ -158,9 +159,14 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
     return (
         <div>
-            <div className="refresh-info">
-                <BsArrowClockwise className="clickable" onClick={getJobInfo} size={28} />
-                <div className="refresh-timestamp">Last updated: {refreshTimestamp}</div>
+            <div className="overview-header">
+                <div className="margin-1rem">
+                    <h1>My Jobs</h1>
+                </div>
+                <div className="refresh-info">
+                    <BsArrowClockwise className="clickable" onClick={getJobInfo} size={28} />
+                    <div className="refresh-timestamp">Last updated: {refreshTimestamp}</div>
+                </div>
             </div>
 
             {showSpinner ? <div className="loader"><Spinner animation="border" variant="primary" /></div> :

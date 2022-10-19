@@ -16,6 +16,19 @@ export const secondsToReadableString = (seconds : string) => {
 }
 
 
+export const getProducts = (products : []) => {
+    const urls = new Set()
+    products.forEach((product: any) => {
+        product["urls"].forEach((url) => {
+            urls.add(url)
+        })
+    })
+    
+    var urls_str = Array.from(urls).join('\r\n')
+    return urls_str
+}
+
+
 
 // export async function getUsernameToken(state: any, profileId:string, callback) {
 //     let uname:string = 'anonymous';

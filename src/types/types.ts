@@ -17,7 +17,7 @@ export interface IJob {
   name?: string,
   params?: [],
   payload_id?: string,
-  products?: string,
+  products?: [],
   queue?: string,
   status?: string,
   tags?: string[],
