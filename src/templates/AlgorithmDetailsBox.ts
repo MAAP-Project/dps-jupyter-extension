@@ -3,25 +3,27 @@
  * The accessors are relative to the IJob type.
  */
 
+import { STYLE_TYPE } from "src/constants";
+
 export const ALGORITHM_DETAILS_BOX = [
     {
         header: "Description",
         accessor: "description",
-        type: "text"
+        type: STYLE_TYPE.TEXT
     },
     {
        header: "Repo URL",
        accessor: "url",
-       type: "url"
+       type: STYLE_TYPE.URL
    },
    {
        header: "Version",
        accessor: "version",
-       type: "text"
+       type: STYLE_TYPE.TEXT
    },
    {
        header: "Run Command",
        accessor: "command",
-       type: "code"
+       type: STYLE_TYPE.CODE
    }
 ]

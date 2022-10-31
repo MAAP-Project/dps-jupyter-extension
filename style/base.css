@@ -8,6 +8,15 @@
   --ADE-light-grey: #F8F9FA;
   --ADE-dark-grey: #DEE2E6;
   --ADE-hover: #E7F1FF;
+
+  /* Job status badge colors */
+  --job-status-completed: rgb(39, 163, 39);
+  --job-status-failed: rgb(204, 19, 19);
+  --job-status-started: rgb(8, 8, 223);
+  --job-status-revoked: rgb(49, 49, 49);
+  --job-status-accepted: rgb(13, 150, 150);
+  --job-status-deduped: rgb(102, 25, 112);
+  --job-status-offline: rgb(0, 0, 0);
 }
 
 /* Split pane */
@@ -103,17 +112,21 @@ h6 {
   margin: 1rem;
 }
 
+.refresh-info > svg {
+  margin-right: 0.5rem;
+}
+
 .refresh-timestamp {
   font-size: small;
   font-style: italic;
   padding: 0.5rem 0;
 }
 
-tbody tr:nth-child(odd) {
+tbody tr:nth-child(even) {
   background-color: #F8F9FA;
 }
 
-tbody tr:nth-child(even) {
+tbody tr:nth-child(odd) {
   background-color:white;
 }
 
@@ -138,11 +151,7 @@ td, th {
   white-space: nowrap;
 }
 
-.overview-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 0.5rem 0.5rem 0.5rem;
-}
+
 
 .selected-row {
   background-color: #E7F1FF !important;

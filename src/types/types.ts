@@ -32,7 +32,7 @@ export interface IJob {
 /**
  * Job Info Table Template
  * 
- * @param header - human-friendly field name to be displayed in table row
+ * @param header - human-friendly header field name
  * @param accessor - path to field data, relative to IJob
  * @param type - field data type
  * 

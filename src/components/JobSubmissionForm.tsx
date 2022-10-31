@@ -138,7 +138,6 @@ export const JobSubmissionForm = () => {
     }
 
 
-
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit}>

@@ -1,6 +1,6 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application'
 import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils'
-import { EXTENSION_ID, EXTENSION_NAME, OPEN_COMMAND } from './enums'
+import { EXTENSION_ID, EXTENSION_NAME, OPEN_COMMAND } from './constants'
 import { ReactAppWidget } from './classes/App'
 import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
@@ -46,51 +46,3 @@ const extension: JupyterFrontEndPlugin<void> = {
 };
 
 export default extension;
-
-// export const activate = (app: JupyterFrontEnd, palette: ICommandPalette, restorer: ILayoutRestorer, launcher: ILauncher): void => {
-//   console.log(`JupyterLab extension ${EXTENSION_ID} is activated!`)
-
-//   // Create a single widget
-//   let widget: MainAreaWidget<ReactAppWidget>
-
-//   // Add an application command
-//   const command = OPEN_COMMAND
-//   app.commands.addCommand(command, {
-//     label: EXTENSION_NAME,
-//     execute: () => {
-//       if (!widget || widget.isDisposed) {
-//         const content = new ReactAppWidget()
-//         widget = new MainAreaWidget({ content })
-//         widget.id = EXTENSION_ID
-//         widget.title.label = EXTENSION_NAME
-//         widget.title.closable = true
-//         widget.title.icon = reactIcon
-//         app.shell.add(widget, 'main')
-//       }
-//       if (!tracker.has(widget)) {
-//         tracker.add(widget)
-//       }
-
-//       // Activate the widget
-//       app.shell.activateById(widget.id)
-//     },
-//   })
-
-//   if (launcher) {
-//     launcher.add({
-//       command,
-//     });
-//   }
-
-//   // Add the command to the palette.
-//   palette.addItem({ command, category: 'React Redux Extension' })
-
-//   const tracker = new WidgetTracker<MainAreaWidget<ReactAppWidget>>({
-//     namespace: EXTENSION_ID,
-//   })
-
-//   restorer.restore(tracker, {
-//     command: OPEN_COMMAND,
-//     name: () => EXTENSION_ID,
-//   })
-// }

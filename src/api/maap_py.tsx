@@ -71,9 +71,12 @@ export async function getJobs(username:string) {
   return response.json();
 }
 
-export async function getAlgorithms() {
-  console.log("mlucas: in async jobs function")
-  console.log("Getting algorithms")
+const filterOptions = (options, inputValue) => {
+  const candidate = inputValue.toLowerCase();
+  return options.filter(({ label }) => label.toLowerCase().includes(candidate));
+};
+
+export async function getAlgorithms( inputValue, callback ) {
   let algorithms_tmp: any[] = []
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listAlgorithms');
   //console.log(requestUrl)
@@ -96,6 +99,8 @@ export async function getAlgorithms() {
               algorithm["label"] = item["type"] + ':' + item["version"]
               algorithms_tmp.push(algorithm)
           })
+          const filtered = filterOptions(algorithms_tmp, inputValue);
+          callback(filtered);
           return algorithms_tmp
       });
   return algorithms_tmp
@@ -195,7 +200,7 @@ export async function submitJob(data:any) {
 }
 
 
-export async function getResources() {
+export async function getResources( inputValue, callback ) {
   var resources: any[] = []
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getQueues');
   await fetch(requestUrl.href, {
@@ -211,6 +216,8 @@ export async function getResources() {
         resource["label"] = item
         resources.push(resource)
       })
+      const filtered = filterOptions(resources, inputValue);
+      callback(filtered);
       return resources
     });
   return resources

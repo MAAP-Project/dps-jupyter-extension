@@ -3,4 +3,6 @@
  * The accessors are relative to the IJob type.
  */
 
-export const INPUTS_JOBS_INFO = { accessor: "params" }
+export const INPUTS_JOBS_INFO = { 
+        accessor: "params"
+    }

@@ -30,7 +30,9 @@ export const parseJobData = (data: any) => {
                 if (tmp[0][1]['job']['job_info']) {
                     tmpJob.queue = tmp[0][1]['job']['job_info']['job_queue']
                     tmpJob.time_end = tmp[0][1]['job']['job_info']['time_end']
-                    tmpJob.time_start = tmp[0][1]['job']['job_info']['time_start']
+
+                    /* If there is no time_start field, that implies the job never started (i.e. revoked). For sorting purposes, grab time_queued instead. */
+                    tmpJob.time_start = tmp[0][1]['job']['job_info']['time_start'] ? tmp[0][1]['job']['job_info']['time_start'] : "" //tmp[0][1]['job']['job_info']['time_queued']
                     tmpJob.time_queued = tmp[0][1]['job']['job_info']['time_queued']
                     tmpJob.duration = tmp[0][1]['job']['job_info']['duration']
 
@@ -62,7 +64,7 @@ export const parseJobData = (data: any) => {
                 }
             }
         }
-        
+
         tmpJobs.push(tmpJob)
 
     })

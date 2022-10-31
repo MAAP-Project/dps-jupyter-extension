@@ -10,7 +10,7 @@ export const GeneralJobInfoTable = (): JSX.Element => {
     const { selectedJob } = useSelector(selectJobs)
 
 
-    // Local component variables
+    // Component local state
     const [expandError, setExpandError] = useState(false)
 
     return (

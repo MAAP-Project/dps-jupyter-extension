@@ -2,7 +2,7 @@ import React from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import { JobSubmissionForm } from './JobSubmissionForm'
 import { JobsView } from './JobsView'
-import { EXTENSION_CSS_CLASSNAME } from '../enums'
+import { EXTENSION_CSS_CLASSNAME } from '../constants'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const JobsApp = (): JSX.Element => {

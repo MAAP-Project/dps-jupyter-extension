@@ -6,8 +6,42 @@ thead>tr:hover {
 .overview-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .margin-1rem {
     margin: 1rem;
+}
+
+.overview-footer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.overview-footer > ul {
+    margin: 0;
+}
+
+.overview-footer > span {
+    margin: 0 1rem;
+}
+
+.global-filter {
+    margin: 1rem;
+    width: 500px;
+}
+
+.cell-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+button > svg {
+    margin-right: 0.5rem;
+}
+
+.table-container {
+    overflow: auto;
 }
