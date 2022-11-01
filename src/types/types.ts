@@ -54,6 +54,6 @@ export interface IJobInfoTable {
  */
 export interface IInputParam {
   name: string,
-  value: string,
+  value: any,
   destination: string
 }
