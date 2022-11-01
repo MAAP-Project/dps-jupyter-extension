@@ -35,7 +35,6 @@ export const GeneralJobInfoTable = (): JSX.Element => {
                             case "duration": return <tr>
                                 <th>{field.header}</th>
                                 <td>
-                                    {console.log(selectedJob['jobInfo'][field.accessor])}
                                     {secondsToReadableString(selectedJob['jobInfo'][field.accessor])}
                                 </td>
                             </tr>
