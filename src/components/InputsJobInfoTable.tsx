@@ -18,10 +18,9 @@ export const InputsJobInfoTable = (): JSX.Element => {
                     return <tr>
                         <th>{input.name}</th>
                         { input.value ? 
-                            <td><ReactJson src={input.value} theme="summerfruit:inverted" collapsed={true} displayDataTypes={false}/></td>
-                            // isPlainObject(input.value) ? 
-                            //     <td><ReactJson src={input.value} theme="summerfruit:inverted" collapsed={true} displayDataTypes={false}/></td> 
-                            //     : <td>{input.value}</td>
+                            typeof(input.value) === 'string' ?
+                                <td>{input.value}</td>
+                                : <td><ReactJson src={input.value} theme="summerfruit:inverted" collapsed={true} displayDataTypes={false}/></td> 
                             : <td>-</td> }
                     </tr>
                 })}
