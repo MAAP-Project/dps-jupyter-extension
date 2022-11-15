@@ -4,7 +4,6 @@ import { selectJobs } from '../redux/slices/jobsSlice'
 import { INPUTS_JOBS_INFO } from '../templates/InputsJobInfoTable'
 import { IInputParam } from '../types/types'
 import ReactJson from 'react-json-view'
-import { isPlainObject } from '@reduxjs/toolkit';
 
 export const InputsJobInfoTable = (): JSX.Element => {
 

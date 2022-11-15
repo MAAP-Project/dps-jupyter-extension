@@ -20,3 +20,5 @@ export const STYLE_TYPE = {
     URL  : "url"
 }
 
+export const EMPTY_FIELD_CHAR = '-'
+
