@@ -73,7 +73,7 @@ export async function getUsernameToken(state: IStateDB, profileId:string, callba
     }).finally(() => {
         console.log("Test env done.")
         console.log(document.location.origin)
-        if ("https://" + ade_server !== document.location.origin) {
+        if ("https://" + ade_server === document.location.origin) {
             console.log("first")
             console.log(document.location.origin)
             console.log("https://" + ade_server)
