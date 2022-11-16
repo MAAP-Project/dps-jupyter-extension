@@ -45,6 +45,8 @@ export async function requestAPI<T>(
   return data;
 }
 
+
+
 export async function getJobs(username:string) {
   console.log("mlucas: in async jobs function")
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listJobs');
@@ -283,6 +285,27 @@ export async function getUserJobs(username:any) {
   var body = response.json()
   if (response.status >= 200 && response.status < 400) {
     console.log("got user jobs")
+  }else{
+    console.log("something went wrong with user jobs list request!!!")
+  }
+
+  return body;
+
+}
+
+export async function getEnvironmentInfo() {
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/maapsec/environment');
+  console.log("Request url: ", requestUrl)
+  // print request url and test it out on postman to make sure it works
+  let response : any = await fetch(requestUrl.href, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  var body = response.json()
+  if (response.status >= 200 && response.status < 400) {
+    console.log("got environment info")
   }else{
     console.log("something went wrong with user jobs list request!!!")
   }
