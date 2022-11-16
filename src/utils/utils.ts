@@ -13,7 +13,7 @@ import { getEnvironmentInfo } from "../api/maap_py";
  * 
  * @param seconds - string
  */
-export const secondsToReadableString = (seconds : string) => {
+export const secondsToReadableString = (seconds: string) => {
     let d = Number(seconds)
     let h = Math.floor(d / 3600)
     let m = Math.floor(d % 3600 / 60)
@@ -23,31 +23,31 @@ export const secondsToReadableString = (seconds : string) => {
 }
 
 
-export const getProducts = (products : []) => {
+export const getProducts = (products: []) => {
     const urls = new Set()
     products.forEach((product: any) => {
         product["urls"].forEach((url) => {
             urls.add(url)
         })
     })
-    
+
     var urls_str = Array.from(urls).join('\r\n')
     return urls_str
 }
 
 
-export var getUserInfo = function(callback) {
+export var getUserInfo = function (callback) {
     console.log("In getuserinfo")
     console.log(window.parent);
-    // window.parent._keycloak.loadUserInfo().success(function(profile) {
-    //   console.log(profile);
-    //   // key = profile['public_ssh_keys'];
-    //   callback(profile);
+    window.parent._keycloak.loadUserInfo().success(function (profile) {
+        console.log(profile);
+        // key = profile['public_ssh_keys'];
+        callback(profile);
 
-    // }).error(function() {
-    //   console.log('Failed to load profile.');
-    //   return "error";
-    // });
+    }).error(function () {
+        console.log('Failed to load profile.');
+        return "error";
+    });
 };
 
 // export var getToken = function() {
@@ -59,10 +59,10 @@ export var getUserInfo = function(callback) {
 // };
 
 
-export async function getUsernameToken(state: IStateDB, profileId:string, callback) {
+export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
     console.log("In username token")
-    let uname:string = 'anonymous';
-    let ticket:string = '';
+    let uname: string = 'anonymous';
+    let ticket: string = '';
 
     let ade_server = ''
     let response = getEnvironmentInfo()
@@ -72,21 +72,23 @@ export async function getUsernameToken(state: IStateDB, profileId:string, callba
         ade_server = data["ade_server"]
     }).finally(() => {
         console.log("Test env done.")
+        console.log(window.parent);
         console.log(document.location.origin)
+        console.log("https://" + ade_server)
         if ("https://" + ade_server === document.location.origin) {
             console.log("first")
             console.log(document.location.origin)
             console.log("https://" + ade_server)
-          getUserInfo(function(profile: any) {
-            if (profile['cas:username'] === undefined) {
-              INotification.error("Get profile failed.");
-            } else {
-              uname = profile['cas:username'];
-              ticket = profile['proxyGrantingTicket'];
-              callback(uname,ticket);
-              INotification.success("Got profile.");
-            }
-          });
+            getUserInfo(function (profile: any) {
+                if (profile['cas:username'] === undefined) {
+                    INotification.error("Get profile failed.");
+                } else {
+                    uname = profile['cas:username'];
+                    ticket = profile['proxyGrantingTicket'];
+                    callback(uname, ticket);
+                    INotification.success("Got profile.");
+                }
+            });
         } else {
             console.log("In the fetch part")
             console.log(state)
@@ -102,6 +104,6 @@ export async function getUsernameToken(state: IStateDB, profileId:string, callba
             });
         }
     })
-  
 
-  }
+
+}

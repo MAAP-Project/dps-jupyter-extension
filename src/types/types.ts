@@ -57,3 +57,9 @@ export interface IInputParam {
   value: string|Object,
   destination: string
 }
+
+declare global {
+  interface Window {
+      _keycloak: any;
+  }
+}
