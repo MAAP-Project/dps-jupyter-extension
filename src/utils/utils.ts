@@ -1,6 +1,7 @@
 import { INotification } from "jupyterlab_toastify"
 import { IStateDB } from '@jupyterlab/statedb';
 import { getEnvironmentInfo } from "../api/maap_py";
+import { DEFAULT_USERNAME } from "../constants";
 
 // export function getUserInfo(callback: any): any;
 // export function getToken(): any;
@@ -61,7 +62,7 @@ export var getUserInfo = function (callback) {
 
 export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
     console.log("In username token")
-    let uname: string = 'anonymous';
+    let uname: string = DEFAULT_USERNAME
     let ticket: string = '';
 
     let ade_server = ''
@@ -100,6 +101,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
                 callback(uname, ticket);
             }).catch((error) => {
                 console.log(error)
+                callback(uname, ticket);
                 INotification.error("Get profile failed. ");
             });
         }

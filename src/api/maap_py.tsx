@@ -83,8 +83,6 @@ export async function getAlgorithms( inputValue, callback ) {
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listAlgorithms');
   //console.log(requestUrl)
 
-  //requestUrl.searchParams.append("username", "anonymous");
-  //requestUrl.searchParams.append("proxy-ticket", "");
   requestUrl.searchParams.append("visibility", "all");
 
   await fetch(requestUrl.href, {
@@ -111,8 +109,7 @@ export async function getAlgorithms( inputValue, callback ) {
 export async function describeAlgorithms(algo_id: string) {
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/describeAlgorithms');
   var body: any = {}
-  //requestUrl.searchParams.append("username", "anonymous");
-  //requestUrl.searchParams.append("proxy-ticket", "");
+
   requestUrl.searchParams.append("algo_id", algo_id);
 
   await fetch(requestUrl.href, {

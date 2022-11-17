@@ -11,6 +11,8 @@ import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsS
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { INotification } from 'jupyterlab_toastify'
+import { selectUserInfo } from '../redux/slices/userInfoSlice'
+import { DEFAULT_USERNAME } from "../constants";
 
 
 export const JobSubmissionForm = () => {
@@ -20,6 +22,8 @@ export const JobSubmissionForm = () => {
 
     const { setAlgorithm, setResource, setAlgorithmMetadata, setCMRCollection } = algorithmsActions
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
+
+    const { username } = useSelector(selectUserInfo)
 
     const { toggleValue, toggleDisabled } = CMRSwitchActions
     const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
@@ -73,7 +77,7 @@ export const JobSubmissionForm = () => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = 'anonymous'
+        jobParams.username = DEFAULT_USERNAME
         jobParams.identifier = jobTag
 
         console.log("Test form:")

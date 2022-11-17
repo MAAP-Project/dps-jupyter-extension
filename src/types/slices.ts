@@ -28,3 +28,7 @@ export interface ICMRSwitchSlice {
   switchIsChecked: boolean
   switchIsDisabled: boolean
 }
+
+export interface IUserInfoSlice {
+  username: string
+}

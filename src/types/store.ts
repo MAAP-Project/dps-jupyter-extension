@@ -1,8 +1,9 @@
-import { IAlgorithmsSlice, ICMRSwitchSlice, IJobsSlice, IJobsContainerSlice } from "./slices"
+import { IAlgorithmsSlice, ICMRSwitchSlice, IJobsSlice, IJobsContainerSlice, IUserInfoSlice } from "./slices"
 
 export interface IStore {
   Algorithms: IAlgorithmsSlice,
   CMRSwitch: ICMRSwitchSlice,
   JobsContainer: IJobsContainerSlice,
-  Jobs: IJobsSlice
+  Jobs: IJobsSlice,
+  UserInfo: IUserInfoSlice
 }

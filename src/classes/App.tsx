@@ -7,15 +7,17 @@ import store from '../redux/store'
 import 'regenerator-runtime/runtime'
 
 export class ReactAppWidget extends ReactWidget {
-  constructor() {
+  uname: string
+  constructor(uname: string) {
     super()
     this.addClass(EXTENSION_CSS_CLASSNAME)
+    this.uname = uname
   }
 
   render(): JSX.Element {
     return (
       <Provider store={store}>
-        <JobsApp />
+        <JobsApp uname={this.uname}/>
       </Provider>
     )
   }

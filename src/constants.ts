@@ -22,3 +22,10 @@ export const STYLE_TYPE = {
 
 export const EMPTY_FIELD_CHAR = '-'
 
+
+/*******************************
+ * User Info
+ *******************************/
+
+ export const DEFAULT_USERNAME = "anonymous"
+

@@ -12,6 +12,7 @@ import { parseJobData } from '../utils/mapping'
 import { Search } from 'react-bootstrap-icons';
 import "../../style/JobsOverview.css"
 import * as defaults from 'src/constants'
+import { selectUserInfo } from '../redux/slices/userInfoSlice';
 
 const GlobalFilter = ({
     preGlobalFilteredRows,
@@ -51,6 +52,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
     const { itemSize } = useSelector(selectJobsContainer)
     const { selectedJob, userJobInfo, formattedJobsInfo } = useSelector(selectJobs)
+    const { username } = useSelector(selectUserInfo)
 
     const { setSelectedJob, setUserJobInfo, setFormattedJobsInfo } = jobsActions
 

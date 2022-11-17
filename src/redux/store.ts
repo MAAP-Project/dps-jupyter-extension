@@ -3,6 +3,7 @@ import CMRSwitchReducer from './slices/CMRSwitchSlice'
 import JobsContainerReducer from './slices/JobsContainerSlice'
 import algorithmsReducer from './slices/algorithmsSlice'
 import jobsReducer from './slices/jobsSlice'
+import userInfoReducer from './slices/userInfoSlice'
 
 
 export default configureStore({
@@ -10,7 +11,8 @@ export default configureStore({
     Algorithms: algorithmsReducer,
     CMRSwitch: CMRSwitchReducer,
     JobsContainer: JobsContainerReducer,
-    Jobs: jobsReducer
+    Jobs: jobsReducer,
+    UserInfo: userInfoReducer
   },
   devTools: true,
 })

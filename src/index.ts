@@ -34,15 +34,15 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: EXTENSION_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        getUsernameToken(state, profileId, function(uname:string,ticket:string) {
+        getUsernameToken(state, profileId, function (uname: string, ticket: string) {
           console.log("Got username: ", uname)
+          const content = new ReactAppWidget(uname);
+          const widget = new MainAreaWidget<ReactAppWidget>({ content });
+          widget.title.label = EXTENSION_NAME;
+          widget.title.icon = reactIcon;
+          app.shell.add(widget, 'main');
         });
 
-        const content = new ReactAppWidget();
-        const widget = new MainAreaWidget<ReactAppWidget>({ content });
-        widget.title.label = EXTENSION_NAME;
-        widget.title.icon = reactIcon;
-        app.shell.add(widget, 'main');
       },
     });
 
