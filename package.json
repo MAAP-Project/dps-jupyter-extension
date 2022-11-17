@@ -1,6 +1,6 @@
 {
   "name": "@maap-jupyterlab/dps-jupyter-extension",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "A JupyterLab extension for submitting and viewing jobs.",
   "keywords": [
     "dps",

@@ -65,7 +65,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
         setShowSpinner(true)
 
         // List all jobs for a given user
-        let response = getUserJobs("anonymous")
+        let response = getUserJobs(username)
 
         response.then((data) => {
             dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))

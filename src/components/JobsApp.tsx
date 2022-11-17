@@ -4,14 +4,15 @@ import { JobSubmissionForm } from './JobSubmissionForm'
 import { JobsView } from './JobsView'
 import { EXTENSION_CSS_CLASSNAME } from '../constants'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useDispatch } from 'react-redux'
-import { userInfoActions } from '../redux/slices/userInfoSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 
 export const JobsApp = ({ uname }): JSX.Element => {
 
   // Redux
   const dispatch = useDispatch()
   const { setUsername } = userInfoActions
+  const { username } = useSelector(selectUserInfo)
 
   useEffect(() => {
     dispatch(setUsername(uname))
@@ -19,14 +20,15 @@ export const JobsApp = ({ uname }): JSX.Element => {
 
   return (
     <div className={EXTENSION_CSS_CLASSNAME}>
-      <Tabs defaultActiveKey="view-jobs" id="jobs-widget-tabs" className="mb-3">
+      {username ? <Tabs defaultActiveKey="view-jobs" id="jobs-widget-tabs" className="mb-3">
         <Tab eventKey="view-jobs" title="View">
+          {console.log("Dispatched uname: ", username)}
           <JobsView />
         </Tab>
         <Tab eventKey="submit-jobs" title="Submit">
           <JobSubmissionForm />
         </Tab>
-      </Tabs>
+      </Tabs> : ''}
     </div>
   )
 }
