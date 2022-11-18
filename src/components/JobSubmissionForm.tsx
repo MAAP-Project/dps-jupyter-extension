@@ -77,7 +77,7 @@ export const JobSubmissionForm = () => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = DEFAULT_USERNAME
+        jobParams.username = username
         jobParams.identifier = jobTag
 
         console.log("Test form:")
