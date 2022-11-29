@@ -11,8 +11,8 @@ export const JobsView = (): JSX.Element => {
     const { updateSize } = JobsContainerActions
 
     const handleDragFinish = (size:any) => {
-        console.log("The size is: ", size)
         let newSize = Math.floor(size/40) - 1
+        if (newSize < 1) { newSize = 1}
         dispatch(updateSize(newSize))
     }
 
