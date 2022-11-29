@@ -17,6 +17,7 @@ thead>tr:hover {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin: 1rem;
 }
 
 .overview-footer > ul {
@@ -24,7 +25,7 @@ thead>tr:hover {
 }
 
 .overview-footer > span {
-    margin: 0 1rem;
+    margin: 1rem;
 }
 
 .global-filter {

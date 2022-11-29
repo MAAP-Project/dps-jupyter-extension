@@ -27,21 +27,21 @@ const GlobalFilter = ({
 
 
     return (
-            <InputGroup className="mb-3">
-                <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
-                <FormControl
-                    type="search"
-                    key="globalSearch"
-                    placeholder={`Search records...`}
-                    aria-label="Search"
-                    aria-describedby="basic-addon1"
-                    value={value || ""}
-                    onChange={e => {
-                        setValue(e.target.value);
-                        onChange(e.target.value);
-                    }}
-                />
-            </InputGroup>
+        <InputGroup className="mb-3">
+            <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
+            <FormControl
+                type="search"
+                key="globalSearch"
+                placeholder={`Search records...`}
+                aria-label="Search"
+                aria-describedby="basic-addon1"
+                value={value || ""}
+                onChange={e => {
+                    setValue(e.target.value);
+                    onChange(e.target.value);
+                }}
+            />
+        </InputGroup>
     )
 }
 
@@ -73,7 +73,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
             setShowSpinner(false)
             setRefreshTimestamp(new Date().toUTCString())
             setGlobalFilter(state.globalFilter)
-        })  
+        })
     }
 
     useEffect(() => {
@@ -116,15 +116,15 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 //return 1
             }
 
-          const a = new Date(rowA.values[columnId]);
-          const b = new Date(rowB.values[columnId]);
+            const a = new Date(rowA.values[columnId]);
+            const b = new Date(rowB.values[columnId]);
 
-        
 
-          return a > b ? 1 : -1;
+
+            return a > b ? 1 : -1;
         },
         []
-      );
+    );
 
     const testSort = (canSort, isSortedDesc) => {
         //console.log("Sorting test")
@@ -132,7 +132,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
             //console.log(isSortedDesc)
             if (isSortedDesc) {
                 return <MdKeyboardArrowUp size={24} />
-            }else {
+            } else {
                 return <MdKeyboardArrowDown size={24} />
             }
         }
@@ -178,7 +178,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 // sortUndefined: -1
                 //sortType: 'datetime',
                 //Cell: ({ cell: { row: { values: { time_sort } } } }: any) => time_sort,
-                
+
             },
             {
                 Header: 'End Time',
@@ -219,12 +219,16 @@ export const JobsOverviewContainer = (): JSX.Element => {
         setPageSize,
         visibleColumns,
         state: { pageIndex, pageSize, sortBy }
-    } = useTable({ columns, data: data, disableSortRemove: true, initialState: { pageIndex: 0, pageSize: itemSize, sortBy: [
-        {
-          id: "time_start",
-          desc: true
-        },
-      ], } }, useGlobalFilter, useSortBy, usePagination)
+    } = useTable({
+        columns, data: data, disableSortRemove: true, initialState: {
+            pageIndex: 0, pageSize: itemSize, sortBy: [
+                {
+                    id: "time_start",
+                    desc: true
+                },
+            ],
+        }
+    }, useGlobalFilter, useSortBy, usePagination)
 
     return (
         <div>
@@ -234,17 +238,28 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 </div>
                 <div className="refresh-info">
                     <Button onClick={getJobInfo} ><BsArrowClockwise className="clickable" size={24} />Refresh</Button>
-                    {refreshTimestamp ? <div className="refresh-timestamp">Last updated: {refreshTimestamp}</div>: ""}
+                    {refreshTimestamp ? <div className="refresh-timestamp">Last updated: {refreshTimestamp}</div> : ""}
                 </div>
             </div>
             <div className="global-filter">
-                <GlobalFilter 
+                <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
                     setGlobalFilter={setGlobalFilter}
                 />
-                </div>
-                <div className="table-container">
+            </div>
+
+            <div className='overview-footer'>
+                <Pagination>
+                    <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+                    <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
+                    <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                    <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
+                </Pagination>
+                <span>Page {pageOptions.length === 0 ? 0 : pageIndex + 1} of {pageOptions.length}</span>
+            </div>
+
+            <div className="table-container">
                 <Table {...getTableProps()} >
                     <thead >
                         {headerGroups.map(headerGroup => (
@@ -254,7 +269,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
                                     >
                                         <span {...column.getSortByToggleProps()}>
                                             {console.log(column.isSortedDesc)}
-                                            { testSort(column.canSort, column.isSortedDesc) }
+                                            {testSort(column.canSort, column.isSortedDesc)}
                                             {/* {column.canSort ? (column.isSortedDesc ? <MdKeyboardArrowUp size={24} /> : <MdKeyboardArrowDown size={24} />) : ""} */}
                                         </span>
                                         {column.render('Header')}
@@ -263,34 +278,28 @@ export const JobsOverviewContainer = (): JSX.Element => {
                             </tr>
                         ))}
                     </thead>
-                    {showSpinner ? <tbody><tr><td colSpan={columns.length} style={{textAlign: "center"}}><Spinner animation="border" variant="primary" /></td></tr></tbody> :
-                    <tbody {...getTableBodyProps()} >
-                        {page.map(row => {
-                            prepareRow(row)
-                            return (
-                                <tr className={selectedJob && (selectedJob.rowIndex === row.index) ? "selected-row" : ""} onClick={() => handleRowClick(row)}>
-                                    {row.cells.map(cell => {
-                                        return (
-                                            <td className="cell-overflow" {...cell.getCellProps({style: {
-                                                maxWidth: cell.column.maxWidth}})}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        )
-                                    })}
-                                </tr>
-                            )
-                        })}
-                    </tbody>}
+                    {showSpinner ? <tbody><tr><td colSpan={columns.length} style={{ textAlign: "center" }}><Spinner animation="border" variant="primary" /></td></tr></tbody> :
+                        <tbody {...getTableBodyProps()} >
+                            {page.map(row => {
+                                prepareRow(row)
+                                return (
+                                    <tr className={selectedJob && (selectedJob.rowIndex === row.index) ? "selected-row" : ""} onClick={() => handleRowClick(row)}>
+                                        {row.cells.map(cell => {
+                                            return (
+                                                <td className="cell-overflow" {...cell.getCellProps({
+                                                    style: {
+                                                        maxWidth: cell.column.maxWidth
+                                                    }
+                                                })}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            )
+                                        })}
+                                    </tr>
+                                )
+                            })}
+                        </tbody>}
                 </Table>
-                </div>
-            <div className='overview-footer'>
-                <Pagination>
-                    <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-                    <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                    <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-                    <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
-                </Pagination>
-                <span>Page {pageOptions.length === 0 ? 0 : pageIndex + 1 } of {pageOptions.length}</span>
             </div>
         </div>
     )

@@ -2,7 +2,6 @@
     display: flex;
     margin: 2rem;
     align-items: flex-start;
-    position: absolute;
 }
 
 .algorithm-details {
