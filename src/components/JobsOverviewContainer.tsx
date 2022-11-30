@@ -249,7 +249,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 />
             </div>
 
-            <div className='overview-footer'>
+            <div className='pagination'>
                 <Pagination>
                     <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
                     <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />

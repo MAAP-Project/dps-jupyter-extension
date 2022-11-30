@@ -13,18 +13,18 @@ thead>tr:hover {
     margin: 1rem;
 }
 
-.overview-footer {
+.pagination {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     margin: 1rem;
 }
 
-.overview-footer > ul {
+.pagination > ul {
     margin: 0;
 }
 
-.overview-footer > span {
+.pagination > span {
     margin: 1rem;
 }
 
