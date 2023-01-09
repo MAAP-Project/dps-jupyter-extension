@@ -33,6 +33,10 @@
   overflow: auto;
 }
 
+.Pane1 {
+  max-height: 90%;
+}
+
 .Pane2 {
   margin-bottom: 2rem;
 }
