@@ -71,5 +71,9 @@ In development mode, you will also need to remove the symlink created by `jupyte
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
 folder is located. Then you can remove the symlink named `dps_jupyter_extension` within that folder.  
 &nbsp;
+
+## Contributing
+Refer to the contributing guidelines [here](https://github.com/MAAP-Project/dps-jupyter-extension/blob/main/CONTRIBUTING.md).
+
 ## Questions?
 Refer to the [Q&A discussion board](https://github.com/MAAP-Project/dps-jupyter-extension/discussions).
