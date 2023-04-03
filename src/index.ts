@@ -6,6 +6,8 @@ import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
 import { getUsernameToken } from './utils/utils';
 import { IStateDB } from '@jupyterlab/statedb';
+import { IMainMenu } from '@jupyterlab/mainmenu';
+import { Menu } from '@lumino/widgets';
 
 
 /**
@@ -17,6 +19,24 @@ namespace CommandIDs {
 
 const profileId = 'maapsec-extension:IMaapProfile';
 
+const jobsMenuext: JupyterFrontEndPlugin<void> = {
+  id: 'jobs-menu',
+  autoStart: true,
+  requires: [IMainMenu],
+  activate: (app: JupyterFrontEnd, mainMenu: IMainMenu) => {
+    const { commands } = app;
+    let jobsMenu = new Menu({ commands });
+    jobsMenu.id = 'jobs-menu';
+    jobsMenu.title.label = 'Jobs';
+    [
+      OPEN_COMMAND,
+    ].forEach(command => {
+      jobsMenu.addItem({ command });
+    });
+    mainMenu.addMenu(jobsMenu)
+  }
+};
+
 /**
  * Initialization data for the react-widget extension.
  */
@@ -25,7 +45,7 @@ const extension: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   optional: [ILauncher, ICommandPalette, IStateDB],
   // requires: [ICommandPalette, IStateDB],
-  activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB,) => {
+  activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB) => {
     const { commands } = app;
 
     const command = OPEN_COMMAND;
@@ -46,12 +66,15 @@ const extension: JupyterFrontEndPlugin<void> = {
       },
     });
 
+    palette.addItem({command: OPEN_COMMAND, category: 'MAAP Extensions'});
+
     if (launcher) {
       launcher.add({
         command,
+        category: "MAAP Extensions"
       });
     }
   },
 };
 
-export default extension;
+export default [extension, jobsMenuext];

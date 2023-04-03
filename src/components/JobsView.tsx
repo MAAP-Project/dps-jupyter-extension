@@ -18,7 +18,7 @@ export const JobsView = (): JSX.Element => {
 
     return (
         <SplitPane defaultSize={"60%"} split="horizontal" className="split-pane" onDragFinished={(size) => handleDragFinish(size)}>
-            <Pane>
+            <Pane >
                 <JobsOverviewContainer />
             </Pane>
             <Pane>

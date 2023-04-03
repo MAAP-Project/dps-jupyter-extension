@@ -291,7 +291,7 @@ export async function getUserJobs(username:any) {
 }
 
 export async function getEnvironmentInfo() {
-  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/maapsec/environment');
+  var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getConfig');
   console.log("Request url: ", requestUrl)
   // print request url and test it out on postman to make sure it works
   let response : any = await fetch(requestUrl.href, {
