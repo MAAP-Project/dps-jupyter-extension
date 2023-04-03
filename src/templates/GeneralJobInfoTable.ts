@@ -41,13 +41,5 @@ export const GENERAL_JOBS_INFO: IJobInfoTable[] = [
     {
         header: "Resource",
         accessor: "queue"
-    },
-    {
-        header: "Products",
-        accessor: "products"
-    },
-    {
-        header: "Errors",
-        accessor: "error"
     }
 ]

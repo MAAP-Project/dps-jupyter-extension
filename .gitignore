@@ -8,6 +8,7 @@ node_modules/
 *.tsbuildinfo
 dps_jupyter_extension/labextension
 package-lock.json
+maap.cfg
 
 # Integration tests
 ui-tests/test-results/

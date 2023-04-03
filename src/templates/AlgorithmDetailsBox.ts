@@ -3,7 +3,7 @@
  * The accessors are relative to the IJob type.
  */
 
-import { STYLE_TYPE } from "src/constants";
+import { STYLE_TYPE } from "../constants";
 
 export const ALGORITHM_DETAILS_BOX = [
     {

@@ -25,6 +25,11 @@ export const secondsToReadableString = (seconds: string) => {
 
 
 export const getProducts = (products: []) => {
+
+    // if (products.length !> 0) {
+    //     return ""
+    // }
+
     const urls = new Set()
     products.forEach((product: any) => {
         product["urls"].forEach((url) => {
@@ -32,7 +37,7 @@ export const getProducts = (products: []) => {
         })
     })
 
-    var urls_str = Array.from(urls).join('\r\n')
+    let urls_str = Array.from(urls).join('\r\n')
     return urls_str
 }
 

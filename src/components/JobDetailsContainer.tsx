@@ -6,6 +6,8 @@ import { InputsJobInfoTable } from './InputsJobInfoTable'
 import { selectJobs } from '../redux/slices/jobsSlice'
 import { MetricsJobInfoTable } from './MetricsJobInfoTable'
 import '../../style/JobDetailsContainer.css'
+import { ErrorsJobInfoTable } from './ErrorsJobInfoTable'
+import { OutputsJobInfoTable } from './OutputsJobInfoTable'
 
 export const JobDetailsContainer = (): JSX.Element => {
 
@@ -24,6 +26,12 @@ export const JobDetailsContainer = (): JSX.Element => {
                         <Nav.Link eventKey="inputs">Inputs</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
+                        <Nav.Link eventKey="outputs">Outputs</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="errors">Errors</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
                         <Nav.Link eventKey="metrics">Metrics</Nav.Link>
                     </Nav.Item>
                 </Nav>
@@ -33,6 +41,12 @@ export const JobDetailsContainer = (): JSX.Element => {
                     </Tab.Pane>
                     <Tab.Pane eventKey="inputs">
                         {selectedJob ? <InputsJobInfoTable /> : <span className='subtext'>No job selected</span>}
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="outputs">
+                        {selectedJob ? <OutputsJobInfoTable /> : <span className='subtext'>No job selected</span>}
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="errors">
+                        {selectedJob ? <ErrorsJobInfoTable /> : <span className='subtext'>No job selected</span>}
                     </Tab.Pane>
                     <Tab.Pane eventKey="metrics">
                         {selectedJob ? <MetricsJobInfoTable /> : <span className='subtext'>No job selected</span>}
