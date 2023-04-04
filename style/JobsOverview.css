@@ -42,7 +42,3 @@ thead>tr:hover {
 button > svg {
     margin-right: 0.5rem;
 }
-
-.table-container {
-    overflow: auto;
-}

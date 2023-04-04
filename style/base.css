@@ -110,9 +110,8 @@ h6 {
 }
 
 .refresh-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  position: fixed;
+  right: 1rem;
   margin: 1rem;
 }
 
