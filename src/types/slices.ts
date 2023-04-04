@@ -14,7 +14,8 @@ export interface IJobsSlice {
   userJobStatuses: [],
   selectedJob: any,
   userJobInfo: any,
-  formattedJobsInfo: any
+  formattedJobsInfo: any,
+  jobRefreshTimestamp: any
 }
 
 export interface IAlgorithmsSlice {

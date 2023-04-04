@@ -11,7 +11,6 @@ import { JobStatusBadge } from './JobStatusBadge';
 import { parseJobData } from '../utils/mapping'
 import { Search } from 'react-bootstrap-icons';
 import "../../style/JobsOverview.css"
-import * as defaults from 'src/constants'
 import { selectUserInfo } from '../redux/slices/userInfoSlice';
 
 const GlobalFilter = ({
@@ -51,13 +50,12 @@ export const JobsOverviewContainer = (): JSX.Element => {
     const dispatch = useDispatch()
 
     const { itemSize } = useSelector(selectJobsContainer)
-    const { selectedJob, userJobInfo, formattedJobsInfo } = useSelector(selectJobs)
+    const { selectedJob, userJobInfo, formattedJobsInfo, jobRefreshTimestamp } = useSelector(selectJobs)
     const { username } = useSelector(selectUserInfo)
 
-    const { setSelectedJob, setUserJobInfo, setFormattedJobsInfo } = jobsActions
+    const { setSelectedJob, setUserJobInfo, setFormattedJobsInfo, setJobRefreshTimestamp } = jobsActions
 
     // Local component variables
-    const [refreshTimestamp, setRefreshTimestamp] = useState(null)
     const [showSpinner, setShowSpinner] = useState(false)
 
     const getJobInfo = () => {
@@ -71,7 +69,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
             dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
         }).finally(() => {
             setShowSpinner(false)
-            setRefreshTimestamp(new Date().toUTCString())
+            dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             setGlobalFilter(state.globalFilter)
         })
     }
@@ -237,8 +235,10 @@ export const JobsOverviewContainer = (): JSX.Element => {
                     <h1>My Jobs</h1>
                 </div>
                 <div className="refresh-info">
+                    {console.log("Refresh timestamp")}
+                    {console.log(jobRefreshTimestamp)}
                     <Button onClick={getJobInfo} ><BsArrowClockwise className="clickable" size={24} />Refresh</Button>
-                    {refreshTimestamp ? <div className="refresh-timestamp">Last updated: {refreshTimestamp}</div> : ""}
+                    {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated: {jobRefreshTimestamp}</div> : ""}
                 </div>
             </div>
             <div className="global-filter">

@@ -6,13 +6,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import AsyncSelect from 'react-select/async';
 import { useEffect, useState } from 'react'
 import { selectCMRSwitch, CMRSwitchActions } from '../redux/slices/CMRSwitchSlice'
-import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob } from '../api/maap_py'
+import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob, getUserJobs } from '../api/maap_py'
 import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsSlice'
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { INotification } from 'jupyterlab_toastify'
 import { selectUserInfo } from '../redux/slices/userInfoSlice'
-import { DEFAULT_USERNAME } from "../constants";
+import { jobsActions } from '../redux/slices/jobsSlice'
+import { parseJobData } from '../utils/mapping'
 
 
 export const JobSubmissionForm = () => {
@@ -21,6 +22,7 @@ export const JobSubmissionForm = () => {
     const dispatch = useDispatch()
 
     const { setAlgorithm, setResource, setAlgorithmMetadata, setCMRCollection } = algorithmsActions
+    const { setUserJobInfo, setJobRefreshTimestamp } = jobsActions
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
 
     const { username } = useSelector(selectUserInfo)
@@ -101,6 +103,15 @@ export const JobSubmissionForm = () => {
                 INotification.success(msg, { autoClose: false })
             }).catch(error => {
                 INotification.error(error)
+            })
+
+            // Refresh job list once job has been submitted
+            let response = getUserJobs(username)
+
+            response.then((data) => {
+                dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
+            }).finally(() => {
+                dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             })
         }else {
             INotification.error(formValidation)

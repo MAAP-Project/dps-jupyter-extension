@@ -8,7 +8,8 @@ const initialState: IJobsSlice = {
   userJobStatuses: [],
   selectedJob: null,
   userJobInfo: [],
-  formattedJobsInfo: []
+  formattedJobsInfo: [],
+  jobRefreshTimestamp: null
 }
 
 export const jobsSlice = createSlice({
@@ -39,6 +40,10 @@ export const jobsSlice = createSlice({
 
     setFormattedJobsInfo: (state, action): any => {
       state.formattedJobsInfo = action.payload
+    },
+
+    setJobRefreshTimestamp: (state, action): any => {
+      state.jobRefreshTimestamp = action.payload
     }
   },
 })
