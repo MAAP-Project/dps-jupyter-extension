@@ -4,7 +4,7 @@ import { AlgorithmDetailsBox } from './AlgorithmDetailsBox'
 import { AlertBox } from './Alerts'
 import { useSelector, useDispatch } from 'react-redux'
 import AsyncSelect from 'react-select/async';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { selectCMRSwitch, CMRSwitchActions } from '../redux/slices/CMRSwitchSlice'
 import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob, getUserJobs } from '../api/maap_py'
 import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsSlice'
@@ -14,6 +14,7 @@ import { INotification } from 'jupyterlab_toastify'
 import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
+import { copyNotebookCommand } from '../utils/utils'
 
 
 export const JobSubmissionForm = () => {
@@ -33,7 +34,8 @@ export const JobSubmissionForm = () => {
 
     // Local state variables
     const [jobTag, setJobTag] = useState('')
-    //const [didSubmit, setDidSubmit] = useState(false)
+    const [command, setCommand] = useState('')
+    const jobSubmitForm = useRef(null)
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -43,6 +45,12 @@ export const JobSubmissionForm = () => {
             })
         }
     }, [selectedAlgorithm]);
+
+    useEffect(() => {
+        if (command != '') {
+            copyNotebookCommand(command)
+        }
+    }, [command]);
 
 
     const handleAlgorithmChange = value => {
@@ -152,10 +160,47 @@ export const JobSubmissionForm = () => {
 
     }
 
+    // Build job submission jupyter notebook command from user-provided selections
+    const buildNotebookCommand = () => {
+        // maap.submitJob({"algo_id": "test_algo", "username": "anonymous", "queue": "geospec-job_worker-32gb"})
+        let jobParams = {
+            algo_id: null,
+            version: null,
+            queue: null,
+            username: null,
+            identifier: null
+        }
+        
+        if (selectedAlgorithm) {
+            let algorithm = selectedAlgorithm.value.split(':')
+            jobParams.algo_id = algorithm[0]
+            jobParams.version = algorithm[1]
+        }
+
+        if (selectedResource) {
+            jobParams.queue = selectedResource.value
+        }
+
+        jobParams.username = username
+        jobParams.identifier = jobTag
+
+        let data = new FormData(jobSubmitForm.current)
+        
+
+        let inputStr = ""
+        for (const input of data.entries()) {
+            jobParams[input[0]] = input[1]
+            inputStr = inputStr + "," + input[0] + "=" + "\"" + input[1] + "\""
+        }
+
+        let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\", algo_id=\"" + jobParams.algo_id + "\",version=\"" + jobParams.version + "\",username=\"" + jobParams.username + "\",queue=\"" + jobParams.queue + "\"" + inputStr + ")"
+        setCommand(tmp)
+    }
+
 
     return (
         <div className="submit-wrapper">
-            <Form onSubmit={onSubmit}>
+            <Form onSubmit={onSubmit} ref={jobSubmitForm}>
                 <h5>1. General Information</h5>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Algorithm</Form.Label>
@@ -263,6 +308,7 @@ export const JobSubmissionForm = () => {
                 <ButtonToolbar>
                     <Button type="submit">Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
+                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy Jupyter Notebook Code</Button>
                 </ButtonToolbar>
             </Form>
             {/* <AlgorithmDetailsBox /> */}

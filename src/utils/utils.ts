@@ -114,3 +114,13 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
 
 
 }
+
+
+// Copies jupyter notebook command to user clipboard
+export async function copyNotebookCommand(text: string) {
+    try {
+        await navigator.clipboard.writeText(text).then(() => {INotification.success("Copied Jupyter Notebook python command to clipboard.", { autoClose: false })})
+    } catch (error) {
+        console.warn('Copy failed', error)
+    }
+}
