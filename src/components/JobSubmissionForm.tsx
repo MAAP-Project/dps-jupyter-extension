@@ -10,7 +10,7 @@ import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, sub
 import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsSlice'
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
-import { INotification } from 'jupyterlab_toastify'
+import { Notification } from "@jupyterlab/apputils"
 import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
@@ -108,9 +108,9 @@ export const JobSubmissionForm = () => {
             // Submit job
             submitJob(jobParams).then((data) => {
                 let msg = " Job submitted successfully. " + data['response']
-                INotification.success(msg, { autoClose: false })
+                Notification.success(msg, { autoClose: false })
             }).catch(error => {
-                INotification.error(error)
+                Notification.error(error, { autoClose: false })
             })
 
             // Refresh job list once job has been submitted
@@ -122,7 +122,7 @@ export const JobSubmissionForm = () => {
                 dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             })
         }else {
-            INotification.error(formValidation)
+            Notification.error(formValidation, { autoClose: false })
         }
     }
 
