@@ -191,3 +191,6 @@ td, th {
 .loader {
   text-align: center;
 }
+.Toastify__toast-body {
+  overflow: auto;
+}

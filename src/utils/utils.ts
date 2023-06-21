@@ -1,4 +1,4 @@
-import { INotification } from "jupyterlab_toastify"
+import { Notification } from "@jupyterlab/apputils"
 import { IStateDB } from '@jupyterlab/statedb';
 import { getEnvironmentInfo } from "../api/maap_py";
 import { DEFAULT_USERNAME } from "../constants";
@@ -87,12 +87,12 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
             console.log("https://" + ade_server)
             getUserInfo(function (profile: any) {
                 if (profile['cas:username'] === undefined) {
-                    INotification.error("Get profile failed.");
+                    Notification.error("Get profile failed.", { autoClose: false });
                 } else {
                     uname = profile['cas:username'];
                     ticket = profile['proxyGrantingTicket'];
                     callback(uname, ticket);
-                    INotification.success("Got profile.");
+                    Notification.success("Got profile.");
                 }
             });
         } else {
@@ -100,14 +100,14 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
             console.log(state)
             state.fetch(profileId).then((profile) => {
                 let profileObj = JSON.parse(JSON.stringify(profile));
-                INotification.success("Got profile.");
+                Notification.success("Got profile.");
                 uname = profileObj.preferred_username;
                 ticket = profileObj.proxyGrantingTicket;
                 callback(uname, ticket);
             }).catch((error) => {
                 console.log(error)
                 callback(uname, ticket);
-                INotification.error("Get profile failed. ");
+                Notification.error("Get profile failed. ", { autoClose: false });
             });
         }
     })
@@ -119,7 +119,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
 // Copies jupyter notebook command to user clipboard
 export async function copyNotebookCommand(text: string) {
     try {
-        await navigator.clipboard.writeText(text).then(() => {INotification.success("Copied Jupyter Notebook python command to clipboard.", { autoClose: false })})
+        await navigator.clipboard.writeText(text).then(() => {Notification.success("Copied Jupyter Notebook python command to clipboard.", { autoClose: false })})
     } catch (error) {
         console.warn('Copy failed', error)
     }
