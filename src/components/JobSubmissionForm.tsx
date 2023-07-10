@@ -35,6 +35,7 @@ export const JobSubmissionForm = () => {
     // Local state variables
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
+    const [showWaitCursor, setShowWaitCursor] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -52,6 +53,17 @@ export const JobSubmissionForm = () => {
         }
     }, [command]);
 
+    useEffect(() => {
+        let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
+        
+        // Apply the css to the parent div
+        if (showWaitCursor) {
+            elems[0].classList.add('wait-cursor')
+        } else {
+            elems[0].classList.remove('wait-cursor')
+        }
+    }, [showWaitCursor]);
+
 
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
@@ -68,6 +80,8 @@ export const JobSubmissionForm = () => {
 
     const onSubmit = (event: any) => {
         event.preventDefault()
+
+        
 
         var jobParams = {
             algo_id: null,
@@ -90,23 +104,21 @@ export const JobSubmissionForm = () => {
         jobParams.username = username
         jobParams.identifier = jobTag
 
-        console.log("Test form:")
         let data = new FormData(event.target)
-        console.log(data)
 
         for (const input of data.entries()) {
             jobParams[input[0]] = input[1]
-            //inputs[input[0]] = input[1]
         }
-
-        console.log("Final inputs")
-        console.log(jobParams)
 
         let formValidation = validateForm(jobParams)
 
+        
         if (!formValidation) {
+
             // Submit job
+            
             submitJob(jobParams).then((data) => {
+                setShowWaitCursor(false)
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
@@ -121,6 +133,7 @@ export const JobSubmissionForm = () => {
             }).finally(() => {
                 dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             })
+            
         }else {
             Notification.error(formValidation, { autoClose: false })
         }
@@ -205,6 +218,7 @@ export const JobSubmissionForm = () => {
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Algorithm</Form.Label>
                     <AsyncSelect
+                        menuPortalTarget={document.querySelector('body')}
                         cacheOptions
                         defaultOptions
                         value={selectedAlgorithm}
@@ -306,9 +320,9 @@ export const JobSubmissionForm = () => {
                 <hr />
 
                 <ButtonToolbar>
-                    <Button type="submit">Submit Job</Button>
+                    <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
-                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy Jupyter Notebook Code</Button>
+                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
             </Form>
             {/* <AlgorithmDetailsBox /> */}

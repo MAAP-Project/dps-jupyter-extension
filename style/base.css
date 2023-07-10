@@ -126,11 +126,13 @@ h6 {
 }
 
 tbody tr:nth-child(even) {
-  background-color: #F8F9FA;
+  /*background-color: #F8F9FA !important;*/
+  --bs-table-bg: #F8F9FA;
 }
 
 tbody tr:nth-child(odd) {
-  background-color:white;
+  /*background-color:white !;*/
+  --bs-table-bg: white;
 }
 
 tr {
@@ -157,7 +159,8 @@ td, th {
 
 
 .selected-row {
-  background-color: #E7F1FF !important;
+  /*background-color: #E7F1FF !important;*/
+  --bs-table-bg: #E7F1FF !important;
 }
 
 .subtext {

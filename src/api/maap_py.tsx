@@ -48,9 +48,7 @@ export async function requestAPI<T>(
 
 
 export async function getJobs(username:string) {
-  console.log("mlucas: in async jobs function")
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listJobs');
-  console.log(requestUrl.href)
   
   requestUrl.searchParams.append("username", username);
   requestUrl.searchParams.append("proxy-ticket", "");
@@ -65,9 +63,7 @@ export async function getJobs(username:string) {
   if (response.status >= 200 && response.status < 400) {
     console.log("request went well")
   }else{
-    //let res = response.json()
     console.log("something went wrong with request!!!")
-    //console.log(response.json())
   }
 
   return response.json();
@@ -81,7 +77,6 @@ const filterOptions = (options, inputValue) => {
 export async function getAlgorithms( inputValue, callback ) {
   let algorithms_tmp: any[] = []
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/listAlgorithms');
-  //console.log(requestUrl)
 
   requestUrl.searchParams.append("visibility", "all");
 
@@ -91,7 +86,6 @@ export async function getAlgorithms( inputValue, callback ) {
       }
   }).then((response) => response.json())
       .then((data) => {
-          console.log(data)
 
           data["response"]["algorithms"].forEach((item: any) => {
               let algorithm: any = {}
@@ -116,9 +110,7 @@ export async function describeAlgorithms(algo_id: string) {
     headers: { 'Content-Type': 'application/json' }
   }).then((response) => response.json())
     .then((data) => {
-      //console.log(data)
       body = getAlgorithmMetadata(data["response"])
-      console.log(body)
       return body
     })
   return body
@@ -137,7 +129,6 @@ export async function getJobStatus(job_id:string) {
   if (response.status >= 200 && response.status < 400) {
     console.log("Query submitted for: ", job_id)
     body = response.json()
-    console.log(body)
   }else{
     console.log("something went wrong with request!!!")
   }
@@ -156,7 +147,6 @@ export async function getCMRCollections() {
     }
   }).then((response) => response.json())
     .then((data) => {
-      console.log(data)
       data["response"].forEach((item: any) => {
         let collection: any = {}
         collection["value"] = item["Collection"]["ShortName"]
@@ -173,13 +163,10 @@ export async function getCMRCollections() {
 }
 
 export async function submitJob(data:any) {
-  console.log("Job submission data:")
-  console.log(data)
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/submitJob');
   Object.keys(data).map((key, index) => ( 
     requestUrl.searchParams.append(key, data[key])
   ))
-  console.log("Request url: ", requestUrl)
   // print request url and test it out on postman to make sure it works
   let response : any = await fetch(requestUrl.href, {
     headers: {
@@ -225,7 +212,6 @@ export async function getResources( inputValue, callback ) {
 export async function getJobResult(job_id:any) {
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/getJobResult');
   requestUrl.searchParams.append("job_id", job_id);
-  console.log("Request url for get result: ", requestUrl)
   // print request url and test it out on postman to make sure it works
   let response : any = await fetch(requestUrl.href, {
     headers: {

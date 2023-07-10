@@ -13,7 +13,10 @@ export const InputsJobInfoTable = (): JSX.Element => {
     return (
         <table className='table'>
             <tbody>
-                { selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor].map((input: IInputParam) => {
+                { // If the job is in a queued state, the inputs (if there are any) are not provided
+                  // in the API response, so we have to check they exist first.
+                  selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor] ?
+                  selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor].map((input: IInputParam) => {
                     return <tr>
                         <th>{input.name}</th>
                         { input.value ? 
@@ -22,7 +25,7 @@ export const InputsJobInfoTable = (): JSX.Element => {
                                 : <td><ReactJson src={input.value} theme="summerfruit:inverted" collapsed={true} displayDataTypes={false}/></td> 
                             : <td>-</td> }
                     </tr>
-                })}
+                }) : <></>}
             </tbody>
         </table>
     )

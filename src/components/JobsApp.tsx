@@ -22,7 +22,6 @@ export const JobsApp = ({ uname }): JSX.Element => {
     <div className={EXTENSION_CSS_CLASSNAME}>
       {username ? <Tabs defaultActiveKey="view-jobs" id="jobs-widget-tabs" className="mb-3">
         <Tab eventKey="view-jobs" title="View">
-          {console.log("Dispatched uname: ", username)}
           <JobsView />
         </Tab>
         <Tab eventKey="submit-jobs" title="Submit">

@@ -43,30 +43,16 @@ export const getProducts = (products: []) => {
 
 
 export var getUserInfo = function (callback) {
-    console.log("In getuserinfo")
-    console.log(window.parent);
     window.parent._keycloak.loadUserInfo().success(function (profile) {
-        console.log(profile);
-        // key = profile['public_ssh_keys'];
         callback(profile);
 
     }).error(function () {
-        console.log('Failed to load profile.');
         return "error";
     });
 };
 
-// export var getToken = function() {
-//     return window.parent._keycloak.idToken;
-// };
-
-// export var updateKeycloakToken = function(seconds) {
-//     return window.parent._keycloak.updateToken(seconds);
-// };
-
 
 export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
-    console.log("In username token")
     let uname: string = DEFAULT_USERNAME
     let ticket: string = '';
 
@@ -74,17 +60,9 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
     let response = getEnvironmentInfo()
 
     response.then((data) => {
-        console.log("Test env: ", data["ade_server"])
         ade_server = data["ade_server"]
     }).finally(() => {
-        console.log("Test env done.")
-        console.log(window.parent);
-        console.log(document.location.origin)
-        console.log("https://" + ade_server)
         if ("https://" + ade_server === document.location.origin) {
-            console.log("first")
-            console.log(document.location.origin)
-            console.log("https://" + ade_server)
             getUserInfo(function (profile: any) {
                 if (profile['cas:username'] === undefined) {
                     Notification.error("Get profile failed.", { autoClose: false });
@@ -96,8 +74,6 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
                 }
             });
         } else {
-            console.log("In the fetch part")
-            console.log(state)
             state.fetch(profileId).then((profile) => {
                 let profileObj = JSON.parse(JSON.stringify(profile));
                 Notification.success("Got profile.");
