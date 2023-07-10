@@ -67,3 +67,7 @@ input:placeholder-shown {
 .cmr-table > tr:nth-child(even):hover {
     background-color: #E5E5E5;
 }
+
+.wait-cursor {
+    cursor: wait !important;
+}

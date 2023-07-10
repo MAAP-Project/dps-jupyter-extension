@@ -85,10 +85,8 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
 
     const handleRowClick = (row) => {
-        console.log("row clicked")
         userJobInfo.map(job => {
             if (job['payload_id'] === row.values.payload_id) {
-                console.log(row)
                 dispatch(setSelectedJob({ rowIndex: row.index, jobID: row.values.payload_id, jobInfo: job }))
                 return
             }
@@ -125,9 +123,7 @@ export const JobsOverviewContainer = (): JSX.Element => {
     );
 
     const testSort = (canSort, isSortedDesc) => {
-        //console.log("Sorting test")
         if (canSort) {
-            //console.log(isSortedDesc)
             if (isSortedDesc) {
                 return <MdKeyboardArrowUp size={24} />
             } else {
@@ -235,8 +231,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
                     <h1>My Jobs</h1>
                 </div>
                 <div className="refresh-info">
-                    {console.log("Refresh timestamp")}
-                    {console.log(jobRefreshTimestamp)}
                     <Button onClick={getJobInfo} ><BsArrowClockwise className="clickable" size={24} />Refresh</Button>
                     {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated: {jobRefreshTimestamp}</div> : ""}
                 </div>
@@ -268,7 +262,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
                                     <th {...column.getHeaderProps()}
                                     >
                                         <span {...column.getSortByToggleProps()}>
-                                            {console.log(column.isSortedDesc)}
                                             {testSort(column.canSort, column.isSortedDesc)}
                                             {/* {column.canSort ? (column.isSortedDesc ? <MdKeyboardArrowUp size={24} /> : <MdKeyboardArrowDown size={24} />) : ""} */}
                                         </span>

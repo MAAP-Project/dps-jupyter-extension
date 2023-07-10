@@ -1,6 +1,10 @@
 
+tbody>tr:hover {
+    --bs-table-bg: var(--ADE-dark-grey) !important;
+}
+
 thead>tr:hover {
-    background-color: var(--bs-table-bg) !important;
+    --bs-table-bg: var(--bs-table-bg) !important;
 }
 
 .overview-header {
