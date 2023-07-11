@@ -1,5 +1,6 @@
 import React from 'react'
-import SplitPane, { Pane } from 'react-split-pane'
+import SplitPane from 'react-split-pane'
+import Pane from 'react-split-pane'
 import { JobDetailsContainer } from './JobDetailsContainer'
 import { JobsOverviewContainer } from './JobsOverviewContainer'
 import { JobsContainerActions } from '../redux/slices/JobsContainerSlice'
@@ -17,7 +18,7 @@ export const JobsView = (): JSX.Element => {
     }
 
     return (
-        <SplitPane defaultSize={"60%"} split="horizontal" className="split-pane" onDragFinished={(size) => handleDragFinish(size)}>
+        <SplitPane defaultSize={"60%"} split="horizontal" className="split-pane" onChange={(size) => handleDragFinish(size)}>
             <Pane >
                 <JobsOverviewContainer />
             </Pane>
