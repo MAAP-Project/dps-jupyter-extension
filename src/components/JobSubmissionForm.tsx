@@ -122,7 +122,7 @@ export const JobSubmissionForm = () => {
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
-                Notification.error(error, { autoClose: false })
+                Notification.error(error.message, { autoClose: false })
             })
 
             // Refresh job list once job has been submitted
