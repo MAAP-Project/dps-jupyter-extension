@@ -122,7 +122,7 @@ export const JobSubmissionForm = () => {
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
-                Notification.error(error, { autoClose: false })
+                Notification.error(error.message, { autoClose: false })
             })
 
             // Refresh job list once job has been submitted
@@ -203,10 +203,19 @@ export const JobSubmissionForm = () => {
         let inputStr = ""
         for (const input of data.entries()) {
             jobParams[input[0]] = input[1]
-            inputStr = inputStr + "," + input[0] + "=" + "\"" + input[1] + "\""
+            if (inputStr == "") {
+                inputStr = input[0] + "=" + "\"" + input[1] + "\""
+            } else {
+                inputStr = inputStr + ",\n    " + input[0] + "=" + "\"" + input[1] + "\""
+            }
         }
 
-        let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\", algo_id=\"" + jobParams.algo_id + "\",version=\"" + jobParams.version + "\",username=\"" + jobParams.username + "\",queue=\"" + jobParams.queue + "\"" + inputStr + ")"
+        let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
+                  "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
+                  "version=\"" + jobParams.version + "\",\n    " + 
+                  "username=\"" + jobParams.username + "\",\n    " + 
+                  "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
+
         setCommand(tmp)
     }
 

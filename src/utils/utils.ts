@@ -60,6 +60,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
     let response = getEnvironmentInfo()
 
     response.then((data) => {
+        console.log("ADE SERVER: ", data["ade_server"])
         ade_server = data["ade_server"]
     }).finally(() => {
         if ("https://" + ade_server === document.location.origin) {
@@ -67,6 +68,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
                 if (profile['cas:username'] === undefined) {
                     Notification.error("Get profile failed.", { autoClose: false });
                 } else {
+                    console.log("Getting username...")
                     uname = profile['cas:username'];
                     ticket = profile['proxyGrantingTicket'];
                     callback(uname, ticket);
@@ -74,13 +76,18 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
                 }
             });
         } else {
+            console.log("Getting username...1")
+            console.log(state)
             state.fetch(profileId).then((profile) => {
+                console.log("got profile")
                 let profileObj = JSON.parse(JSON.stringify(profile));
+                console.log(profileObj)
                 Notification.success("Got profile.");
                 uname = profileObj.preferred_username;
                 ticket = profileObj.proxyGrantingTicket;
                 callback(uname, ticket);
             }).catch((error) => {
+                console.log("failed to get profile")
                 console.log(error)
                 callback(uname, ticket);
                 Notification.error("Get profile failed. ", { autoClose: false });
