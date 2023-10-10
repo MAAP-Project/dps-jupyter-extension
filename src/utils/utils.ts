@@ -79,7 +79,6 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
             console.log("Getting username...1")
             console.log(state)
             state.fetch(profileId).then((profile) => {
-                console.log("got profile")
                 let profileObj = JSON.parse(JSON.stringify(profile));
                 console.log(profileObj)
                 Notification.success("Got profile.");
