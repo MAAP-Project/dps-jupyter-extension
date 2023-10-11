@@ -69,6 +69,10 @@ export async function getJobs(username:string) {
   return response.json();
 }
 
+const sortAlphabetically = (a, b) => {
+  return a.label > b.label ? 1 : b.label > a.label ? -1 : 0;
+}
+
 const filterOptions = (options, inputValue) => {
   const candidate = inputValue.toLowerCase();
   return options.filter(({ label }) => label.toLowerCase().includes(candidate));
@@ -94,6 +98,10 @@ export async function getAlgorithms( inputValue, callback ) {
               algorithms_tmp.push(algorithm)
           })
           const filtered = filterOptions(algorithms_tmp, inputValue);
+
+          // sort
+          algorithms_tmp = filtered.sort(sortAlphabetically)
+
           callback(filtered);
           return algorithms_tmp
       });
