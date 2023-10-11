@@ -219,6 +219,9 @@ export const JobSubmissionForm = () => {
         setCommand(tmp)
     }
 
+    console.log("graceal1 in the render of job submission with show wait cursor as ");
+    console.log(showWaitCursor);
+
 
     return (
         <div className="submit-wrapper">
