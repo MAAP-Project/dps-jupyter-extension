@@ -3,13 +3,10 @@ import { IJob } from '../types/types'
 export const parseJobData = (data: any) => {
 
     let tmpJobs: IJob[] = []
-
     data.map((job: any) => {
 
         let tmpJob: IJob = {}
         let tmp = Object.entries(job)
-
-        
 
         if (tmp[0][0]) {
             tmpJob.payload_id = tmp[0][0]
