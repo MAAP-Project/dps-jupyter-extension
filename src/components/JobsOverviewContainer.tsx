@@ -1,48 +1,28 @@
-import React, { useMemo, useEffect, useState } from 'react'
+import React, { useMemo, useEffect, useState, Fragment } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectJobsContainer, JobsContainerActions } from '../redux/slices/JobsContainerSlice'
-import { useTable, useGlobalFilter, useSortBy, usePagination, useAsyncDebounce } from 'react-table';
-import { Pagination, FormControl, InputGroup, Spinner, Table, Button } from 'react-bootstrap';
-import { getUserJobs } from '../api/maap_py';
-import { jobsActions, selectJobs } from '../redux/slices/jobsSlice';
+import { useTable, 
+         useGlobalFilter, 
+         useSortBy, 
+         usePagination, 
+         useFilters, 
+         useAsyncDebounce} from 'react-table'
+import { Pagination, 
+         Spinner, 
+         Table, 
+         Button, 
+         InputGroup,
+         FormControl} from 'react-bootstrap'
+import { JobStatusBadge } from './JobStatusBadge'
 import { BsArrowClockwise } from 'react-icons/bs'
-import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
-import { JobStatusBadge } from './JobStatusBadge';
+import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
+import { Search } from 'react-bootstrap-icons'
+import { jobsActions, selectJobs } from '../redux/slices/jobsSlice'
+import { selectJobsContainer } from '../redux/slices/JobsContainerSlice'
+import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { parseJobData } from '../utils/mapping'
-import { Search } from 'react-bootstrap-icons';
+import { getUserJobs } from '../api/maap_py'
 import "../../style/JobsOverview.css"
-import { selectUserInfo } from '../redux/slices/userInfoSlice';
 
-const GlobalFilter = ({
-    preGlobalFilteredRows,
-    globalFilter,
-    setGlobalFilter,
-}: any) => {
-    const [value, setValue] = React.useState(globalFilter)
-
-    const onChange = useAsyncDebounce(value => {
-        setGlobalFilter(value || undefined)
-    }, 200)
-
-
-    return (
-        <InputGroup className="mb-3">
-            <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
-            <FormControl
-                type="search"
-                key="globalSearch"
-                placeholder={`Search records...`}
-                aria-label="Search"
-                aria-describedby="basic-addon1"
-                value={value || ""}
-                onChange={e => {
-                    setValue(e.target.value);
-                    onChange(e.target.value);
-                }}
-            />
-        </InputGroup>
-    )
-}
 
 export const JobsOverviewContainer = (): JSX.Element => {
 
@@ -57,9 +37,23 @@ export const JobsOverviewContainer = (): JSX.Element => {
 
     // Local component variables
     const [showSpinner, setShowSpinner] = useState(false)
+    const [showFilters, setShowFilters] = useState(true)
+    const [statusFilterOptions, setStatusFilterOptions] = useState([])
+
+
+    const data = useMemo(() => userJobInfo, [userJobInfo])
+
+    useEffect(() => {
+        getJobInfo()
+    }, []);
+
+    useEffect(() => {
+        setPageSize(itemSize)
+    }, [itemSize]);
+
+
 
     const getJobInfo = () => {
-
         setShowSpinner(true)
 
         // List all jobs for a given user
@@ -69,21 +63,15 @@ export const JobsOverviewContainer = (): JSX.Element => {
             dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
         }).finally(() => {
             setShowSpinner(false)
+
+            // Update refresh timestamp
             dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
-            setGlobalFilter(state.globalFilter)
+            // setGlobalFilter(state.globalFilter)
         })
     }
 
-    useEffect(() => {
-        getJobInfo()
-    }, []);
 
-
-    useEffect(() => {
-        setPageSize(itemSize)
-    }, [itemSize]);
-
-
+    // Set selected row
     const handleRowClick = (row) => {
         userJobInfo.map(job => {
             if (job['payload_id'] === row.values.payload_id) {
@@ -91,6 +79,186 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 return
             }
         })
+    }
+
+
+    const MultipleFilter = (rows, filler, filterValue) => {
+        const arr = [];
+        rows.forEach((val) => {
+            if (filterValue.includes(val.original.status)) arr.push(val);
+        });
+        return arr;
+    };
+    
+    function setFilteredParams(filterArr, val) {
+        console.log("Check filter")
+        console.log(filterArr)
+        console.log(val)
+        if (filterArr.includes(val)) {
+            console.log("test")
+            
+            filterArr = filterArr.filter((n) => {
+                return n !== val;
+            });
+            
+        } else {
+            console.log("test2")
+            filterArr.push(val)
+        };
+    
+        //if (filterArr.length === 0) filterArr = undefined;
+        return filterArr;
+    }
+    
+    const SelectColumnFilter = ({column: { filterValue = [], setFilter, preFilteredRows, id }}) => {
+        const options = useMemo(() => {
+            const options = new Set();
+            preFilteredRows.forEach((row) => {
+                options.add(row.values[id]);
+            });
+            setStatusFilterOptions(Array.from(options))
+            return [...options.values()];
+        }, [id, preFilteredRows]);
+    
+        return (
+            <Fragment>
+                <div className="block">
+                    {options.map((option: any, i) => {
+                        console.log("test option")
+                        console.log(option)
+                        return (
+                            <Fragment key={i}>
+                                <div className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        defaultChecked={true}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                                        id={option}
+                                        name={option}
+                                        value={option}
+                                        onChange={(e) => {
+                                            setFilter(setFilteredParams(filterValue, e.target.value));
+                                        }}
+                                    ></input>
+                                    <label
+                                        htmlFor={option}
+                                        className="ml-1.5 font-medium text-gray-700"
+                                    >
+                                        {option}
+                                    </label>
+                                </div>
+                            </Fragment>
+                        );
+                    })}
+                </div>
+            </Fragment>
+        );
+    }
+
+    // Text filter for a single column
+    const TextColumnFilter = ({column: { filterValue, preFilteredRows, setFilter }}) => {
+        const count = preFilteredRows.length
+        return (
+            <div className='text-filter'>
+                <input
+                    value={filterValue || ''}
+                    onChange={e => {
+                        setFilter(e.target.value || undefined)
+                    }}
+                    placeholder={`Search ${count} record(s)...`}
+                />
+            </div>
+        )
+    }
+
+    // Global text filter
+    const GlobalFilter = ({
+        preGlobalFilteredRows,
+        globalFilter,
+        setGlobalFilter,
+    }: any) => {
+        const [value, setValue] = React.useState(globalFilter)
+
+        const onChange = useAsyncDebounce(value => {
+            setGlobalFilter(value || undefined)
+        }, 200)
+
+
+        return (
+            <InputGroup className="mb-3">
+                <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
+                <FormControl
+                    type="search"
+                    key="globalSearch"
+                    placeholder={`Search records...`}
+                    aria-label="Search"
+                    aria-describedby="basic-addon1"
+                    value={value || ""}
+                    onChange={e => {
+                        setValue(e.target.value);
+                        onChange(e.target.value);
+                    }}
+                />
+            </InputGroup>
+        )
+    }
+
+    // Date range filter component for a single column
+    const DateRangeColumnFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id }}) => {
+        const [min, max] = React.useMemo(() => {
+            let min = preFilteredRows.length
+                ? new Date(preFilteredRows[0].values[id])
+                : new Date(0);
+            let max = preFilteredRows.length
+                ? new Date(preFilteredRows[0].values[id])
+                : new Date(0);
+
+            preFilteredRows.forEach((row) => {
+                const rowDate = new Date(row.values[id]);
+
+                min = rowDate <= min ? rowDate : min;
+                max = rowDate >= max ? rowDate : max;
+            });
+
+            return [min, max];
+        }, [id, preFilteredRows]);
+
+        return (
+            <div className='date-filter'>
+                <input
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setFilter((old = []) => [val ? val : undefined, old[1]]);
+                    }}
+                    type="date"
+                    value={filterValue[0] || ""}
+                />
+                {" to "}
+                <input
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        setFilter((old = []) => [
+                            old[0],
+                            val ? val.concat("T23:59:59.999Z") : undefined
+                        ]);
+                    }}
+                    type="date"
+                    value={filterValue[1]?.slice(0, 10) || ""}
+                />
+            </div>
+        );
+    }
+
+    const testSort = (canSort, isSortedDesc) => {
+        if (canSort) {
+            if (isSortedDesc === undefined) {
+                return <FaSort size={24} />
+            } else if (isSortedDesc) {
+                return <FaSortDown size={24}/>
+            } else {
+                return <FaSortUp size={24}/>
+            }
+        }
     }
 
     const dateSort = useMemo(
@@ -122,17 +290,35 @@ export const JobsOverviewContainer = (): JSX.Element => {
         []
     );
 
-    const testSort = (canSort, isSortedDesc) => {
-        if (canSort) {
-            if (isSortedDesc) {
-                return <MdKeyboardArrowUp size={24} />
-            } else {
-                return <MdKeyboardArrowDown size={24} />
-            }
+    // Date range filter function for a single column
+    const dateBetweenFilterFn = (rows, id, filterValues) => {
+        const sd = filterValues[0] ? new Date(filterValues[0]) : undefined;
+        const ed = filterValues[1] ? new Date(filterValues[1]) : undefined;
+        if (ed || sd) {
+            return rows.filter((r) => {
+                var dateAndHour = r.original[id[0]].split("T");
+                var [year, month, day] = dateAndHour[0].split("-");
+                var date = [month, day, year].join("/");
+                var hour = dateAndHour[1];
+                var formattedData = date + " " + hour;
+
+                const cellDate = new Date(formattedData);
+
+                if (ed && sd) {
+                    return cellDate >= sd && cellDate <= ed;
+                } else if (sd) {
+                    return cellDate >= sd;
+                } else {
+                    return cellDate <= ed;
+                }
+            });
+        } else {
+            return rows;
         }
     }
 
-    const data = useMemo(() => userJobInfo, [userJobInfo])
+
+
     const columns = useMemo(
         () => [
             {
@@ -140,46 +326,66 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 accessor: 'tags' as const,
                 disableSortBy: true,
                 maxWidth: 350,
+                Filter: TextColumnFilter
             },
             {
-                Header: 'Job Type',
+                Header: () => (
+                    <div style={{ textAlign: "center" }}>Job Type</div>
+                ),
                 accessor: 'job_type' as const,
                 disableSortBy: true,
                 maxWidth: 300,
+                Filter: TextColumnFilter
             },
             {
-                Header: 'Status',
+                Header: () => (
+                    <div style={{ textAlign: "center" }}>Status</div>
+                ),
                 accessor: 'status' as const,
                 disableSortBy: true,
                 maxWidth: 300,
-                Cell: ({ cell: { row: { values: { status } } } }: any) => <JobStatusBadge status={status} />,
+                Cell: ({ cell: { row: { values: { status } } } }: any) => <div style={{ textAlign: "center" }}><JobStatusBadge status={status} /></div>,
+                Filter: SelectColumnFilter,
+                filter: MultipleFilter
             },
             {
-                Header: 'Queued Time',
+                Header: () => (
+                    <div style={{ textAlign: "center" }}>Queued Time</div>
+                ),
                 accessor: 'time_queued' as const,
+                Cell: row => (
+                    <div style={{ textAlign: "center" }}>{row.value}</div>
+                ),
                 sortType: dateSort,
-                //disableSortBy: true,
-                // enableSortingRemoval: false,
                 sortDescFirst: true,
+                Filter: DateRangeColumnFilter,
+                filter: dateBetweenFilterFn,
                 maxWidth: 300,
             },
             {
-                Header: 'Start Time',
+                Header: () => (
+                    <div style={{ textAlign: "center" }}>Start Time</div>
+                ),
                 accessor: 'time_start' as const,
+                Cell: row => (
+                    <div style={{ textAlign: "center" }}>{row.value}</div>
+                ),
                 sortType: dateSort,
-                sortDescFirst: true,
+                Filter: DateRangeColumnFilter,
+                filter: dateBetweenFilterFn,
                 maxWidth: 300,
-                // sortUndefined: -1
-                //sortType: 'datetime',
-                //Cell: ({ cell: { row: { values: { time_sort } } } }: any) => time_sort,
-
             },
             {
-                Header: 'End Time',
+                Header: () => (
+                    <div style={{ textAlign: "center" }}>End Time</div>
+                ),
                 accessor: 'time_end' as const,
+                Cell: row => (
+                    <div style={{ textAlign: "center" }}>{row.value}</div>
+                ),
+                Filter: DateRangeColumnFilter,
+                filter: dateBetweenFilterFn,
                 sortType: dateSort,
-                sortDescFirst: true,
-                //disableSortBy: true,
                 maxWidth: 300,
             },
             {
@@ -187,17 +393,19 @@ export const JobsOverviewContainer = (): JSX.Element => {
                 accessor: 'payload_id' as const,
                 disableSortBy: true,
                 maxWidth: 300,
+                Filter: TextColumnFilter
             }
         ],
 
         []
     )
 
+
+
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        // rows,
         page,
         prepareRow,
         state,
@@ -212,21 +420,34 @@ export const JobsOverviewContainer = (): JSX.Element => {
         previousPage,
         setPageSize,
         visibleColumns,
+        setAllFilters,
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
-        columns, data: data, disableSortRemove: true, initialState: {
-            pageIndex: 0, pageSize: itemSize, sortBy: [
+        columns,
+        data: data,
+        disableSortRemove: true,
+        initialState: {
+            pageIndex: 0,
+            pageSize: itemSize,
+            sortBy: [
                 {
-                    id: "time_start",
+                    id: "time_queued",
                     desc: true
                 },
             ],
+            filters: [
+                {
+                    id: 'status',
+                    value: statusFilterOptions,
+                }
+            ],
         }
-    }, useGlobalFilter, useSortBy, usePagination)
+    }, useFilters, useGlobalFilter, useSortBy, usePagination)
 
     return (
         <div>
             <div className="overview-header">
+
                 <div className="margin-1rem">
                     <h1>My Jobs</h1>
                 </div>
@@ -234,38 +455,33 @@ export const JobsOverviewContainer = (): JSX.Element => {
                     <Button onClick={getJobInfo} ><BsArrowClockwise className="clickable" size={24} />Refresh</Button>
                     {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated: {jobRefreshTimestamp}</div> : ""}
                 </div>
+
+
             </div>
-            <div className="global-filter">
+            <div className='table-toolbar'>
+                {showFilters ? <span onClick={() => setShowFilters(!showFilters)}><a>Hide filters</a></span> : <span onClick={() => setShowFilters(!showFilters)}><a>Show filters</a></span>}
+                {' | '}
+                {<span onClick={() => setAllFilters([{id: 'status', value: statusFilterOptions}])}><a>Clear filters</a></span>}
+            </div>
+            {/* <div className="global-filter">
                 <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
                     setGlobalFilter={setGlobalFilter}
                 />
-            </div>
-
-            <div className='pagination'>
-                <Pagination>
-                    <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
-                    <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
-                    <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
-                    <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
-                </Pagination>
-                <span>Page {pageOptions.length === 0 ? 0 : pageIndex + 1} of {pageOptions.length}</span>
-            </div>
-
+            </div> */}
             <div className="table-container">
                 <Table {...getTableProps()} >
                     <thead >
                         {headerGroups.map(headerGroup => (
                             <tr {...headerGroup.getHeaderGroupProps()}>
                                 {headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps()}
-                                    >
-                                        <span {...column.getSortByToggleProps()}>
+                                    <th {...column.getHeaderProps()}>
+                                        <span className='header-sort' {...column.getSortByToggleProps()}>
+                                            {column.render('Header')}
                                             {testSort(column.canSort, column.isSortedDesc)}
-                                            {/* {column.canSort ? (column.isSortedDesc ? <MdKeyboardArrowUp size={24} /> : <MdKeyboardArrowDown size={24} />) : ""} */}
                                         </span>
-                                        {column.render('Header')}
+                                        <div>{showFilters ? column.canFilter ? column.render('Filter') : null : null}</div>
                                     </th>
                                 ))}
                             </tr>
@@ -293,6 +509,16 @@ export const JobsOverviewContainer = (): JSX.Element => {
                             })}
                         </tbody>}
                 </Table>
+
+            </div>
+            <div className='pagination'>
+                <Pagination>
+                    <Pagination.First onClick={() => gotoPage(0)} disabled={!canPreviousPage} />
+                    <Pagination.Prev onClick={() => previousPage()} disabled={!canPreviousPage} />
+                    <Pagination.Next onClick={() => nextPage()} disabled={!canNextPage} />
+                    <Pagination.Last onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} />
+                </Pagination>
+                <span>Page {pageOptions.length === 0 ? 0 : pageIndex + 1} of {pageOptions.length}</span>
             </div>
         </div>
     )
