@@ -36,6 +36,7 @@ export const JobSubmissionForm = () => {
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
+    const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -63,6 +64,13 @@ export const JobSubmissionForm = () => {
             elems[0].classList.remove('wait-cursor')
         }
     }, [showWaitCursor]);
+    
+    useEffect(() => {
+        let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary")
+        console.log("graceal1 printing elems in use effect");
+        console.log(elems);
+        console.log(disableButton);
+    }, [disableButton]);
 
 
     const handleAlgorithmChange = value => {
@@ -221,7 +229,6 @@ export const JobSubmissionForm = () => {
 
     console.log("graceal1 in the render of job submission with show wait cursor as ");
     console.log(showWaitCursor);
-
 
     return (
         <div className="submit-wrapper">
