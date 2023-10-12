@@ -17,7 +17,7 @@ export const parseJobData = (data: any) => {
             tmpJob.job_type = tmp[0][1]['type']
             tmpJob.status = tmp[0][1]['status']
             tmpJob.tags = tmp[0][1]['tags']
-            tmpJob.error = tmp[0][1]['error']
+            tmpJob.traceback = tmp[0][1]['traceback']
 
             if (tmp[0][1]['job']) {
                 tmpJob.username = tmp[0][1]['job']['username']

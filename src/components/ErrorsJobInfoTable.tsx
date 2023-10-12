@@ -17,7 +17,6 @@ export const ErrorsJobInfoTable = (): JSX.Element => {
             <tbody>
                 {ERRORS_JOBS_INFO.map((field) => {
                     {
-                        // The 'errors' key exists only if there are errors
                         if (selectedJob['jobInfo'][field.accessor]) {
                             return <tr>
                                 <th>{field.header}</th>
