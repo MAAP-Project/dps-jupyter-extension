@@ -1,6 +1,6 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application'
 import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils'
-import { EXTENSION_ID, EXTENSION_NAME, JUPYTER_EXT, OPEN_COMMAND } from './constants'
+import { JUPYTER_EXT } from './constants'
 import { ReactAppWidget, SubmitJobReactAppWidget } from './classes/App'
 import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
@@ -19,6 +19,8 @@ namespace CommandIDs {
 
 const profileId = 'maapsec-extension:IMaapProfile';
 
+
+// Add View Jobs and Submit Jobs plugins to the jupyter lab menu
 const jobsMenuext: JupyterFrontEndPlugin<void> = {
   id: 'jobs-menu',
   autoStart: true,
@@ -29,7 +31,8 @@ const jobsMenuext: JupyterFrontEndPlugin<void> = {
     jobsMenu.id = 'jobs-menu';
     jobsMenu.title.label = 'Jobs';
     [
-      OPEN_COMMAND,
+      JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
+      JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND
     ].forEach(command => {
       jobsMenu.addItem({ command });
     });
@@ -37,28 +40,27 @@ const jobsMenuext: JupyterFrontEndPlugin<void> = {
   }
 };
 
-/**
- * Initialization data for the react-widget extension.
- */
-const extension: JupyterFrontEndPlugin<void> = {
-  id: EXTENSION_ID,
+
+// View Jobs plugin
+const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
+  id: JUPYTER_EXT.VIEW_JOBS_PLUGIN_ID,
   autoStart: true,
   optional: [ILauncher, ICommandPalette, IStateDB],
   // requires: [ICommandPalette, IStateDB],
   activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB) => {
     const { commands } = app;
 
-    const command = OPEN_COMMAND;
+    const command = JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND;
     commands.addCommand(command, {
-      caption: 'View and submit user jobs',
-      label: EXTENSION_NAME,
+      caption: JUPYTER_EXT.VIEW_JOBS_NAME,
+      label: JUPYTER_EXT.VIEW_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
           console.log("Got username: ", uname)
           const content = new ReactAppWidget(uname);
           const widget = new MainAreaWidget<ReactAppWidget>({ content });
-          widget.title.label = EXTENSION_NAME;
+          widget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
           widget.title.icon = reactIcon;
           app.shell.add(widget, 'main');
         });
@@ -66,7 +68,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       },
     });
 
-    palette.addItem({command: OPEN_COMMAND, category: 'MAAP Extensions'});
+    palette.addItem({command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, category: 'MAAP Extensions'});
 
     if (launcher) {
       launcher.add({
@@ -74,9 +76,12 @@ const extension: JupyterFrontEndPlugin<void> = {
         category: "MAAP Extensions"
       });
     }
+
+    console.log('JupyterLab View Jobs plugin is activated!');
   },
 };
 
+// Submit Jobs plugin
 const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
   id: JUPYTER_EXT.SUBMIT_JOBS_PLUGIN_ID,
   autoStart: true,
@@ -90,21 +95,18 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.SUBMIT_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        // const content = new SubmitJobReactAppWidget("");
-        // const widget = new MainAreaWidget<SubmitJobReactAppWidget>({ content });
-        // widget.title.label = "Submit Job";
-        // widget.title.icon = reactIcon;
-        // app.shell.add(widget, 'main');
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
           console.log("Got username: ", uname)
           const content = new SubmitJobReactAppWidget("");
           const widget = new MainAreaWidget<SubmitJobReactAppWidget>({ content });
-          widget.title.label = "Submit Job";
+          widget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
           widget.title.icon = reactIcon;
           app.shell.add(widget, 'main');
         }).catch((error) => console.log(error));
       },
     });
+
+    palette.addItem({command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, category: 'MAAP Extensions'});
 
     if (launcher) {
       launcher.add({
@@ -113,8 +115,8 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    console.log('JupyterLab jobs-submit plugin is activated!');
+    console.log('JupyterLab Submit Jobs plugin is activated!');
   }
 };
 
-export default [extension, jobsMenuext, jobs_submit_plugin];
+export default [jobs_view_plugin, jobsMenuext, jobs_submit_plugin];

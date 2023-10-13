@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import { JobSubmissionForm } from './JobSubmissionForm'
 import { JobsView } from './JobsView'
-import { EXTENSION_CSS_CLASSNAME } from '../constants'
+import { JUPYTER_EXT } from '../constants'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
@@ -19,7 +19,7 @@ export const JobsApp = ({ uname }): JSX.Element => {
   }, []);
 
   return (
-    <div className={EXTENSION_CSS_CLASSNAME}>
+    <div className={JUPYTER_EXT.EXTENSION_CSS_CLASSNAME}>
       {username ? <Tabs defaultActiveKey="view-jobs" id="jobs-widget-tabs" className="mb-3">
         <Tab eventKey="view-jobs" title="View">
           <JobsView />

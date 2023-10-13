@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { Provider } from 'react-redux'
 import { JobsApp } from '../components/JobsApp'
-import { EXTENSION_CSS_CLASSNAME, JUPYTER_EXT } from '../constants'
+import { JUPYTER_EXT } from '../constants'
 import store from '../redux/store'
 import 'regenerator-runtime/runtime'
 import { JobSubmissionForm } from '../components/JobSubmissionForm'
@@ -11,7 +11,7 @@ export class ReactAppWidget extends ReactWidget {
   uname: string
   constructor(uname: string) {
     super()
-    this.addClass(EXTENSION_CSS_CLASSNAME)
+    this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
     this.uname = uname
   }
 
