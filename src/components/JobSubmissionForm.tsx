@@ -36,7 +36,7 @@ export const JobSubmissionForm = () => {
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
-    //const [disableButton, setDisableButton] = useState(false)
+    const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -56,6 +56,7 @@ export const JobSubmissionForm = () => {
 
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
+        console.log("graceal1 in the use effect of show wait cursor");
         
         // Apply the css to the parent div
         if (showWaitCursor) {
@@ -65,12 +66,21 @@ export const JobSubmissionForm = () => {
         }
     }, [showWaitCursor]);
     
-    /*useEffect(() => {
+    useEffect(() => {
+        console.log("graceal1 in use effect of disable button");
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary")
+        for (let i=0;i<elems.length;i++){
+            console.log(elems[i]);
+            console.log(elems[i].getAttribute("type"));
+            if (elems[i].getAttribute("type") === "submit") {
+                elems[i].setAttribute("disabled", "true");
+                console.log(elems[i]);
+            }
+        }
         console.log("graceal1 printing elems in use effect");
         console.log(elems);
         console.log(disableButton);
-    }, [disableButton]);*/
+    }, [disableButton]);
 
 
     const handleAlgorithmChange = value => {
@@ -88,6 +98,7 @@ export const JobSubmissionForm = () => {
 
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
+        //setDisableButton(true);
         event.preventDefault()
 
         
@@ -160,6 +171,9 @@ export const JobSubmissionForm = () => {
             Notification.error(formValidation, { autoClose: false })
         }
         console.log("graceal1 at the very bottom of onsubmit");
+        setDisableButton(false);
+        console.log("graceal1 set disable button back to false");
+        setShowWaitCursor(false)
     }
 
 
@@ -244,6 +258,7 @@ export const JobSubmissionForm = () => {
 
     console.log("graceal1 in the render of job submission with show wait cursor as ");
     console.log(showWaitCursor);
+    console.log(disableButton);
 
     return (
         <div className="submit-wrapper">
@@ -354,7 +369,10 @@ export const JobSubmissionForm = () => {
                 <hr />
 
                 <ButtonToolbar>
-                    <Button type="submit" onClick={() => setShowWaitCursor(true)} disabled={showWaitCursor}>Submit Job</Button>
+                    <Button type="submit" onClick={() => {
+                        setShowWaitCursor(true);
+                        setDisableButton(true);
+                    }} /*disabled={disableButton}*/>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
