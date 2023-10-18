@@ -47,6 +47,7 @@ const extension: JupyterFrontEndPlugin<void> = {
   // requires: [ICommandPalette, IStateDB],
   activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB) => {
     const { commands } = app;
+    console.log("graceal1 in index.ts activate of dps jupyter extension");
 
     const command = OPEN_COMMAND;
     commands.addCommand(command, {
