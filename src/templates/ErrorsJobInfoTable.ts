@@ -9,7 +9,7 @@ import { IJobInfoTable } from "../types/types";
 export const ERRORS_JOBS_INFO: IJobInfoTable[] = [
     {
         header: "Errors",
-        accessor: "error",
+        accessor: "traceback",
         type: STYLE_TYPE.CODE
     }
 ]
