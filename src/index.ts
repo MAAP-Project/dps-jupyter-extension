@@ -1,7 +1,7 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application'
 import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils'
 import { JUPYTER_EXT } from './constants'
-import { ReactAppWidget, SubmitJobReactAppWidget } from './classes/App'
+import { ViewJobsReactAppWidget, SubmitJobsReactAppWidget } from './classes/App'
 import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
 import { getUsernameToken } from './utils/utils';
@@ -20,8 +20,8 @@ namespace CommandIDs {
 const profileId = 'maapsec-extension:IMaapProfile';
 
 
-// Add View Jobs and Submit Jobs plugins to the jupyter lab menu
-const jobsMenuext: JupyterFrontEndPlugin<void> = {
+// Add 'View Jobs' and 'Submit Jobs' plugins to the jupyter lab 'Jobs' menu
+const jobs_menu_plugin: JupyterFrontEndPlugin<void> = {
   id: 'jobs-menu',
   autoStart: true,
   requires: [IMainMenu],
@@ -45,10 +45,27 @@ const jobsMenuext: JupyterFrontEndPlugin<void> = {
 const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
   id: JUPYTER_EXT.VIEW_JOBS_PLUGIN_ID,
   autoStart: true,
-  optional: [ILauncher, ICommandPalette, IStateDB],
-  // requires: [ICommandPalette, IStateDB],
-  activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB) => {
+  optional: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer],
+  activate: (app: JupyterFrontEnd, 
+             launcher: ILauncher, 
+             palette: ICommandPalette, 
+             state: IStateDB, 
+             restorer: ILayoutRestorer) => {
+
     const { commands } = app;
+
+    let viewJobsWidget: MainAreaWidget<ViewJobsReactAppWidget> | null = null;
+
+    const viewJobsTracker = new WidgetTracker<MainAreaWidget<ViewJobsReactAppWidget>>({
+      namespace: 'view-jobs-tracker'
+    });
+
+    if (restorer) {
+      restorer.restore(viewJobsTracker, {
+        command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
+        name: () => 'view-jobs-tracker'
+      });
+    }
 
     const command = JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND;
     commands.addCommand(command, {
@@ -57,14 +74,17 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-          console.log("Got username: ", uname)
-          const content = new ReactAppWidget(uname);
-          const widget = new MainAreaWidget<ReactAppWidget>({ content });
-          widget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
-          widget.title.icon = reactIcon;
-          app.shell.add(widget, 'main');
-        });
+            console.log("Got username: ", uname)
+            const content = new ViewJobsReactAppWidget(uname, app);
+            viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
+            viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
+            viewJobsWidget.title.icon = reactIcon;
+            app.shell.add(viewJobsWidget, 'main');
 
+            // Add widget to the tracker so it will persist on browser refresh
+            viewJobsTracker.save(viewJobsWidget)
+            viewJobsTracker.add(viewJobsWidget)
+        });
       },
     });
 
@@ -79,15 +99,35 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
 
     console.log('JupyterLab View Jobs plugin is activated!');
   },
+  
 };
 
 // Submit Jobs plugin
 const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
   id: JUPYTER_EXT.SUBMIT_JOBS_PLUGIN_ID,
   autoStart: true,
-  optional: [ILauncher, ICommandPalette, IStateDB],
-  activate: (app: JupyterFrontEnd, launcher: ILauncher, palette: ICommandPalette, state: IStateDB) => {
+  optional: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer],
+  activate: (app: JupyterFrontEnd, 
+             launcher: ILauncher, 
+             palette: ICommandPalette, 
+             state: IStateDB, 
+             restorer: ILayoutRestorer) => {
+
     const { commands } = app;
+
+    let submitJobsWidget: MainAreaWidget<SubmitJobsReactAppWidget> | null = null;
+
+    const submitJobsTracker = new WidgetTracker<MainAreaWidget<SubmitJobsReactAppWidget>>({
+      namespace: 'submit-jobs-tracker'
+    });
+
+    if (restorer) {
+      restorer.restore(submitJobsTracker, {
+        command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND,
+        name: () => 'submit-jobs-tracker'
+      });
+    }
+
     const command = JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND;
 
     commands.addCommand(command, {
@@ -97,11 +137,16 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
           console.log("Got username: ", uname)
-          const content = new SubmitJobReactAppWidget("");
-          const widget = new MainAreaWidget<SubmitJobReactAppWidget>({ content });
-          widget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
-          widget.title.icon = reactIcon;
-          app.shell.add(widget, 'main');
+          const content = new SubmitJobsReactAppWidget("");
+          submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
+          submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
+          submitJobsWidget.title.icon = reactIcon;
+          app.shell.add(submitJobsWidget, 'main');
+
+          // Add widget to the tracker so it will persist on browser refresh
+          submitJobsTracker.save(submitJobsWidget)
+          submitJobsTracker.add(submitJobsWidget)
+
         }).catch((error) => console.log(error));
       },
     });
@@ -119,4 +164,4 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
   }
 };
 
-export default [jobs_view_plugin, jobsMenuext, jobs_submit_plugin];
+export default [jobs_view_plugin, jobs_menu_plugin, jobs_submit_plugin];

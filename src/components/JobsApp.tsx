@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react'
-import { Tabs, Tab } from 'react-bootstrap'
-import { JobSubmissionForm } from './JobSubmissionForm'
 import { JobsView } from './JobsView'
 import { JUPYTER_EXT } from '../constants'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 
-export const JobsApp = ({ uname }): JSX.Element => {
+export const JobsApp = ({ uname, jupyterApp }): JSX.Element => {
 
   // Redux
   const dispatch = useDispatch()
@@ -20,14 +18,7 @@ export const JobsApp = ({ uname }): JSX.Element => {
 
   return (
     <div className={JUPYTER_EXT.EXTENSION_CSS_CLASSNAME}>
-      {username ? <Tabs defaultActiveKey="view-jobs" id="jobs-widget-tabs" className="mb-3">
-        <Tab eventKey="view-jobs" title="View">
-          <JobsView />
-        </Tab>
-        <Tab eventKey="submit-jobs" title="Submit">
-          <JobSubmissionForm />
-        </Tab>
-      </Tabs> : ''}
+      {username ? <JobsView jupyterApp={jupyterApp} /> : ''}
     </div>
   )
 }
