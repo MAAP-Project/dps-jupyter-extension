@@ -87,6 +87,7 @@ export const JobSubmissionForm = () => {
 
 
     const onSubmit = (event: any) => {
+        console.log("graceal1 at the beginning of onsubmit");
         event.preventDefault()
 
         
@@ -104,6 +105,7 @@ export const JobSubmissionForm = () => {
             jobParams.algo_id = algorithm[0]
             jobParams.version = algorithm[1]
         }
+        console.log("graceal1 after selectedAlg if statement");
 
         if (selectedResource) {
             jobParams.queue = selectedResource.value
@@ -118,14 +120,20 @@ export const JobSubmissionForm = () => {
             jobParams[input[0]] = input[1]
         }
 
+        console.log("graceal1 right before form validation");
         let formValidation = validateForm(jobParams)
+        console.log("graceal1 right after form validation");
 
         
         if (!formValidation) {
 
             // Submit job
+            console.log("graceal1 in !formValidation if statement about to submit job with jobParams");
+            console.log(jobParams);
             
             submitJob(jobParams).then((data) => {
+                console.log("graceal1 in the then of submitjob with ");
+                console.log(data);
                 setShowWaitCursor(false)
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
@@ -135,14 +143,20 @@ export const JobSubmissionForm = () => {
 
             // Refresh job list once job has been submitted
             let response = getUserJobs(username)
+            console.log("graceal1 and response is ");
+            console.log(response);
 
             response.then((data) => {
+                console.log("graceal1 in then of response");
+                console.log(data);
                 dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
             }).finally(() => {
+                console.log("graceal1 in finally of response");
                 dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             })
             
         }else {
+            console.log("graceal1 in else of !formValidation");
             Notification.error(formValidation, { autoClose: false })
         }
     }
@@ -339,7 +353,7 @@ export const JobSubmissionForm = () => {
                 <hr />
 
                 <ButtonToolbar>
-                    <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
+                    <Button type="submit" onClick={() => setShowWaitCursor(true)} disabled={showWaitCursor}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
