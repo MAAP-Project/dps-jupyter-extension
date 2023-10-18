@@ -36,7 +36,7 @@ export const JobSubmissionForm = () => {
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
-    const [disableButton, setDisableButton] = useState(false)
+    //const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -65,12 +65,12 @@ export const JobSubmissionForm = () => {
         }
     }, [showWaitCursor]);
     
-    useEffect(() => {
+    /*useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary")
         console.log("graceal1 printing elems in use effect");
         console.log(elems);
         console.log(disableButton);
-    }, [disableButton]);
+    }, [disableButton]);*/
 
 
     const handleAlgorithmChange = value => {
@@ -339,7 +339,7 @@ export const JobSubmissionForm = () => {
                 <hr />
 
                 <ButtonToolbar>
-                    <Button type="submit" onClick={() => setShowWaitCursor(true)} disabled={showWaitCursor}>Submit Job</Button>
+                    <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
