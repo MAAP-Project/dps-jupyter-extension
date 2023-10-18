@@ -159,6 +159,7 @@ export const JobSubmissionForm = () => {
             console.log("graceal1 in else of !formValidation");
             Notification.error(formValidation, { autoClose: false })
         }
+        console.log("graceal1 at the very bottom of onsubmit");
     }
 
 
