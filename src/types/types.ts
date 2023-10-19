@@ -10,7 +10,6 @@ export interface IJob {
   ec2_instance_type?: string,
   ec2_instance_id?: string,
   ec2_availability_zone?: string,
-  error?: string,
   job_dir_size?: string,
   job_id?: string,
   job_type?: string,
@@ -24,6 +23,7 @@ export interface IJob {
   time_end?: string,
   time_queued?: string,
   time_start?: string,
+  traceback?: string,
   username?: string,
   version?: string
 }
