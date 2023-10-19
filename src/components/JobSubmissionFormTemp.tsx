@@ -97,6 +97,7 @@ export const JobSubmissionForm = () => {
         console.log(disableButton);
     }, [disableButton]);
 
+
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
     }
@@ -109,7 +110,7 @@ export const JobSubmissionForm = () => {
         dispatch(setCMRCollection(value))
     }
 
-    /*const handleButtonClickSubmit = (event) => {
+    const handleButtonClickSubmit = (event) => {
         event.preventDefault();
         setShowWaitCursor(true);
         setDisableButton(true);
@@ -118,12 +119,15 @@ export const JobSubmissionForm = () => {
             console.log("graceal1 jobSubmitForm.current true");
             jobSubmitForm.current.submit(); // Programmatically submit the form
         }
-    }*/
-
+    }
 
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
-        event.preventDefault();
+        //setDisableButton(true);
+        event.preventDefault()
+
+        
+
         var jobParams = {
             algo_id: null,
             version: null,
@@ -166,7 +170,7 @@ export const JobSubmissionForm = () => {
             submitJob(jobParams).then((data) => {
                 console.log("graceal1 in the then of submitjob with ");
                 console.log(data);
-                //setShowWaitCursor(false)
+                setShowWaitCursor(false)
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
@@ -192,9 +196,11 @@ export const JobSubmissionForm = () => {
             Notification.error(formValidation, { autoClose: false })
         }
         console.log("graceal1 at the very bottom of onsubmit");
-        setShowWaitCursor(false);
         setDisableButton(false);
+        console.log("graceal1 set disable button back to false");
+        setShowWaitCursor(false)
     }
+
 
     const validateForm = (params) => {
         let errorMsg = ""
@@ -209,6 +215,7 @@ export const JobSubmissionForm = () => {
 
         return errorMsg
     }
+
 
     // Reset job form
     const clearForm = () => {
@@ -266,21 +273,22 @@ export const JobSubmissionForm = () => {
         }
 
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
-                    "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
-                    "version=\"" + jobParams.version + "\",\n    " + 
-                    "username=\"" + jobParams.username + "\",\n    " + 
-                    "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
+                  "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
+                  "version=\"" + jobParams.version + "\",\n    " + 
+                  "username=\"" + jobParams.username + "\",\n    " + 
+                  "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
 
         setCommand(tmp)
     }
 
-    console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
+    console.log("graceal1 in the render of job submission with show wait cursor as ");
     console.log(showWaitCursor);
+    console.log(disableButton);
 
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
-            <h5>1. General Information</h5>
+                <h5>1. General Information</h5>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Algorithm</Form.Label>
                     <AsyncSelect
@@ -384,15 +392,14 @@ export const JobSubmissionForm = () => {
                         </div></> : null}
 
                 <hr />
+
                 <ButtonToolbar>
-                    <Button type="submit" onClick={() => {
-                        setShowWaitCursor(true);
-                        setDisableButton(true);
-                    }}>Submit Job</Button>
+                    <Button type="submit" onClick={handleButtonClickSubmit} /*disabled={disableButton}*/>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
             </Form>
+            {/* <AlgorithmDetailsBox /> */}
         </div>
     )
 }
