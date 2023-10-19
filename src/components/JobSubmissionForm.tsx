@@ -68,14 +68,29 @@ export const JobSubmissionForm = () => {
     
     useEffect(() => {
         console.log("graceal1 in use effect of disable button");
-        let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary")
-        for (let i=0;i<elems.length;i++){
-            console.log(elems[i]);
-            console.log(elems[i].getAttribute("type"));
-            if (elems[i].getAttribute("type") === "submit") {
-                elems[i].setAttribute("disabled", "true");
+        let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
+            
+        if (disableButton) {
+            for (let i=0;i<elems.length;i++){
                 console.log(elems[i]);
+                console.log(elems[i].getAttribute("type"));
+                if (elems[i].getAttribute("type") === "submit") {
+                    elems[i].setAttribute("disabled", "true");
+                    console.log("graceal1 disabled button in useEffect");
+                    console.log(elems[i]);
+                }
             }
+        } else {
+            for (let i=0;i<elems.length;i++){
+                console.warn("graceal1 in else ");
+                if (elems[i].getAttribute("type") === "submit" && elems[i].hasAttribute("disabled")) {
+                    console.warn("graceal1 in if statement of the else statement");
+                    elems[i].removeAttribute("disabled");
+                    console.log("graceal1 enabled button in useEffect");
+                    console.log(elems[i]);
+                }
+            }
+
         }
         console.log("graceal1 printing elems in use effect");
         console.log(elems);
