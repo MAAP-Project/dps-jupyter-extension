@@ -19,41 +19,11 @@ import { copyNotebookCommand } from '../utils/utils'
 
 export const JobSubmissionForm = () => {
 
-    // Redux
-    const dispatch = useDispatch()
-
-    const { setAlgorithm, setResource, setAlgorithmMetadata, setCMRCollection } = algorithmsActions
-    const { setUserJobInfo, setJobRefreshTimestamp } = jobsActions
-    const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
-
-    const { username } = useSelector(selectUserInfo)
-
-    const { toggleValue, toggleDisabled } = CMRSwitchActions
-    const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
-
-
-    // Local state variables
-    const [jobTag, setJobTag] = useState('')
-    const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
     const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
-    useEffect(() => {
-        if (selectedAlgorithm != null) {
-            let res = describeAlgorithms(selectedAlgorithm["value"])
-            res.then((data) => {
-                dispatch(setAlgorithmMetadata(data))
-            })
-        }
-    }, [selectedAlgorithm]);
-
-    useEffect(() => {
-        if (command != '') {
-            copyNotebookCommand(command)
-        }
-    }, [command]);
-
+    
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
         console.log("graceal1 in the use effect of show wait cursor");
@@ -97,182 +67,16 @@ export const JobSubmissionForm = () => {
         console.log(disableButton);
     }, [disableButton]);
 
-    const handleAlgorithmChange = value => {
-        dispatch(setAlgorithm(value))
-    }
-
-    const handleResourceChange = value => {
-        dispatch(setResource(value))
-    }
-
-    const handleCMRCollectionChange = value => {
-        dispatch(setCMRCollection(value))
-    }
-
-    /*const handleButtonClickSubmit = (event) => {
-        event.preventDefault();
-        setShowWaitCursor(true);
-        setDisableButton(true);
-        console.log("graceal1 in handle button click submit");
-        if (jobSubmitForm.current) {
-            console.log("graceal1 jobSubmitForm.current true");
-            jobSubmitForm.current.submit(); // Programmatically submit the form
-        }
-    }*/
-
-
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
         event.preventDefault();
-        var jobParams = {
-            algo_id: null,
-            version: null,
-            queue: null,
-            username: null,
-            identifier: null
-        }
         
-        if (selectedAlgorithm) {
-            let algorithm = selectedAlgorithm.value.split(':')
-            jobParams.algo_id = algorithm[0]
-            jobParams.version = algorithm[1]
-        }
-        console.log("graceal1 after selectedAlg if statement");
-
-        if (selectedResource) {
-            jobParams.queue = selectedResource.value
-        }
-
-        jobParams.username = username
-        jobParams.identifier = jobTag
-
-        let data = new FormData(event.target)
-
-        for (const input of data.entries()) {
-            jobParams[input[0]] = input[1]
-        }
-
-        console.log("graceal1 right before form validation");
-        let formValidation = validateForm(jobParams)
-        console.log("graceal1 right after form validation");
-
-        
-        if (!formValidation) {
-
-            // Submit job
-            console.log("graceal1 in !formValidation if statement about to submit job with jobParams");
-            console.log(jobParams);
-            
-            submitJob(jobParams).then((data) => {
-                console.log("graceal1 in the then of submitjob with ");
-                console.log(data);
-                //setShowWaitCursor(false)
-                let msg = " Job submitted successfully. " + data['response']
-                Notification.success(msg, { autoClose: false })
-            }).catch(error => {
-                Notification.error(error.message, { autoClose: false })
-            })
-
-            // Refresh job list once job has been submitted
-            let response = getUserJobs(username)
-            console.log("graceal1 and response is ");
-            console.log(response);
-
-            response.then((data) => {
-                console.log("graceal1 in then of response");
-                console.log(data);
-                dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
-            }).finally(() => {
-                console.log("graceal1 in finally of response");
-                dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
-            })
-            
-        }else {
-            console.log("graceal1 in else of !formValidation");
-            Notification.error(formValidation, { autoClose: false })
-        }
         console.log("graceal1 at the very bottom of onsubmit");
         setShowWaitCursor(false);
         setDisableButton(false);
     }
 
-    const validateForm = (params) => {
-        let errorMsg = ""
-
-        if (!params.algo_id) {
-            errorMsg = " Missing algorithm selection. Job failed to submit."
-        }else if (!params.identifier) {
-                errorMsg = " Missing job tag. Job failed to submit."
-        }else if (!params.queue) {
-            errorMsg = " Missing resource selection. Job failed to submit."
-        }
-
-        return errorMsg
-    }
-
-    // Reset job form
-    const clearForm = () => {
-        dispatch(setAlgorithm(null))
-        dispatch(setResource(null))
-        dispatch(setAlgorithmMetadata(null))
-
-        setJobTag('')
-
-        if (!switchIsDisabled) {
-            dispatch(toggleDisabled())
-        }
-
-        if (switchIsChecked) {
-            dispatch(toggleValue())
-        }
-
-    }
-
-    // Build job submission jupyter notebook command from user-provided selections
-    const buildNotebookCommand = () => {
-        // maap.submitJob({"algo_id": "test_algo", "username": "anonymous", "queue": "geospec-job_worker-32gb"})
-        let jobParams = {
-            algo_id: null,
-            version: null,
-            queue: null,
-            username: null,
-            identifier: null
-        }
-        
-        if (selectedAlgorithm) {
-            let algorithm = selectedAlgorithm.value.split(':')
-            jobParams.algo_id = algorithm[0]
-            jobParams.version = algorithm[1]
-        }
-
-        if (selectedResource) {
-            jobParams.queue = selectedResource.value
-        }
-
-        jobParams.username = username
-        jobParams.identifier = jobTag
-
-        let data = new FormData(jobSubmitForm.current)
-        
-
-        let inputStr = ""
-        for (const input of data.entries()) {
-            jobParams[input[0]] = input[1]
-            if (inputStr == "") {
-                inputStr = input[0] + "=" + "\"" + input[1] + "\""
-            } else {
-                inputStr = inputStr + ",\n    " + input[0] + "=" + "\"" + input[1] + "\""
-            }
-        }
-
-        let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
-                    "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
-                    "version=\"" + jobParams.version + "\",\n    " + 
-                    "username=\"" + jobParams.username + "\",\n    " + 
-                    "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
-
-        setCommand(tmp)
-    }
+    
 
     console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
     console.log(showWaitCursor);
@@ -280,118 +84,13 @@ export const JobSubmissionForm = () => {
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
-            <h5>1. General Information</h5>
-                <Form.Group className="mb-3 algorithm-input">
-                    <Form.Label>Algorithm</Form.Label>
-                    <AsyncSelect
-                        menuPortalTarget={document.querySelector('body')}
-                        cacheOptions
-                        defaultOptions
-                        value={selectedAlgorithm}
-                        loadOptions={getAlgorithms}
-                        onChange={handleAlgorithmChange}
-                        placeholder="Select algorithm..."
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3 algorithm-input">
-                    <Form.Label>Job Tag</Form.Label>
-                    <Form.Control type="text" value={jobTag} placeholder="Enter job tag..." onChange={event => setJobTag(event.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3 algorithm-input">
-                    <Form.Label>Resource</Form.Label>
-                    <AsyncSelect
-                        cacheOptions
-                        defaultOptions
-                        value={selectedResource}
-                        loadOptions={getResources}
-                        onChange={handleResourceChange}
-                        placeholder="Select resource..."
-                    />
-                </Form.Group>
-
-                {selectedAlgorithmMetadata ?
-                    
-                    // If user has selected an algorithm, render inputs and CMR info
-                    <><h5>2. Algorithm Inputs</h5>
-                        {Array.isArray(selectedAlgorithmMetadata.inputs) ? 
-                        selectedAlgorithmMetadata.inputs.map((item, index) => {
-                            switch (item["ows:Title"]) {
-                                case "publish_to_cmr":
-                                    if (switchIsDisabled) {
-                                        dispatch(toggleDisabled())
-                                    }
-                                    return "publish to cmr"
-                                case "queue_name":
-                                    return "" // already integrated above using the resource async select
-                                default:
-                                    return <div key={`${item["ows:Title"]}_${index}`}>
-                                        <Form.Group className="algorithm-input">
-                                            <Form.Label>{`${item["ows:Title"]}`}</Form.Label>
-                                            <Form.Control
-                                                // value={item["ows:Title"]}
-                                                name={item["ows:Title"]}
-                                                placeholder={`Enter ${item["ows:Title"]}...`}
-                                                required={false}
-                                            />
-                                        </Form.Group>
-                                    </div>}}) : <AlertBox text="No inputs defined for selected algorithm." variant="primary" />}
-                        <div className="cmr">
-                            <div style={{ display: 'flex' }}>
-                                <h5>3. Publish to Content Metadata Repository (CMR)?</h5>
-                                <Form.Group>
-                                    <Form.Switch
-                                        custom
-                                        disabled={switchIsDisabled}
-                                        type="switch"
-                                        checked={switchIsChecked}
-                                        onChange={() => dispatch(toggleValue())}
-                                    />
-                                </Form.Group>
-                            </div>
-                            {switchIsChecked ?
-                                <Form.Group className="mb-3 algorithm-input">
-                                    <Form.Label>CMR Collections</Form.Label>
-                                    <AsyncSelect
-                                        cacheOptions
-                                        defaultOptions
-                                        value={selectedCMRCollection}
-                                        loadOptions={getCMRCollections}
-                                        onChange={handleCMRCollectionChange}
-                                        placeholder="Select CMR collection..."
-                                    />
-                                </Form.Group>
-                                : null}
-                            {selectedCMRCollection && switchIsChecked ?
-                                <table className="cmr-table">
-                                    <tr>
-                                        <td>Concept ID</td>
-                                        <td>{selectedCMRCollection["concept-id"]}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>{selectedCMRCollection["ShortName"]}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Description</td>
-                                        <td>{selectedCMRCollection["Description"]}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Science Keywords</td>
-                                        {parseScienceKeywords(selectedCMRCollection["ScienceKeywords"]).map((item) => item + ", ")}
-                                    </tr>
-                                </table> : null}
-                            {switchIsDisabled ? <AlertBox text="CMR publication not available for selected algorithm." variant="primary" /> : null}
-                        </div></> : null}
-
-                <hr />
+            
                 <ButtonToolbar>
                     <Button type="submit" onClick={() => {
                         setShowWaitCursor(true);
                         setDisableButton(true);
                     }}>Submit Job</Button>
-                    <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
-                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
-                </ButtonToolbar>
+                    </ButtonToolbar>
             </Form>
         </div>
     )
