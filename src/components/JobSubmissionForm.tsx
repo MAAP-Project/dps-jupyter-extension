@@ -280,15 +280,22 @@ export const JobSubmissionForm = () => {
     console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
     console.log(showWaitCursor);
 
-    
-
-    console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
-    console.log(showWaitCursor);
-
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
-            
+            <h5>1. General Information</h5>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Algorithm</Form.Label>
+                    <AsyncSelect
+                        menuPortalTarget={document.querySelector('body')}
+                        cacheOptions
+                        defaultOptions
+                        value={selectedAlgorithm}
+                        loadOptions={getAlgorithms}
+                        onChange={handleAlgorithmChange}
+                        placeholder="Select algorithm..."
+                    />
+                </Form.Group>
                 <ButtonToolbar>
                     <Button type="submit" onClick={() => {
                         setShowWaitCursor(true);
