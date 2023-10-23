@@ -296,6 +296,21 @@ export const JobSubmissionForm = () => {
                         placeholder="Select algorithm..."
                     />
                 </Form.Group>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Job Tag</Form.Label>
+                    <Form.Control type="text" value={jobTag} placeholder="Enter job tag..." onChange={event => setJobTag(event.target.value)} />
+                </Form.Group>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Resource</Form.Label>
+                    <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={selectedResource}
+                        loadOptions={getResources}
+                        onChange={handleResourceChange}
+                        placeholder="Select resource..."
+                    />
+                </Form.Group>
                 <ButtonToolbar>
                     <Button type="submit" onClick={() => {
                         setShowWaitCursor(true);
