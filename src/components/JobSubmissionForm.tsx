@@ -293,7 +293,9 @@ export const JobSubmissionForm = () => {
                     <Button type="submit" onClick={() => {
                         setShowWaitCursor(true);
                     }}>Submit Job</Button>
-                    </ButtonToolbar>
+                    <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
+                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                </ButtonToolbar>
             </Form>
         </div>
     )
