@@ -127,6 +127,13 @@ export const JobSubmissionForm = () => {
         console.log("graceal1 at the beginning of onsubmit");
         event.preventDefault();
         setDisableButton(true);
+
+        const start = Date.now();
+        while (Date.now() - start < 1000) {
+            // This loop will keep the CPU busy for about 1 second.
+            console.log("in blocking loop");
+        }
+        console.log("End of blocking code execution");
         var jobParams = {
             algo_id: null,
             version: null,
@@ -311,7 +318,7 @@ export const JobSubmissionForm = () => {
                         placeholder="Select resource..."
                     />
                 </Form.Group>
-                
+
                 {selectedAlgorithmMetadata ?
                     
                     // If user has selected an algorithm, render inputs and CMR info
