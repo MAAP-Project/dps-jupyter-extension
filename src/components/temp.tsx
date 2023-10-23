@@ -54,8 +54,6 @@ export const JobSubmissionForm = () => {
         }
     }, [command]);
 
-
-    
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
         console.log("graceal1 in the use effect of show wait cursor");
@@ -126,7 +124,6 @@ export const JobSubmissionForm = () => {
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
         event.preventDefault();
-        setDisableButton(true);
         var jobParams = {
             algo_id: null,
             version: null,
@@ -280,20 +277,121 @@ export const JobSubmissionForm = () => {
     console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
     console.log(showWaitCursor);
 
-    
-
-    console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
-    console.log(showWaitCursor);
-
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
-            
+            <h5>1. General Information</h5>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Algorithm</Form.Label>
+                    <AsyncSelect
+                        menuPortalTarget={document.querySelector('body')}
+                        cacheOptions
+                        defaultOptions
+                        value={selectedAlgorithm}
+                        loadOptions={getAlgorithms}
+                        onChange={handleAlgorithmChange}
+                        placeholder="Select algorithm..."
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Job Tag</Form.Label>
+                    <Form.Control type="text" value={jobTag} placeholder="Enter job tag..." onChange={event => setJobTag(event.target.value)} />
+                </Form.Group>
+                <Form.Group className="mb-3 algorithm-input">
+                    <Form.Label>Resource</Form.Label>
+                    <AsyncSelect
+                        cacheOptions
+                        defaultOptions
+                        value={selectedResource}
+                        loadOptions={getResources}
+                        onChange={handleResourceChange}
+                        placeholder="Select resource..."
+                    />
+                </Form.Group>
+
+                {selectedAlgorithmMetadata ?
+                    
+                    // If user has selected an algorithm, render inputs and CMR info
+                    <><h5>2. Algorithm Inputs</h5>
+                        {Array.isArray(selectedAlgorithmMetadata.inputs) ? 
+                        selectedAlgorithmMetadata.inputs.map((item, index) => {
+                            switch (item["ows:Title"]) {
+                                case "publish_to_cmr":
+                                    if (switchIsDisabled) {
+                                        dispatch(toggleDisabled())
+                                    }
+                                    return "publish to cmr"
+                                case "queue_name":
+                                    return "" // already integrated above using the resource async select
+                                default:
+                                    return <div key={`${item["ows:Title"]}_${index}`}>
+                                        <Form.Group className="algorithm-input">
+                                            <Form.Label>{`${item["ows:Title"]}`}</Form.Label>
+                                            <Form.Control
+                                                // value={item["ows:Title"]}
+                                                name={item["ows:Title"]}
+                                                placeholder={`Enter ${item["ows:Title"]}...`}
+                                                required={false}
+                                            />
+                                        </Form.Group>
+                                    </div>}}) : <AlertBox text="No inputs defined for selected algorithm." variant="primary" />}
+                        <div className="cmr">
+                            <div style={{ display: 'flex' }}>
+                                <h5>3. Publish to Content Metadata Repository (CMR)?</h5>
+                                <Form.Group>
+                                    <Form.Switch
+                                        custom
+                                        disabled={switchIsDisabled}
+                                        type="switch"
+                                        checked={switchIsChecked}
+                                        onChange={() => dispatch(toggleValue())}
+                                    />
+                                </Form.Group>
+                            </div>
+                            {switchIsChecked ?
+                                <Form.Group className="mb-3 algorithm-input">
+                                    <Form.Label>CMR Collections</Form.Label>
+                                    <AsyncSelect
+                                        cacheOptions
+                                        defaultOptions
+                                        value={selectedCMRCollection}
+                                        loadOptions={getCMRCollections}
+                                        onChange={handleCMRCollectionChange}
+                                        placeholder="Select CMR collection..."
+                                    />
+                                </Form.Group>
+                                : null}
+                            {selectedCMRCollection && switchIsChecked ?
+                                <table className="cmr-table">
+                                    <tr>
+                                        <td>Concept ID</td>
+                                        <td>{selectedCMRCollection["concept-id"]}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>{selectedCMRCollection["ShortName"]}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Description</td>
+                                        <td>{selectedCMRCollection["Description"]}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Science Keywords</td>
+                                        {parseScienceKeywords(selectedCMRCollection["ScienceKeywords"]).map((item) => item + ", ")}
+                                    </tr>
+                                </table> : null}
+                            {switchIsDisabled ? <AlertBox text="CMR publication not available for selected algorithm." variant="primary" /> : null}
+                        </div></> : null}
+
+                <hr />
                 <ButtonToolbar>
                     <Button type="submit" onClick={() => {
                         setShowWaitCursor(true);
+                        setDisableButton(true);
                     }}>Submit Job</Button>
-                    </ButtonToolbar>
+                    <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
+                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                </ButtonToolbar>
             </Form>
         </div>
     )
