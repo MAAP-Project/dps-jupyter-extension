@@ -10,6 +10,10 @@ export const OutputsJobInfoTable = (): JSX.Element => {
     // Redux
     const { selectedJob } = useSelector(selectJobs)
 
+    console.log('graceal1 in outputs jobs info table');
+    console.log(selectedJob);
+    console.log(selectedJob['jobInfo']);
+
     return (
         <table className='table'>
             <tbody>

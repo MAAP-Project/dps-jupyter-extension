@@ -36,7 +36,7 @@ export const JobSubmissionForm = () => {
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
-    const [disableButton, setDisableButton] = useState(false)
+    //const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -58,17 +58,36 @@ export const JobSubmissionForm = () => {
     
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
+        let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         console.log("graceal1 in the use effect of show wait cursor");
         
         // Apply the css to the parent div
         if (showWaitCursor) {
             elems[0].classList.add('wait-cursor')
+            for (let i=0;i<elemsButtons.length;i++){
+                console.log(elemsButtons[i]);
+                console.log(elemsButtons[i].getAttribute("type"));
+                if (elemsButtons[i].getAttribute("type") === "submit") {
+                    elemsButtons[i].setAttribute("disabled", "true");
+                    console.log("graceal1 disabled button in useEffect");
+                    console.log(elemsButtons[i]);
+                }
+            }
         } else {
             elems[0].classList.remove('wait-cursor')
+            for (let i=0;i<elemsButtons.length;i++){
+                console.warn("graceal1 in else ");
+                if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
+                    console.warn("graceal1 in if statement of the else statement");
+                    elemsButtons[i].removeAttribute("disabled");
+                    console.log("graceal1 enabled button in useEffect");
+                    console.log(elemsButtons[i]);
+                }
+            }
         }
     }, [showWaitCursor]);
     
-    useEffect(() => {
+    /*useEffect(() => {
         console.log("graceal1 in use effect of disable button");
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
             
@@ -97,7 +116,7 @@ export const JobSubmissionForm = () => {
         console.log("graceal1 printing elems in use effect");
         console.log(elems);
         console.log(disableButton);
-    }, [disableButton]);
+    }, [disableButton]);*/
 
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
@@ -125,15 +144,16 @@ export const JobSubmissionForm = () => {
 
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
+        //setDisableButton(true);
         event.preventDefault();
-        setDisableButton(true);
+        
 
-        const start = Date.now();
+        /*const start = Date.now();
         while (Date.now() - start < 1000) {
             // This loop will keep the CPU busy for about 1 second.
             console.log("in blocking loop");
         }
-        console.log("End of blocking code execution");
+        console.log("End of blocking code execution");*/
         var jobParams = {
             algo_id: null,
             version: null,
@@ -176,11 +196,21 @@ export const JobSubmissionForm = () => {
             submitJob(jobParams).then((data) => {
                 console.log("graceal1 in the then of submitjob with ");
                 console.log(data);
-                //setShowWaitCursor(false)
+                const start = Date.now();
+                while (Date.now() - start < 1000) {
+                    // This loop will keep the CPU busy for about 1 second.
+                    console.log("in blocking loop");
+                }
+                console.log("End of blocking code execution");
+                setShowWaitCursor(false)
+                //setDisableButton(false)
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
                 Notification.error(error.message, { autoClose: false })
+                console.log("graceal1 in catch of submit job");
+                setShowWaitCursor(false)
+                //setDisableButton(false)
             })
 
             // Refresh job list once job has been submitted
@@ -200,10 +230,12 @@ export const JobSubmissionForm = () => {
         }else {
             console.log("graceal1 in else of !formValidation");
             Notification.error(formValidation, { autoClose: false })
+            setShowWaitCursor(false);
+            //setDisableButton(false);
         }
         console.log("graceal1 at the very bottom of onsubmit");
-        setShowWaitCursor(false);
-        setDisableButton(false);
+        //setShowWaitCursor(false);
+        //setDisableButton(false);
     }
 
     const validateForm = (params) => {
