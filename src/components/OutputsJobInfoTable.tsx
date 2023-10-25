@@ -10,6 +10,10 @@ export const OutputsJobInfoTable = (): JSX.Element => {
     // Redux
     const { selectedJob } = useSelector(selectJobs)
 
+    console.log("graceal1 in outputs job info table with ");
+    console.log(selectedJob);
+    console.log(selectedJob['jobInfo']);
+    
     return (
         <table className='table'>
             <tbody>
@@ -30,6 +34,12 @@ export const OutputsJobInfoTable = (): JSX.Element => {
                         }
                     }
                 })}
+                <tr>
+                    <th>cd in terminal</th>
+                    <td style={{ whiteSpace: 'pre' }}>
+                        cd ~/testFolder1/testFolder2
+                    </td>
+                </tr>
             </tbody>
         </table>
     )
