@@ -140,10 +140,7 @@ export const JobSubmissionForm = () => {
             jobSubmitForm.current.submit(); // Programmatically submit the form
         }
     }*/
-
-
-    const onSubmit = (event: any) => {
-        console.log("graceal1 at the beginning of onsubmit");
+    const disableSubmitButton = () => {
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         for (let i=0;i<elemsButtons.length;i++){
             console.log(elemsButtons[i]);
@@ -154,6 +151,23 @@ export const JobSubmissionForm = () => {
                 console.log(elemsButtons[i]);
             }
         }
+    }
+
+    const enableSubmitButton = () => {
+        let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
+        for (let i=0;i<elemsButtons.length;i++){
+            if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
+                console.log("graceal1 in if statement of the else statement");
+                elemsButtons[i].removeAttribute("disabled");
+                console.log("graceal1 enabled button in useEffect");
+                console.log(elemsButtons[i]);
+            }
+        }
+    }
+
+    const onSubmit = (event: any) => {
+        console.log("graceal1 at the beginning of onsubmit");
+        disableSubmitButton();
         //setDisableButton(true);
         event.preventDefault();
         
@@ -206,30 +220,17 @@ export const JobSubmissionForm = () => {
             submitJob(jobParams).then((data) => {
                 console.log("graceal1 in the then of submitjob with ");
                 console.log(data);
-                const start = Date.now();
-                while (Date.now() - start < 1000) {
-                    // This loop will keep the CPU busy for about 1 second.
-                    console.log("in blocking loop");
-                }
-                console.log("End of blocking code execution");
                 setShowWaitCursor(false)
                 console.log("graceal1 trying to enable button in onSubmit because already submitted job");
-                let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
-                for (let i=0;i<elemsButtons.length;i++){
-                    if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
-                        console.log("graceal1 in if statement of the else statement");
-                        elemsButtons[i].removeAttribute("disabled");
-                        console.log("graceal1 enabled button in useEffect");
-                        console.log(elemsButtons[i]);
-                    }
-                }
+                enableSubmitButton();
                 //setDisableButton(false)
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
                 Notification.error(error.message, { autoClose: false })
                 console.log("graceal1 in catch of submit job");
-                setShowWaitCursor(false)
+                setShowWaitCursor(false);
+                enableSubmitButton();
                 //setDisableButton(false)
             })
 
@@ -251,6 +252,7 @@ export const JobSubmissionForm = () => {
             console.log("graceal1 in else of !formValidation");
             Notification.error(formValidation, { autoClose: false })
             setShowWaitCursor(false);
+            enableSubmitButton();
             //setDisableButton(false);
         }
         console.log("graceal1 at the very bottom of onsubmit");
