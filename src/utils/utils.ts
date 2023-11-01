@@ -1,12 +1,7 @@
 import { Notification } from "@jupyterlab/apputils"
 import { IStateDB } from '@jupyterlab/statedb';
 import { getEnvironmentInfo } from "../api/maap_py";
-import { DEFAULT_USERNAME } from "../constants";
-
-// export function getUserInfo(callback: any): any;
-// export function getToken(): any;
-// export function updateKeycloakToken(seconds: any): any;
-
+import { DEFAULT_USERNAME, JUPYTER_EXT } from "../constants";
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -104,5 +99,16 @@ export async function copyNotebookCommand(text: string) {
         await navigator.clipboard.writeText(text).then(() => {Notification.success("Copied Jupyter Notebook python command to clipboard.", { autoClose: false })})
     } catch (error) {
         console.warn('Copy failed', error)
+    }
+}
+
+
+export const openSubmitJobs = (jupyterApp, data) => {
+    if (jupyterApp.commands.hasCommand(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND)) {
+        if (data == null) {
+            jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, null)
+        }else {
+            jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, data)
+        }
     }
 }
