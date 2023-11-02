@@ -15,6 +15,7 @@ import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
 import { copyNotebookCommand } from '../utils/utils'
+import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL } from '../constants'
 
 
 export const JobSubmissionForm = () => {
@@ -58,32 +59,18 @@ export const JobSubmissionForm = () => {
     
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
+        let pElement: HTMLElement = document.getElementById("submitting_job_text")
+        console.log("graceal1 pElement is ");
+        console.log(pElement);
         //let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         console.log("graceal1 in the use effect of show wait cursor");
         
         // Apply the css to the parent div
         if (showWaitCursor) {
             elems[0].classList.add('wait-cursor')
-            /*for (let i=0;i<elemsButtons.length;i++){
-                console.log(elemsButtons[i]);
-                console.log(elemsButtons[i].getAttribute("type"));
-                if (elemsButtons[i].getAttribute("type") === "submit") {
-                    elemsButtons[i].setAttribute("disabled", "true");
-                    console.log("graceal1 disabled button in useEffect");
-                    console.log(elemsButtons[i]);
-                }
-            }*/
+            pElement.textContent = SUBMITTING_JOB_TEXT;
         } else {
             elems[0].classList.remove('wait-cursor')
-            /*for (let i=0;i<elemsButtons.length;i++){
-                console.warn("graceal1 in else ");
-                if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
-                    console.warn("graceal1 in if statement of the else statement");
-                    elemsButtons[i].removeAttribute("disabled");
-                    console.log("graceal1 enabled button in useEffect");
-                    console.log(elemsButtons[i]);
-                }
-            }*/
         }
     }, [showWaitCursor]);
     
@@ -165,6 +152,17 @@ export const JobSubmissionForm = () => {
         }
     }
 
+    const setSubmittedJobText = (success: boolean, id: string, errorMessage: string) => {
+        let pElement: HTMLElement = document.getElementById("submitting_job_text")
+        console.log("graceal1 pElement is ");
+        console.log(pElement);
+        if (success) {
+            pElement.textContent = SUBMITTED_JOB_SUCCESS.replace("{TIME}", new Date().toUTCString()).replace("{ID}", id);
+        } else {
+            pElement.textContent = SUBMITTED_JOB_FAIL.replace("{TIME}", new Date().toUTCString()).replace("{ERROR}", errorMessage);
+        }
+    }
+
     const onSubmit = (event: any) => {
         console.log("graceal1 at the beginning of onsubmit");
         disableSubmitButton();
@@ -220,10 +218,10 @@ export const JobSubmissionForm = () => {
             submitJob(jobParams).then((data) => {
                 console.log("graceal1 in the then of submitjob with ");
                 console.log(data);
-                setShowWaitCursor(false)
+                setShowWaitCursor(false);
                 console.log("graceal1 trying to enable button in onSubmit because already submitted job");
                 enableSubmitButton();
-                //setDisableButton(false)
+                setSubmittedJobText(true, data['response'], null);
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
@@ -231,7 +229,7 @@ export const JobSubmissionForm = () => {
                 console.log("graceal1 in catch of submit job");
                 setShowWaitCursor(false);
                 enableSubmitButton();
-                //setDisableButton(false)
+                setSubmittedJobText(false, null, error.message);
             })
 
             // Refresh job list once job has been submitted
@@ -250,25 +248,23 @@ export const JobSubmissionForm = () => {
             
         }else {
             console.log("graceal1 in else of !formValidation");
-            Notification.error(formValidation, { autoClose: false })
+            Notification.error("Job failed to submit because "+formValidation, { autoClose: false })
             setShowWaitCursor(false);
             enableSubmitButton();
-            //setDisableButton(false);
+            setSubmittedJobText(false, null, formValidation);
         }
         console.log("graceal1 at the very bottom of onsubmit");
-        //setShowWaitCursor(false);
-        //setDisableButton(false);
     }
 
     const validateForm = (params) => {
         let errorMsg = ""
 
         if (!params.algo_id) {
-            errorMsg = " Missing algorithm selection. Job failed to submit."
+            errorMsg = "missing algorithm selection."
         }else if (!params.identifier) {
-                errorMsg = " Missing job tag. Job failed to submit."
+            errorMsg = "missing job tag."
         }else if (!params.queue) {
-            errorMsg = " Missing resource selection. Job failed to submit."
+            errorMsg = "missing resource selection."
         }
 
         return errorMsg
@@ -455,6 +451,8 @@ export const JobSubmissionForm = () => {
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
+                <br />
+                <p id="submitting_job_text"></p>
             </Form>
         </div>
     )
