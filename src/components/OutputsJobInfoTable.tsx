@@ -9,6 +9,7 @@ export const OutputsJobInfoTable = (): JSX.Element => {
 
     // Redux
     const { selectedJob } = useSelector(selectJobs)
+
     return (
         <table className='table'>
             <tbody>

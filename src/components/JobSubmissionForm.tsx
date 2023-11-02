@@ -15,7 +15,7 @@ import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
 import { copyNotebookCommand } from '../utils/utils'
-import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL } from '../constants'
+import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
 export const JobSubmissionForm = () => {
@@ -37,7 +37,6 @@ export const JobSubmissionForm = () => {
     const [jobTag, setJobTag] = useState('')
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
-    //const [disableButton, setDisableButton] = useState(false)
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
@@ -55,11 +54,9 @@ export const JobSubmissionForm = () => {
         }
     }, [command]);
 
-
-    
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
-        let pElement: HTMLElement = document.getElementById("submitting_job_text")
+        let pElement: HTMLElement = document.getElementById(SUBMITTED_JOB_ELEMENT_ID)
         
         // Apply the css to the parent div
         if (showWaitCursor) {
@@ -69,6 +66,7 @@ export const JobSubmissionForm = () => {
             elems[0].classList.remove('wait-cursor')
         }
     }, [showWaitCursor]);
+
 
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
@@ -84,7 +82,7 @@ export const JobSubmissionForm = () => {
 
     const disableSubmitButton = () => {
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
-        for (let i=0;i<elemsButtons.length;i++){
+        for (let i=0; i<elemsButtons.length; i++){
             if (elemsButtons[i].getAttribute("type") === "submit") {
                 elemsButtons[i].setAttribute("disabled", "true");
             }
@@ -93,7 +91,7 @@ export const JobSubmissionForm = () => {
 
     const enableSubmitButton = () => {
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
-        for (let i=0;i<elemsButtons.length;i++){
+        for (let i=0; i<elemsButtons.length; i++){
             if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
                 elemsButtons[i].removeAttribute("disabled");
             }
@@ -101,7 +99,7 @@ export const JobSubmissionForm = () => {
     }
 
     const setSubmittedJobText = (success: boolean, id: string, errorMessage: string) => {
-        let pElement: HTMLElement = document.getElementById("submitting_job_text")
+        let pElement: HTMLElement = document.getElementById(SUBMITTED_JOB_ELEMENT_ID)
         if (success) {
             pElement.textContent = SUBMITTED_JOB_SUCCESS.replace("{TIME}", new Date().toUTCString()).replace("{ID}", id);
         } else {
@@ -142,9 +140,11 @@ export const JobSubmissionForm = () => {
 
         let formValidation = validateForm(jobParams)
         if (!formValidation) {
+
             // Submit job
+
             submitJob(jobParams).then((data) => {
-                setShowWaitCursor(false);
+                setShowWaitCursor(false)
                 enableSubmitButton();
                 setSubmittedJobText(true, data['response'], null);
                 let msg = " Job submitted successfully. " + data['response']
@@ -158,6 +158,7 @@ export const JobSubmissionForm = () => {
 
             // Refresh job list once job has been submitted
             let response = getUserJobs(username)
+
             response.then((data) => {
                 dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
             }).finally(() => {
@@ -242,10 +243,10 @@ export const JobSubmissionForm = () => {
         }
 
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
-                    "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
-                    "version=\"" + jobParams.version + "\",\n    " + 
-                    "username=\"" + jobParams.username + "\",\n    " + 
-                    "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
+                  "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
+                  "version=\"" + jobParams.version + "\",\n    " + 
+                  "username=\"" + jobParams.username + "\",\n    " + 
+                  "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
 
         setCommand(tmp)
     }
@@ -253,7 +254,7 @@ export const JobSubmissionForm = () => {
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
-            <h5>1. General Information</h5>
+                <h5>1. General Information</h5>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Algorithm</Form.Label>
                     <AsyncSelect
@@ -358,15 +359,14 @@ export const JobSubmissionForm = () => {
 
                 <hr />
                 <ButtonToolbar>
-                    <Button type="submit" onClick={() => {
-                        setShowWaitCursor(true);
-                    }}>Submit Job</Button>
+                    <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
                     <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
                 </ButtonToolbar>
                 <br />
-                <p id="submitting_job_text"></p>
+                <p id={SUBMITTED_JOB_ELEMENT_ID}></p>
             </Form>
+            {/* <AlgorithmDetailsBox /> */}
         </div>
     )
 }
