@@ -53,7 +53,6 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
              restorer: ILayoutRestorer) => {
 
     const { commands } = app;
-    console.log("graceal1 in index.ts activate of dps jupyter extension");
 
     let viewJobsWidget: MainAreaWidget<ViewJobsReactAppWidget> | null = null;
 

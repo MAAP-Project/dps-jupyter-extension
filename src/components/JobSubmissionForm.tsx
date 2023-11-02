@@ -60,10 +60,6 @@ export const JobSubmissionForm = () => {
     useEffect(() => {
         let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("jl-ReactAppWidget")
         let pElement: HTMLElement = document.getElementById("submitting_job_text")
-        console.log("graceal1 pElement is ");
-        console.log(pElement);
-        //let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
-        console.log("graceal1 in the use effect of show wait cursor");
         
         // Apply the css to the parent div
         if (showWaitCursor) {
@@ -73,37 +69,6 @@ export const JobSubmissionForm = () => {
             elems[0].classList.remove('wait-cursor')
         }
     }, [showWaitCursor]);
-    
-    /*useEffect(() => {
-        console.log("graceal1 in use effect of disable button");
-        let elems: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
-            
-        if (disableButton) {
-            for (let i=0;i<elems.length;i++){
-                console.log(elems[i]);
-                console.log(elems[i].getAttribute("type"));
-                if (elems[i].getAttribute("type") === "submit") {
-                    elems[i].setAttribute("disabled", "true");
-                    console.log("graceal1 disabled button in useEffect");
-                    console.log(elems[i]);
-                }
-            }
-        } else {
-            for (let i=0;i<elems.length;i++){
-                console.warn("graceal1 in else ");
-                if (elems[i].getAttribute("type") === "submit" && elems[i].hasAttribute("disabled")) {
-                    console.warn("graceal1 in if statement of the else statement");
-                    elems[i].removeAttribute("disabled");
-                    console.log("graceal1 enabled button in useEffect");
-                    console.log(elems[i]);
-                }
-            }
-
-        }
-        console.log("graceal1 printing elems in use effect");
-        console.log(elems);
-        console.log(disableButton);
-    }, [disableButton]);*/
 
     const handleAlgorithmChange = value => {
         dispatch(setAlgorithm(value))
@@ -117,25 +82,11 @@ export const JobSubmissionForm = () => {
         dispatch(setCMRCollection(value))
     }
 
-    /*const handleButtonClickSubmit = (event) => {
-        event.preventDefault();
-        setShowWaitCursor(true);
-        setDisableButton(true);
-        console.log("graceal1 in handle button click submit");
-        if (jobSubmitForm.current) {
-            console.log("graceal1 jobSubmitForm.current true");
-            jobSubmitForm.current.submit(); // Programmatically submit the form
-        }
-    }*/
     const disableSubmitButton = () => {
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         for (let i=0;i<elemsButtons.length;i++){
-            console.log(elemsButtons[i]);
-            console.log(elemsButtons[i].getAttribute("type"));
             if (elemsButtons[i].getAttribute("type") === "submit") {
                 elemsButtons[i].setAttribute("disabled", "true");
-                console.log("graceal1 disabled button in onSubmit");
-                console.log(elemsButtons[i]);
             }
         }
     }
@@ -144,18 +95,13 @@ export const JobSubmissionForm = () => {
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         for (let i=0;i<elemsButtons.length;i++){
             if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
-                console.log("graceal1 in if statement of the else statement");
                 elemsButtons[i].removeAttribute("disabled");
-                console.log("graceal1 enabled button in useEffect");
-                console.log(elemsButtons[i]);
             }
         }
     }
 
     const setSubmittedJobText = (success: boolean, id: string, errorMessage: string) => {
         let pElement: HTMLElement = document.getElementById("submitting_job_text")
-        console.log("graceal1 pElement is ");
-        console.log(pElement);
         if (success) {
             pElement.textContent = SUBMITTED_JOB_SUCCESS.replace("{TIME}", new Date().toUTCString()).replace("{ID}", id);
         } else {
@@ -164,18 +110,9 @@ export const JobSubmissionForm = () => {
     }
 
     const onSubmit = (event: any) => {
-        console.log("graceal1 at the beginning of onsubmit");
         disableSubmitButton();
-        //setDisableButton(true);
         event.preventDefault();
         
-
-        /*const start = Date.now();
-        while (Date.now() - start < 1000) {
-            // This loop will keep the CPU busy for about 1 second.
-            console.log("in blocking loop");
-        }
-        console.log("End of blocking code execution");*/
         var jobParams = {
             algo_id: null,
             version: null,
@@ -189,7 +126,6 @@ export const JobSubmissionForm = () => {
             jobParams.algo_id = algorithm[0]
             jobParams.version = algorithm[1]
         }
-        console.log("graceal1 after selectedAlg if statement");
 
         if (selectedResource) {
             jobParams.queue = selectedResource.value
@@ -204,29 +140,17 @@ export const JobSubmissionForm = () => {
             jobParams[input[0]] = input[1]
         }
 
-        console.log("graceal1 right before form validation");
         let formValidation = validateForm(jobParams)
-        console.log("graceal1 right after form validation");
-
-        
         if (!formValidation) {
-
             // Submit job
-            console.log("graceal1 in !formValidation if statement about to submit job with jobParams");
-            console.log(jobParams);
-            
             submitJob(jobParams).then((data) => {
-                console.log("graceal1 in the then of submitjob with ");
-                console.log(data);
                 setShowWaitCursor(false);
-                console.log("graceal1 trying to enable button in onSubmit because already submitted job");
                 enableSubmitButton();
                 setSubmittedJobText(true, data['response'], null);
                 let msg = " Job submitted successfully. " + data['response']
                 Notification.success(msg, { autoClose: false })
             }).catch(error => {
                 Notification.error(error.message, { autoClose: false })
-                console.log("graceal1 in catch of submit job");
                 setShowWaitCursor(false);
                 enableSubmitButton();
                 setSubmittedJobText(false, null, error.message);
@@ -234,26 +158,18 @@ export const JobSubmissionForm = () => {
 
             // Refresh job list once job has been submitted
             let response = getUserJobs(username)
-            console.log("graceal1 and response is ");
-            console.log(response);
-
             response.then((data) => {
-                console.log("graceal1 in then of response");
-                console.log(data);
                 dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
             }).finally(() => {
-                console.log("graceal1 in finally of response");
                 dispatch(setJobRefreshTimestamp(new Date().toUTCString()))
             })
             
         }else {
-            console.log("graceal1 in else of !formValidation");
             Notification.error("Job failed to submit because "+formValidation, { autoClose: false })
             setShowWaitCursor(false);
             enableSubmitButton();
             setSubmittedJobText(false, null, formValidation);
         }
-        console.log("graceal1 at the very bottom of onsubmit");
     }
 
     const validateForm = (params) => {
@@ -333,9 +249,6 @@ export const JobSubmissionForm = () => {
 
         setCommand(tmp)
     }
-
-    console.log("graceal1 in the render of job submission with show wait cursor and disable button as ");
-    console.log(showWaitCursor);
 
     return (
         <div className="submit-wrapper">
