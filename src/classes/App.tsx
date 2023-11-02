@@ -2,29 +2,32 @@ import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { Provider } from 'react-redux'
 import { JobsApp } from '../components/JobsApp'
-import { EXTENSION_CSS_CLASSNAME, JUPYTER_EXT } from '../constants'
+import { JUPYTER_EXT } from '../constants'
 import store from '../redux/store'
 import 'regenerator-runtime/runtime'
 import { JobSubmissionForm } from '../components/JobSubmissionForm'
+import { JupyterFrontEnd } from '@jupyterlab/application';
 
-export class ReactAppWidget extends ReactWidget {
+export class ViewJobsReactAppWidget extends ReactWidget {
   uname: string
-  constructor(uname: string) {
+  jupyterApp: JupyterFrontEnd
+  constructor(uname: string, jupyterApp: JupyterFrontEnd) {
     super()
-    this.addClass(EXTENSION_CSS_CLASSNAME)
+    this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
     this.uname = uname
+    this.jupyterApp = jupyterApp
   }
 
   render(): JSX.Element {
     return (
       <Provider store={store}>
-        <JobsApp uname={this.uname}/>
+        <JobsApp uname={this.uname} jupyterApp={this.jupyterApp} />
       </Provider>
     )
   }
 }
 
-export class SubmitJobReactAppWidget extends ReactWidget {
+export class SubmitJobsReactAppWidget extends ReactWidget {
   data: any
   constructor(data: any) {
     super()
