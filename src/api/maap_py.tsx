@@ -1,6 +1,7 @@
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { getAlgorithmMetadata } from '../utils/ogc_parsers';
+import { test } from "../constants";
 
 /**
  * Call the API extension
@@ -172,6 +173,7 @@ export async function getCMRCollections() {
 
 export async function submitJob(data:any) {
   var requestUrl = new URL(PageConfig.getBaseUrl() + 'jupyter-server-extension/submitJob');
+  console.log(test.kdjhfg);
   Object.keys(data).map((key, index) => ( 
     requestUrl.searchParams.append(key, data[key])
   ))
