@@ -11,7 +11,8 @@ import { Pagination,
          Table, 
          Button, 
          InputGroup,
-         FormControl} from 'react-bootstrap'
+         FormControl,
+         ButtonGroup} from 'react-bootstrap'
 import { JobStatusBadge } from './JobStatusBadge'
 import { BsArrowClockwise } from 'react-icons/bs'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
@@ -21,19 +22,22 @@ import { selectJobsContainer } from '../redux/slices/JobsContainerSlice'
 import { selectUserInfo } from '../redux/slices/userInfoSlice'
 import { parseJobData } from '../utils/mapping'
 import { getUserJobs } from '../api/maap_py'
+import { openSubmitJobs } from '../utils/utils'
 import "../../style/JobsOverview.css"
+import { MdClear, MdFilterAlt, MdFilterAltOff, MdRefresh } from 'react-icons/md'
 
 
-export const JobsOverviewContainer = (): JSX.Element => {
+export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
 
     // Redux
     const dispatch = useDispatch()
 
     const { itemSize } = useSelector(selectJobsContainer)
-    const { selectedJob, userJobInfo, formattedJobsInfo, jobRefreshTimestamp } = useSelector(selectJobs)
+    const { selectedJob, userJobInfo, jobRefreshTimestamp } = useSelector(selectJobs)
     const { username } = useSelector(selectUserInfo)
 
-    const { setSelectedJob, setUserJobInfo, setFormattedJobsInfo, setJobRefreshTimestamp } = jobsActions
+    const { setSelectedJob, setUserJobInfo, setJobRefreshTimestamp } = jobsActions
+
 
     // Local component variables
     const [showSpinner, setShowSpinner] = useState(false)
@@ -50,7 +54,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
     useEffect(() => {
         setPageSize(itemSize)
     }, [itemSize]);
-
 
 
     const getJobInfo = () => {
@@ -124,8 +127,6 @@ export const JobsOverviewContainer = (): JSX.Element => {
             <Fragment>
                 <div className="block">
                     {options.map((option: any, i) => {
-                        console.log("test option")
-                        console.log(option)
                         return (
                             <Fragment key={i}>
                                 <div className="flex items-center">
@@ -447,21 +448,20 @@ export const JobsOverviewContainer = (): JSX.Element => {
     return (
         <div>
             <div className="overview-header">
-
-                <div className="margin-1rem">
-                    <h1>My Jobs</h1>
-                </div>
-                <div className="refresh-info">
-                    <Button onClick={getJobInfo} ><BsArrowClockwise className="clickable" size={24} />Refresh</Button>
-                    {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated: {jobRefreshTimestamp}</div> : ""}
-                </div>
-
-
+                    <div>
+                        <h1>My Jobs</h1>
+                    </div>
+                    <div>
+                        <Button variant="primary" onClick={() => openSubmitJobs(jupyterApp, null)}>+ Submit New Job</Button>
+                    </div>
             </div>
             <div className='table-toolbar'>
-                {showFilters ? <span onClick={() => setShowFilters(!showFilters)}><a>Hide filters</a></span> : <span onClick={() => setShowFilters(!showFilters)}><a>Show filters</a></span>}
-                {' | '}
-                {<span onClick={() => setAllFilters([{id: 'status', value: statusFilterOptions}])}><a>Clear filters</a></span>}
+                <ButtonGroup className='toolbar-btn'>
+                    {showFilters ? <button title= "Hide filters" onClick={() => setShowFilters(!showFilters)}><MdFilterAltOff /></button> : <button title= "Show filters" onClick={() => setShowFilters(!showFilters)}><MdFilterAlt /></button>}
+                    <button title= "Clear filters"  onClick={() => setAllFilters([{id: 'status', value: statusFilterOptions}])}><MdClear /></button>
+                    <button title= "Refresh job list" onClick={getJobInfo}><MdRefresh /></button>
+                </ButtonGroup>
+                {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated:< br /> {jobRefreshTimestamp}</div> : ""}
             </div>
             {/* <div className="global-filter">
                 <GlobalFilter

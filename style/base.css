@@ -63,8 +63,7 @@ h6 {
 
 .refresh-info {
   display: grid;
-  right: 1rem;
-  margin: 1rem;
+  justify-items: end;
 }
 
 .refresh-info > svg {
@@ -74,7 +73,7 @@ h6 {
 .refresh-timestamp {
   font-size: small;
   font-style: italic;
-  padding: 0.5rem 0;
+  padding: 0 0 0 0.5rem;
 }
 
 tbody tr:nth-child(even) {
@@ -166,11 +165,41 @@ td, th {
 }
 
 .table-toolbar {
-  margin: 1rem;
+  display: flex;
+  margin: 0 0 0.5rem 0.5rem;
 }
 
-.table-toolbar > span > a {
-  color: blue !important;
+.toolbar-btn button {
+  border-width: thin;
+  border-style: solid;
+  padding: 0 0.5rem;
+}
+
+.toolbar-btn button:first-child {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.toolbar-btn button:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.toolbar-btn button:active {
+  background-color: darkgray;
+  cursor: pointer;
+}
+
+.toolbar-btn button:last-child {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.btn-check:focus+.btn, .btn:focus {
+  background-color: #f8f9fa !important;
+  border-color: #f8f9fa !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .table-container {
