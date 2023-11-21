@@ -14,11 +14,15 @@ export class ViewJobsReactAppWidget extends ReactWidget {
   constructor(uname: string, jupyterApp: JupyterFrontEnd) {
     super()
     this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
+    console.log("graceal1 in the constructor of ViewJobsReactAppWidget with uname");
+    console.log(uname);
     this.uname = uname
     this.jupyterApp = jupyterApp
   }
 
   render(): JSX.Element {
+    console.log("graceal1 in render of ViewJobsReactAppWidget and about to render JobsApp with uname");
+    console.log(this.uname);
     return (
       <Provider store={store}>
         <JobsApp uname={this.uname} jupyterApp={this.jupyterApp} />

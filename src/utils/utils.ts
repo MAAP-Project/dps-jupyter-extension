@@ -61,8 +61,11 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
         if ("https://" + ade_server === document.location.origin) {
             getUserInfo(function (profile: any) {
                 if (profile['cas:username'] === undefined) {
+                    console.log("graceal1 cas:username in getUsernameToken undefined case 1");
                     Notification.error("Get profile failed.", { autoClose: false });
                 } else {
+                    console.log("graceal1 cas:username in getUsernameTokendefined case 2");
+                    console.log(profile['cas:username']);
                     console.log("Getting username...")
                     uname = profile['cas:username'];
                     ticket = profile['proxyGrantingTicket'];
@@ -75,6 +78,8 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
             console.log(state)
             state.fetch(profileId).then((profile) => {
                 let profileObj = JSON.parse(JSON.stringify(profile));
+                console.log("graceal1 fetch state getUsernameTokendefined case 3");
+                console.log(profileObj.preferred_username);
                 console.log(profileObj)
                 Notification.success("Got profile.");
                 uname = profileObj.preferred_username;
@@ -87,6 +92,8 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
                 Notification.error("Get profile failed. ", { autoClose: false });
             });
         }
+        console.log("graceal1 at the bottom of finally for getUsernameToken and uname is");
+        console.log(uname);
     })
 
 

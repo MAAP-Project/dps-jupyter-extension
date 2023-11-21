@@ -90,10 +90,14 @@ export const JobSubmissionForm = () => {
     }
 
     const enableSubmitButton = () => {
+        console.log("graceal1 in enable submit button");
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         for (let i=0; i<elemsButtons.length; i++){
             if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
+                console.log("graceal1 in the if of enable submit button and about to remove disabled attribute");
                 elemsButtons[i].removeAttribute("disabled");
+                console.log("graceal1 successfully under the code that is removing the disabled attribute");
+                console.log(elemsButtons[i]);
             }
         }
     }
@@ -142,7 +146,8 @@ export const JobSubmissionForm = () => {
         if (!formValidation) {
 
             // Submit job
-
+            console.log("graceal1 about to submit the job and jobsParams is ");
+            console.log(jobParams);
             submitJob(jobParams).then((data) => {
                 setShowWaitCursor(false)
                 enableSubmitButton();
@@ -226,6 +231,8 @@ export const JobSubmissionForm = () => {
             jobParams.queue = selectedResource.value
         }
 
+        console.log("graceal1 setting job params username to ");
+        console.log(username);
         jobParams.username = username
         jobParams.identifier = jobTag
 
@@ -250,6 +257,7 @@ export const JobSubmissionForm = () => {
 
         setCommand(tmp)
     }
+    console.log("graceal1 right above the return for job submission form");
 
     return (
         <div className="submit-wrapper">

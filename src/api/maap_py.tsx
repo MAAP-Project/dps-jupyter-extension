@@ -181,6 +181,13 @@ export async function submitJob(data:any) {
       'Content-Type': 'application/json'
     }
   })
+  console.log("graceal1 in submitJob and response is ");
+  console.log(response);
+  console.log("graceal1 and passed in data was");
+  console.log(data);
+  console.log("graceal1 and request url was");
+  console.log(requestUrl);
+  console.log(requestUrl.href);
 
   var body = response.json()
   if (response.status >= 200 && response.status < 400) {
