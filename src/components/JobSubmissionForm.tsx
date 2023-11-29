@@ -11,14 +11,14 @@ import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsS
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { Notification } from "@jupyterlab/apputils"
-import { selectUserInfo } from '../redux/slices/userInfoSlice'
+import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
 import { copyNotebookCommand } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
-export const JobSubmissionForm = () => {
+export const JobSubmissionForm = ({ uname }) => {
 
     // Redux
     const dispatch = useDispatch()
@@ -28,6 +28,7 @@ export const JobSubmissionForm = () => {
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
 
     const { username } = useSelector(selectUserInfo)
+    const { setUsername } = userInfoActions
 
     const { toggleValue, toggleDisabled } = CMRSwitchActions
     const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
@@ -38,6 +39,12 @@ export const JobSubmissionForm = () => {
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
     const jobSubmitForm = useRef(null)
+
+    useEffect(() => {
+        console.log("graceal1 in the useEffect in JobSubmissionForm.tsx with uname");
+        console.log(uname);
+        dispatch(setUsername(uname))
+      }, []);
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -90,14 +97,10 @@ export const JobSubmissionForm = () => {
     }
 
     const enableSubmitButton = () => {
-        console.log("graceal1 in enable submit button");
         let elemsButtons: HTMLCollectionOf<Element> = document.getElementsByClassName("btn btn-primary");
         for (let i=0; i<elemsButtons.length; i++){
             if (elemsButtons[i].getAttribute("type") === "submit" && elemsButtons[i].hasAttribute("disabled")) {
-                console.log("graceal1 in the if of enable submit button and about to remove disabled attribute");
                 elemsButtons[i].removeAttribute("disabled");
-                console.log("graceal1 successfully under the code that is removing the disabled attribute");
-                console.log(elemsButtons[i]);
             }
         }
     }
@@ -257,8 +260,7 @@ export const JobSubmissionForm = () => {
 
         setCommand(tmp)
     }
-    console.log("graceal1 right above the return for job submission form");
-
+    
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>
