@@ -75,6 +75,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
             console.log(state)
             state.fetch(profileId).then((profile) => {
                 let profileObj = JSON.parse(JSON.stringify(profile));
+                console.log(profileObj)
                 Notification.success("Got profile.");
                 uname = profileObj.preferred_username;
                 ticket = profileObj.proxyGrantingTicket;
