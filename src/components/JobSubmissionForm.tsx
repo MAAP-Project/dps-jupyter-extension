@@ -11,14 +11,14 @@ import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsS
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { Notification } from "@jupyterlab/apputils"
-import { selectUserInfo } from '../redux/slices/userInfoSlice'
+import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
 import { copyNotebookCommand } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
-export const JobSubmissionForm = () => {
+export const JobSubmissionForm = ({ uname }) => {
 
     // Redux
     const dispatch = useDispatch()
@@ -28,6 +28,7 @@ export const JobSubmissionForm = () => {
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
 
     const { username } = useSelector(selectUserInfo)
+    const { setUsername } = userInfoActions
 
     const { toggleValue, toggleDisabled } = CMRSwitchActions
     const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
@@ -38,6 +39,10 @@ export const JobSubmissionForm = () => {
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
     const jobSubmitForm = useRef(null)
+
+    useEffect(() => {
+        dispatch(setUsername(uname))
+      }, []);
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -142,7 +147,6 @@ export const JobSubmissionForm = () => {
         if (!formValidation) {
 
             // Submit job
-
             submitJob(jobParams).then((data) => {
                 setShowWaitCursor(false)
                 enableSubmitButton();
@@ -250,7 +254,7 @@ export const JobSubmissionForm = () => {
 
         setCommand(tmp)
     }
-
+    
     return (
         <div className="submit-wrapper">
             <Form onSubmit={onSubmit} ref={jobSubmitForm}>

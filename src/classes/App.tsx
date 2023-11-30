@@ -29,17 +29,19 @@ export class ViewJobsReactAppWidget extends ReactWidget {
 
 export class SubmitJobsReactAppWidget extends ReactWidget {
   data: any
-  constructor(data: any) {
+  uname: string
+  constructor(data: any, uname: string) {
     super()
     this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
     this.data = data
+    this.uname = uname
   }
 
   render(): JSX.Element {
     return (
       <Provider store={store}>
         {/* <div>This is the jobs submission plugin</div> */}
-        <JobSubmissionForm />
+        <JobSubmissionForm uname={this.uname}/>
         {/* <Registering /> */}
       </Provider>
     )
