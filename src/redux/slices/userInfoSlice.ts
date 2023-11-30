@@ -12,8 +12,6 @@ export const userInfoSlice = createSlice({
   reducers: {
     resetUsername: () => initialState,
     setUsername: (state, action) => {
-      console.log("graceal1 in setUsername function in redux/userInfoSlice and setting to");
-      console.log(action.payload);
       state.username = action.payload
     },
   },

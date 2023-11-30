@@ -41,8 +41,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const jobSubmitForm = useRef(null)
 
     useEffect(() => {
-        console.log("graceal1 in the useEffect in JobSubmissionForm.tsx with uname");
-        console.log(uname);
         dispatch(setUsername(uname))
       }, []);
 
@@ -149,8 +147,6 @@ export const JobSubmissionForm = ({ uname }) => {
         if (!formValidation) {
 
             // Submit job
-            console.log("graceal1 about to submit the job and jobsParams is ");
-            console.log(jobParams);
             submitJob(jobParams).then((data) => {
                 setShowWaitCursor(false)
                 enableSubmitButton();
@@ -234,8 +230,6 @@ export const JobSubmissionForm = ({ uname }) => {
             jobParams.queue = selectedResource.value
         }
 
-        console.log("graceal1 setting job params username to ");
-        console.log(username);
         jobParams.username = username
         jobParams.identifier = jobTag
 

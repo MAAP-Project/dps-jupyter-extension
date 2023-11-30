@@ -13,8 +13,6 @@ export const JobsApp = ({ uname, jupyterApp }): JSX.Element => {
   const { username } = useSelector(selectUserInfo)
 
   useEffect(() => {
-    console.log("graceal1 in the useEffect in JobsApp.tsx with uname");
-    console.log(uname);
     dispatch(setUsername(uname))
   }, []);
 

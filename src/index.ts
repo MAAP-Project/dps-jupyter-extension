@@ -74,9 +74,6 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-            console.log("Got username: ", uname)
-            console.log("graceal1 about to create an instance of ViewJobsReactAppWidget in view jobs with uname");
-            console.log(uname);
             const content = new ViewJobsReactAppWidget(uname, app);
             viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
             viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
