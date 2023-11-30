@@ -137,7 +137,7 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         getUsernameToken(state, profileId, function (uname: string, ticket: string) {
           console.log("Got username: ", uname)
-          const content = new SubmitJobsReactAppWidget("");
+          const content = new SubmitJobsReactAppWidget("", uname);
           submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
           submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
           submitJobsWidget.title.icon = reactIcon;
