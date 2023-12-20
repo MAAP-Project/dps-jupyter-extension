@@ -39,3 +39,7 @@ export const EMPTY_FIELD_CHAR = '-'
 
  export const DEFAULT_USERNAME = "anonymous"
 
+export const SUBMITTING_JOB_TEXT = "Submitting job...";
+export const SUBMITTED_JOB_SUCCESS = "{TIME}\nJob submitted successfully. {ID}";
+export const SUBMITTED_JOB_FAIL = "{TIME}\nJob submission failed because {ERROR}";
+export const SUBMITTED_JOB_ELEMENT_ID = "submitting_job_text";
