@@ -9,6 +9,7 @@ node_modules/
 dps_jupyter_extension/labextension
 package-lock.json
 maap.cfg
+yarn.lock
 
 # Integration tests
 ui-tests/test-results/
