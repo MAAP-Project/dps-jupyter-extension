@@ -10,9 +10,7 @@ thead>tr:hover {
 .overview-header {
     display: flex;
     justify-content: space-between;
-}
-
-.margin-1rem {
+    align-items: center;
     margin: 1rem;
 }
 
@@ -40,8 +38,4 @@ thead>tr:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-button > svg {
-    margin-right: 0.5rem;
 }

@@ -3,11 +3,11 @@ import SplitPane, { Pane } from 'split-pane-react';
 import 'split-pane-react/esm/themes/default.css';
 import { JobDetailsContainer } from './JobDetailsContainer'
 import { JobsOverviewContainer } from './JobsOverviewContainer'
-import { JobsContainerActions } from '../redux/slices/JobsContainerSlice'
-import { useDispatch } from 'react-redux'
+// import { JobsContainerActions } from '../redux/slices/JobsContainerSlice'
+// import { useDispatch } from 'react-redux'
 import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
 
-export const JobsView = (): JSX.Element => {
+export const JobsView = ({ jupyterApp }): JSX.Element => {
 
     const [sizes, setSizes] = useState([100, '5%']);
 
@@ -30,7 +30,7 @@ export const JobsView = (): JSX.Element => {
                 onChange={setSizes}
             >
                 <Pane maxSize='100%' style={{ overflow: 'scroll' }}>
-                    <JobsOverviewContainer />
+                    <JobsOverviewContainer jupyterApp={jupyterApp} />
                 </Pane>
                 <Pane maxSize='100%' style={{ overflow: 'scroll' }}>
                     <JobDetailsContainer />
