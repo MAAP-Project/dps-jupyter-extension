@@ -9,7 +9,7 @@ import '../../style/JobDetailsContainer.css'
 import { ErrorsJobInfoTable } from './ErrorsJobInfoTable'
 import { OutputsJobInfoTable } from './OutputsJobInfoTable'
 
-export const JobDetailsContainer = (): JSX.Element => {
+export const JobDetailsContainer = ({ jupyterApp }): JSX.Element => {
 
     // Redux
     const { selectedJob } = useSelector(selectJobs)
@@ -43,7 +43,7 @@ export const JobDetailsContainer = (): JSX.Element => {
                         {selectedJob ? <InputsJobInfoTable /> : <span className='subtext'>No job selected</span>}
                     </Tab.Pane>
                     <Tab.Pane eventKey="outputs">
-                        {selectedJob ? <OutputsJobInfoTable /> : <span className='subtext'>No job selected</span>}
+                        {selectedJob ? <OutputsJobInfoTable jupyterApp={jupyterApp}/> : <span className='subtext'>No job selected</span>}
                     </Tab.Pane>
                     <Tab.Pane eventKey="errors">
                         {selectedJob ? <ErrorsJobInfoTable /> : <span className='subtext'>No job selected</span>}
