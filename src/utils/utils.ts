@@ -38,6 +38,15 @@ export const getProducts = (products: []) => {
     return urls_str
 }
 
+export const getProductFilePaths = (products: []) => {
+    const productFilePaths = new Set()
+    products.forEach((product: any) => {
+        productFilePaths.add(product["product_file_path"])
+    })
+
+    return Array.from(productFilePaths)
+}
+
 
 export var getUserInfo = function (callback) {
     window.parent._keycloak.loadUserInfo().success(function (profile) {
