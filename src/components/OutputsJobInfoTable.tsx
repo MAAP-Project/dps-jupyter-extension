@@ -12,7 +12,8 @@ import { JupyterFrontEnd } from '@jupyterlab/application'
 async function navigateToFolder(folderPath: Array<any>, jupyterApp: JupyterFrontEnd): Promise<void> {
     console.log("graceal1 in navigate to folder function with ");
     console.log(folderPath);
-    //folderPath = "/testingFolder/testingFolder2/untitled.txt";
+    folderPath[0] = "dps_output/dps_tutorial_graceal/main/test55/2023/12/04/17/30/05/708167";
+    console.log("graceal1 trying to go to folder path "+folderPath[0]);
 
     const contents = jupyterApp.serviceManager.contents;
     if (folderPath.length > 1) {
@@ -42,13 +43,37 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     console.log(selectedJob);
     console.log(selectedJob['jobInfo']);
     console.log("graceal1 in the render for outputs job info table and trying to print product file path");
+    //let temp = ["http://maap-dit-workspace.s3-website-us-west-2.amazonaws.com/grallewellyn/dps_output/aimee-dps-test_ubuntu/segundo/2024/01/10/23/08/53/536069","s3://s3-us-west-2.amazonaws.com:80/maap-dit-workspace/grallewellyn/dps_output/aimee-dps-test_ubuntu/segundo/2024/01/10/23/08/53/536069"].join('\r\n');
 
+    // example where open in file browser is right next to file paths 
     /*return (
         <table className='table'>
             <tbody>
                 <tr>
-                    <th>{" urls"}</th>
-                    <td style={{ whiteSpace: 'pre' }}>
+                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{"Product urls"}</th>
+                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                        {temp}
+                    </td>
+                </tr> 
+                <tr>
+                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{"Product file paths"}</th>
+                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                        {"dps_output/aimee-dps-test_ubuntu/segundo/2024/01/10/23/08/53/536069               "}
+                        <Button variant="primary" onClick={() => navigateToFolder(["t"], jupyterApp)}>
+                            <FaFolder />   Open in File Browser
+                        </Button>
+                    </td>
+                </tr>
+            </tbody>
+        </table> 
+    )*/
+    // good example where open in file browser is in a different section
+    /*return (
+        <table className='table'>
+            <tbody>
+                <tr>
+                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{" urls"}</th>
+                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                         {"Testing"}
                     </td>
                 </tr> 
@@ -59,7 +84,7 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                     </td>
                     <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                         <Button variant="primary" onClick={() => navigateToFolder(["t"], jupyterApp)}>
-                            <FaFolder /> Open in File Browser
+                            <FaFolder />   Open in File Browser
                         </Button>
                     </td>
                 </tr>
@@ -98,8 +123,8 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                         if (selectedJob['jobInfo'][field.accessor]) {
                             return <>
                                 <tr>
-                                    <th>{field.header+ " urls"}</th>
-                                    <td style={{ whiteSpace: 'pre' }}>
+                                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{field.header+ " urls"}</th>
+                                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                                         {getProducts(selectedJob['jobInfo'][field.accessor])}
                                     </td>
                                 </tr> 
@@ -107,9 +132,10 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                                     <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{field.header+ " file paths"}</th>
                                     <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                                         {getProductFilePaths(selectedJob['jobInfo'][field.accessor])}
+                                        <Button variant="primary" onClick={() => navigateToFolder(getProductFilePaths(selectedJob['jobInfo'][field.accessor]), jupyterApp)+"               "}><FaFolder />   Open in File Browser</Button>
                                     </td>
                                     <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
-                                        <Button variant="primary" onClick={() => navigateToFolder(getProductFilePaths(selectedJob['jobInfo'][field.accessor]), jupyterApp)}><FaFolder />Open in File Browser</Button>
+                                        
                                     </td>
                                 </tr>
                             </>
