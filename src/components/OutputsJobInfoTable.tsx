@@ -42,17 +42,48 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     console.log(selectedJob);
     console.log(selectedJob['jobInfo']);
     console.log("graceal1 in the render for outputs job info table and trying to print product file path");
-    console.log("graceal1 WHY ISNT THIS GIVING AN ERROR FOR FAILED JOBS");
-    console.log(selectedJob['jobInfo']['products']);
 
     /*return (
         <table className='table'>
             <tbody>
                 <tr>
-                    <th>{tempVariable+"file paths"}</th>
+                    <th>{" urls"}</th>
                     <td style={{ whiteSpace: 'pre' }}>
-                        {tempVariable+ "     "}
-                        <Button variant="primary" onClick={() => navigateToFolder(["t"], jupyterApp)}><FaFolder />    Open in File Browser</Button>
+                        {"Testing"}
+                    </td>
+                </tr> 
+                <tr>
+                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{" file paths"}</th>
+                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                        {"Testing output"}
+                    </td>
+                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                        <Button variant="primary" onClick={() => navigateToFolder(["t"], jupyterApp)}>
+                            <FaFolder /> Open in File Browser
+                        </Button>
+                    </td>
+                </tr>
+            </tbody>
+        </table> 
+    )*/
+    
+    // one example where the UI looks good 
+    /*return (
+        <table className='table'>
+            <tbody>
+                <tr>
+                    <th>{" urls"}</th>
+                    <td style={{ whiteSpace: 'pre' }}>
+                        {"Testing"}
+                    </td>
+                </tr> 
+                <tr>
+                    <td><b>{" file paths"}</b></td>
+                    <td style={{ whiteSpace: 'pre' }}>
+                        {"Testing output"}
+                    </td>
+                    <td style={{ whiteSpace: 'pre' }}>
+                        <Button variant="primary" onClick={() => navigateToFolder(["t"], jupyterApp)}><FaFolder />   Open in File Browser</Button>
                     </td>
                 </tr>
             </tbody>
@@ -67,16 +98,18 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                         if (selectedJob['jobInfo'][field.accessor]) {
                             return <>
                                 <tr>
-                                    <th>{field.header+ "urls"}</th>
+                                    <th>{field.header+ " urls"}</th>
                                     <td style={{ whiteSpace: 'pre' }}>
                                         {getProducts(selectedJob['jobInfo'][field.accessor])}
                                     </td>
                                 </tr> 
                                 <tr>
-                                    <th>{field.header+ "file paths"}</th>
-                                    <td style={{ whiteSpace: 'pre' }}>
+                                    <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{field.header+ " file paths"}</th>
+                                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                                         {getProductFilePaths(selectedJob['jobInfo'][field.accessor])}
-                                        <Button variant="outline-primary" onClick={() => navigateToFolder(getProductFilePaths(selectedJob['jobInfo'][field.accessor]), jupyterApp)}><FaFolder />Open in File Browser</Button>
+                                    </td>
+                                    <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                                        <Button variant="primary" onClick={() => navigateToFolder(getProductFilePaths(selectedJob['jobInfo'][field.accessor]), jupyterApp)}><FaFolder />Open in File Browser</Button>
                                     </td>
                                 </tr>
                             </>
@@ -91,35 +124,5 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
             </tbody>
         </table>
     )
-
-    /*return (
-        <table className='table'>
-            <tbody>
-                {OUTPUTS_JOBS_INFO.map((field) => {
-                    {
-                        if (selectedJob['jobInfo'][field.accessor]) {
-                            return <tr>
-                            <th>{field.header}</th>
-                            <td style={{ whiteSpace: 'pre' }}>
-                                {getProducts(selectedJob['jobInfo'][field.accessor])}
-                            </td>
-                        </tr>
-                        } else {
-                            return <tr>
-                                <th>{field.header}</th>
-                                <td>{EMPTY_FIELD_CHAR}</td>
-                            </tr>
-                        }
-                    }
-                })}
-                <tr>
-                    <th>cd in terminal</th>
-                    <td style={{ whiteSpace: 'pre' }}>
-                        cd ~/testFolder1/testFolder2
-                    </td>
-                    <Button variant="primary" onClick={() => navigateToFolder("", jupyterApp)}><FaFolder /> Open in Folder</Button>
-                </tr>
-            </tbody>
-        </table>
-    )*/
+    
 }
