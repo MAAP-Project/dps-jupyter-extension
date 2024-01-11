@@ -12,7 +12,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application'
 async function navigateToFolder(folderPath: Array<any>, jupyterApp: JupyterFrontEnd): Promise<void> {
     console.log("graceal1 in navigate to folder function with ");
     console.log(folderPath);
-    folderPath[0] = "grace.llewellyn/dps_output/dps_tutorial_graceal/main/test55/2023/12/04/17/30/05/708167";
+    folderPath[0] = "my-private-bucket/dps_output/dps_tutorial_graceal/main/test55/2023/12/04/17/30/05/708167";
     console.log("graceal1 trying to go to folder path "+folderPath[0]);
 
     const contents = jupyterApp.serviceManager.contents;
