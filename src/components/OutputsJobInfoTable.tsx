@@ -10,7 +10,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application'
 
 async function navigateToFolder(folderPath: Array<any>, jupyterApp: JupyterFrontEnd): Promise<void> {
     const contents = jupyterApp.serviceManager.contents;
-    if (folderPath.length > 1) console.error("Folder path was "+folderPath.length+". We are only looking at the first element.");
+    if (folderPath.length > 1) console.error("Folder path length was "+folderPath.length+". We are only looking at the first element.");
 
     if (folderPath.length > 0) {
         // Check if the folder exists
@@ -64,5 +64,4 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
             </tbody>
         </table>
     )
-    
 }
