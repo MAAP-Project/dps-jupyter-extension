@@ -25,8 +25,6 @@ export const getProducts = (products: []) => {
     //     return ""
     // }
 
-    console.log("graceal1 in getProducts with");
-    console.log(products);
     const urls = new Set()
     products.forEach((product: any) => {
         product["urls"].forEach((url) => {
