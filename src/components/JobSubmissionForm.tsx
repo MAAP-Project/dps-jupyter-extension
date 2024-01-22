@@ -115,7 +115,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const onSubmit = (event: any) => {
         disableSubmitButton();
         event.preventDefault();
-        console.log("graceal1 in onSubmit");
         
         var jobParams = {
             algo_id: null,
@@ -146,12 +145,9 @@ export const JobSubmissionForm = ({ uname }) => {
 
         let formValidation = validateForm(jobParams)
         if (!formValidation) {
-            console.log("graceal1 form validated ");
-
+            
             // Submit job
             submitJob(jobParams).then((data) => {
-                //setShowWaitCursor(false);
-                //enableSubmitButton();
                 Notification.success(" Job submitted successfully. " + data['response'], { autoClose: false });
                 setSubmittedJobText(true, data['response'], null);
                 setTimeout(() => {
@@ -160,8 +156,6 @@ export const JobSubmissionForm = ({ uname }) => {
                 }, 2000);
             }).catch(error => {
                 Notification.error(error.message, { autoClose: false })
-                //setShowWaitCursor(false);
-                //enableSubmitButton();
                 setSubmittedJobText(false, null, error.message);
                 setTimeout(() => {
                     enableSubmitButton()
