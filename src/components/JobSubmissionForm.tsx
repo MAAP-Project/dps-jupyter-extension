@@ -148,16 +148,20 @@ export const JobSubmissionForm = ({ uname }) => {
 
             // Submit job
             submitJob(jobParams).then((data) => {
-                setShowWaitCursor(false)
-                enableSubmitButton();
+                let msg = " Job submitted successfully. " + data['response'];
+                Notification.success(msg, { autoClose: false });
                 setSubmittedJobText(true, data['response'], null);
-                let msg = " Job submitted successfully. " + data['response']
-                Notification.success(msg, { autoClose: false })
+                setTimeout(() => {
+                    enableSubmitButton()
+                    setShowWaitCursor(false)
+                }, 2000);
             }).catch(error => {
                 Notification.error(error.message, { autoClose: false })
-                setShowWaitCursor(false);
-                enableSubmitButton();
                 setSubmittedJobText(false, null, error.message);
+                setTimeout(() => {
+                    enableSubmitButton()
+                    setShowWaitCursor(false)
+                }, 2000);
             })
 
             // Refresh job list once job has been submitted
