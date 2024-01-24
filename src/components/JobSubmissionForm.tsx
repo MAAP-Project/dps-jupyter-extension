@@ -145,10 +145,11 @@ export const JobSubmissionForm = ({ uname }) => {
 
         let formValidation = validateForm(jobParams)
         if (!formValidation) {
-            
+
             // Submit job
             submitJob(jobParams).then((data) => {
-                Notification.success(" Job submitted successfully. " + data['response'], { autoClose: false });
+                let msg = " Job submitted successfully. " + data['response'];
+                Notification.success(msg, { autoClose: false });
                 setSubmittedJobText(true, data['response'], null);
                 setTimeout(() => {
                     enableSubmitButton()
