@@ -179,8 +179,6 @@ export const JobSubmissionForm = ({ uname }) => {
             enableSubmitButton();
             setSubmittedJobText(false, null, formValidation);
         }
-        /*const activeElement = document.activeElement as HTMLElement | null;
-        if (activeElement) activeElement.blur();*/
     }
 
     const validateForm = (params) => {
