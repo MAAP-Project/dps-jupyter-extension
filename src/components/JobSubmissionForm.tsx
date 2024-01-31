@@ -179,6 +179,8 @@ export const JobSubmissionForm = ({ uname }) => {
             enableSubmitButton();
             setSubmittedJobText(false, null, formValidation);
         }
+        /*const activeElement = document.activeElement as HTMLElement | null;
+        if (activeElement) activeElement.blur();*/
     }
 
     const validateForm = (params) => {
@@ -210,7 +212,8 @@ export const JobSubmissionForm = ({ uname }) => {
         if (switchIsChecked) {
             dispatch(toggleValue())
         }
-
+        const activeElement = document.activeElement as HTMLElement | null;
+        if (activeElement) activeElement.blur();
     }
 
     // Build job submission jupyter notebook command from user-provided selections
@@ -257,6 +260,8 @@ export const JobSubmissionForm = ({ uname }) => {
                   "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
 
         setCommand(tmp)
+        const activeElement = document.activeElement as HTMLElement | null;
+        if (activeElement) activeElement.blur();
     }
     
     return (
