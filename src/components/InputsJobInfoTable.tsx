@@ -9,6 +9,11 @@ export const InputsJobInfoTable = (): JSX.Element => {
 
     // Redux
     const { selectedJob } = useSelector(selectJobs)
+    console.log("graceal1 printing input.value for src that needs to be valid JSON");
+    console.log(selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor]);
+    selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor].forEach((input: IInputParam) => {
+        console.log(input.value);
+    });
 
     return (
         <table className='table'>
