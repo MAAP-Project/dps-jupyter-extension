@@ -12,6 +12,8 @@ export const InputsJobInfoTable = (): JSX.Element => {
     console.log("graceal1 printing input.value for src that needs to be valid JSON");
     console.log(selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor]);
     selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor].forEach((input: IInputParam) => {
+        console.log(typeof(input.value));
+        console.log(typeof(input.value) === 'string');
         console.log(input.value);
     });
 
