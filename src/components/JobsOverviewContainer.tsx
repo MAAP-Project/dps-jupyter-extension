@@ -445,21 +445,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         }
     }, useFilters, useGlobalFilter, useSortBy, usePagination)
 
-    console.log("graceal1 trying to find keys for the JobsOverviewContainer");
-    console.log(headerGroups);
-    headerGroups.forEach(headerGroup => {
-        console.log(headerGroup);
-        console.log(headerGroup.getHeaderGroupProps());
-        console.log(headerGroup.headers);
-    });
-    console.log("graceal1 printing optoins for the second table");
-    console.log(page);
-    console.log(page.forEach(row => {
-        console.log(row);
-        console.log(row.index);
-    }))
-    
-
     return (
         <div>
             <div className="overview-header">
@@ -489,7 +474,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                 <Table {...getTableProps()} >
                     <thead >
                         {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
+                            <tr {...headerGroup.getHeaderGroupProps()} key={"Header Group"}>
                                 {headerGroup.headers.map(column => (
                                     <th {...column.getHeaderProps()}>
                                         <span className='header-sort' {...column.getSortByToggleProps()}>
