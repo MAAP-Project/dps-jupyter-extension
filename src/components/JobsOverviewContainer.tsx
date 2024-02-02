@@ -114,6 +114,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     }
     
     const SelectColumnFilter = ({column: { filterValue = [], setFilter, preFilteredRows, id }}) => {
+        console.log("graceal1 in SelectColumnFilter");
         const options = useMemo(() => {
             const options = new Set();
             preFilteredRows.forEach((row) => {
@@ -158,6 +159,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
 
     // Text filter for a single column
     const TextColumnFilter = ({column: { filterValue, preFilteredRows, setFilter }}) => {
+        console.log("graceal1 in TextColumnFilter");
         const count = preFilteredRows.length
         return (
             <div className='text-filter'>
@@ -206,6 +208,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
 
     // Date range filter component for a single column
     const DateRangeColumnFilter = ({column: { filterValue = [], preFilteredRows, setFilter, id }}) => {
+        console.log("graceal1 in DateRangeColumnFilter");
         const [min, max] = React.useMemo(() => {
             let min = preFilteredRows.length
                 ? new Date(preFilteredRows[0].values[id])
