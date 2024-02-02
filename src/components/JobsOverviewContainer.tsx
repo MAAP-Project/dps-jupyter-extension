@@ -14,9 +14,9 @@ import { Pagination,
          FormControl,
          ButtonGroup} from 'react-bootstrap'
 import { JobStatusBadge } from './JobStatusBadge'
-import { BsArrowClockwise } from 'react-icons/bs'
-import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
-import { Search } from 'react-bootstrap-icons'
+//import { BsArrowClockwise } from 'react-icons/bs'
+//import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
+//import { Search } from 'react-bootstrap-icons'
 import { jobsActions, selectJobs } from '../redux/slices/jobsSlice'
 import { selectJobsContainer } from '../redux/slices/JobsContainerSlice'
 import { selectUserInfo } from '../redux/slices/userInfoSlice'
@@ -24,7 +24,7 @@ import { parseJobData } from '../utils/mapping'
 import { getUserJobs } from '../api/maap_py'
 import { openSubmitJobs } from '../utils/utils'
 import "../../style/JobsOverview.css"
-import { MdClear, MdFilterAlt, MdFilterAltOff, MdRefresh } from 'react-icons/md'
+//import { MdClear, MdFilterAlt, MdFilterAltOff, MdRefresh } from 'react-icons/md'
 
 
 export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
@@ -189,7 +189,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
 
         return (
             <InputGroup className="mb-3">
-                <InputGroup.Text id="basic-addon1"><Search /></InputGroup.Text>
+                <InputGroup.Text id="basic-addon1"></InputGroup.Text>
                 <FormControl
                     type="search"
                     key="globalSearch"
@@ -256,11 +256,11 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     const testSort = (canSort, isSortedDesc) => {
         if (canSort) {
             if (isSortedDesc === undefined) {
-                return <FaSort size={24} />
+                return null
             } else if (isSortedDesc) {
-                return <FaSortDown size={24}/>
+                return null
             } else {
-                return <FaSortUp size={24}/>
+                return null
             }
         }
     }
@@ -460,9 +460,9 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             </div>
             <div className='table-toolbar'>
                 <ButtonGroup className='toolbar-btn'>
-                    {showFilters ? <button title= "Hide filters" onClick={() => setShowFilters(!showFilters)}><MdFilterAltOff /></button> : <button title= "Show filters" onClick={() => setShowFilters(!showFilters)}><MdFilterAlt /></button>}
-                    <button title= "Clear filters"  onClick={() => setAllFilters([{id: 'status', value: statusFilterOptions}])}><MdClear /></button>
-                    <button title= "Refresh job list" onClick={getJobInfo}><MdRefresh /></button>
+                    {showFilters ? <button title= "Hide filters" onClick={() => setShowFilters(!showFilters)}></button> : <button title= "Show filters" onClick={() => setShowFilters(!showFilters)}></button>}
+                    <button title= "Clear filters"  onClick={() => setAllFilters([{id: 'status', value: statusFilterOptions}])}></button>
+                    <button title= "Refresh job list" onClick={getJobInfo}></button>
                 </ButtonGroup>
                 {jobRefreshTimestamp ? <div className="refresh-timestamp">Last updated:< br /> {jobRefreshTimestamp}</div> : ""}
             </div>

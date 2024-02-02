@@ -27,7 +27,7 @@ export const InputsJobInfoTable = (): JSX.Element => {
                     return <tr key={input.name}>
                         <th>{input.name}</th>
                         { input.value ? 
-                            <td>{input.value}</td>
+                            <td>{"testing"}</td>
                             : <td>-</td> }
                     </tr>
                 }) : <></>}

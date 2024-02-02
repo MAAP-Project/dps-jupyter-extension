@@ -10,7 +10,8 @@ export const JobsApp = ({ uname, jupyterApp }): JSX.Element => {
   // Redux
   const dispatch = useDispatch()
   const { setUsername } = userInfoActions
-  const { username } = useSelector(selectUserInfo)
+  let { username } = useSelector(selectUserInfo)
+  username = "grallewellyn"
 
   useEffect(() => {
     dispatch(setUsername(uname))

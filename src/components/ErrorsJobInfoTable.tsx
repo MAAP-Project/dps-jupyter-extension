@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { EMPTY_FIELD_CHAR } from '../constants'
 import { selectJobs } from '../redux/slices/jobsSlice'
 import { ERRORS_JOBS_INFO } from '../templates/ErrorsJobInfoTable'
-import { MdArrowDropDown, MdArrowRight } from 'react-icons/md';
+//import { MdArrowDropDown, MdArrowRight } from 'react-icons/md';
 
 export const ErrorsJobInfoTable = (): JSX.Element => {
 
@@ -22,7 +22,7 @@ export const ErrorsJobInfoTable = (): JSX.Element => {
                             return <tr key={field.header}>
                                 <th>{field.header}</th>
                                 <td>
-                                    <div onClick={() => setExpandError(!expandError)} className={expandError ? "show-content clickable" : "hide-content clickable"}>{expandError ? <MdArrowDropDown size={28} /> : <MdArrowRight size={28} />}{selectedJob['jobInfo'][field.accessor]}</div>
+                                    <div onClick={() => setExpandError(!expandError)} className={expandError ? "show-content clickable" : "hide-content clickable"}>{expandError ? null : null}{selectedJob['jobInfo'][field.accessor]}</div>
                                 </td>
                             </tr>
                         } else {

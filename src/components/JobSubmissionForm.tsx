@@ -3,7 +3,7 @@ import { Button, ButtonToolbar, Form } from 'react-bootstrap'
 import { AlgorithmDetailsBox } from './AlgorithmDetailsBox'
 import { AlertBox } from './Alerts'
 import { useSelector, useDispatch } from 'react-redux'
-import AsyncSelect from 'react-select/async';
+//import AsyncSelect from 'react-select/async';
 import { useEffect, useState, useRef } from 'react'
 import { selectCMRSwitch, CMRSwitchActions } from '../redux/slices/CMRSwitchSlice'
 import { getAlgorithms, describeAlgorithms, getResources, getCMRCollections, submitJob, getUserJobs } from '../api/maap_py'
@@ -265,15 +265,7 @@ export const JobSubmissionForm = ({ uname }) => {
                 <h5>1. General Information</h5>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Algorithm</Form.Label>
-                    <AsyncSelect
-                        menuPortalTarget={document.querySelector('body')}
-                        cacheOptions
-                        defaultOptions
-                        value={selectedAlgorithm}
-                        loadOptions={getAlgorithms}
-                        onChange={handleAlgorithmChange}
-                        placeholder="Select algorithm..."
-                    />
+                    
                 </Form.Group>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Job Tag</Form.Label>
@@ -281,14 +273,7 @@ export const JobSubmissionForm = ({ uname }) => {
                 </Form.Group>
                 <Form.Group className="mb-3 algorithm-input">
                     <Form.Label>Resource</Form.Label>
-                    <AsyncSelect
-                        cacheOptions
-                        defaultOptions
-                        value={selectedResource}
-                        loadOptions={getResources}
-                        onChange={handleResourceChange}
-                        placeholder="Select resource..."
-                    />
+                    
                 </Form.Group>
 
                 {selectedAlgorithmMetadata ?
@@ -333,14 +318,7 @@ export const JobSubmissionForm = ({ uname }) => {
                             {switchIsChecked ?
                                 <Form.Group className="mb-3 algorithm-input">
                                     <Form.Label>CMR Collections</Form.Label>
-                                    <AsyncSelect
-                                        cacheOptions
-                                        defaultOptions
-                                        value={selectedCMRCollection}
-                                        loadOptions={getCMRCollections}
-                                        onChange={handleCMRCollectionChange}
-                                        placeholder="Select CMR collection..."
-                                    />
+                                    
                                 </Form.Group>
                                 : null}
                             {selectedCMRCollection && switchIsChecked ?
