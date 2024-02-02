@@ -120,7 +120,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             preFilteredRows.forEach((row) => {
                 options.add(row.values[id]);
             });
-            setStatusFilterOptions(Array.from(options))
+            //setStatusFilterOptions(Array.from(options))
             return [...options.values()];
         }, [id, preFilteredRows]);
     
