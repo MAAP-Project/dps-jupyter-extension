@@ -5,16 +5,16 @@ import { JobDetailsContainer } from './JobDetailsContainer'
 import { JobsOverviewContainer } from './JobsOverviewContainer'
 // import { JobsContainerActions } from '../redux/slices/JobsContainerSlice'
 // import { useDispatch } from 'react-redux'
-//import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
+import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
 
 export const JobsView = ({ jupyterApp }): JSX.Element => {
-    console.log("graceal1 in the jobs view render");
-
     const [sizes, setSizes] = useState([100, '5%']);
 
 
     const sash = () => {
         return <div className='sash-resizer'>
+                <MdArrowDropUp className='sash-resizer-up' onClick={() => setSizes([0, 100])}/>
+                <MdArrowDropDown className='sash-resizer-down' onClick={() => setSizes([100, 0])}/>
             </div>
     }
 
