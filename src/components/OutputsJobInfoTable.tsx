@@ -36,13 +36,13 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                     {
                         if (selectedJob['jobInfo'][field.accessor]) {
                             return <>
-                                <tr>
+                                <tr key={field.header+ " urls"}>
                                     <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{field.header+ " urls"}</th>
                                     <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                                         {getProducts(selectedJob['jobInfo'][field.accessor])}
                                     </td>
                                 </tr> 
-                                <tr>
+                                <tr key={field.header+ " file paths"}>
                                     <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{field.header+ " file paths"}</th>
                                     <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                                         {getProductFilePaths(selectedJob['jobInfo'][field.accessor])+"               "}

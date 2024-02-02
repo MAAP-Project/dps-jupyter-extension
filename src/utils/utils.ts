@@ -26,6 +26,7 @@ export const getProducts = (products: []) => {
     // }
 
     const urls = new Set()
+    // note that currently there should only be one element in products
     products.forEach((product: any) => {
         product["urls"].forEach((url) => {
             urls.add(url)
@@ -38,6 +39,7 @@ export const getProducts = (products: []) => {
 
 export const getProductFilePaths = (products: []) => {
     const productFilePaths = new Set()
+    // note that currently there should only be one element in products
     products.forEach((product: any) => {
         productFilePaths.add(product["product_file_path"])
     })
