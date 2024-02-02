@@ -27,7 +27,7 @@ export const InputsJobInfoTable = (): JSX.Element => {
                     return <tr key={input.name}>
                         <th>{input.name}</th>
                         { input.value ? 
-                            typeof(input.value) === 'string' ?
+                            (typeof(input.value) === 'string' || typeof(input.value) === 'number') ?
                                 <td>{input.value}</td>
                                 : <td><ReactJson src={input.value} theme="summerfruit:inverted" collapsed={true} displayDataTypes={false}/></td> 
                             : <td>-</td> }
