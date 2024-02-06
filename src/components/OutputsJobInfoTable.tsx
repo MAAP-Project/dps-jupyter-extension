@@ -8,6 +8,7 @@ import { Button } from 'react-bootstrap'
 import { FaFolder } from "react-icons/fa"
 import { JupyterFrontEnd } from '@jupyterlab/application'
 import { copyTextToClipboard } from '../utils/utils'
+import { Notification } from '@jupyterlab/apputils'
 
 async function navigateToFolder(folderPath: string, jupyterApp: JupyterFrontEnd): Promise<void> {
     const contents = jupyterApp.serviceManager.contents;
@@ -19,8 +20,12 @@ async function navigateToFolder(folderPath: string, jupyterApp: JupyterFrontEnd)
             jupyterApp.shell.activateById('filebrowser');
             jupyterApp.commands.execute('filebrowser:go-to-path', { path: folderPath });
         }).catch(error => {
-            console.error(`Error navigating to folder: ${error.message}`);
+            let errorMessage = `Error navigating to folder: ${error.message}`;
+            console.error(errorMessage);
+            Notification.error(errorMessage, { autoClose: 3000 });
         });
+    } else {
+        Notification.error("No folder path to open.", { autoClose: 3000 });
     }
     const activeElement = document.activeElement as HTMLElement | null;
     if (activeElement) activeElement.blur();
@@ -35,6 +40,8 @@ async function navigateToFolder(folderPath: string, jupyterApp: JupyterFrontEnd)
 export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     // Redux
     const { selectedJob } = useSelector(selectJobs)
+
+    //let selectedJob = {"jobInfo": {"products": [{"urls": ["testing url"], "product_folder_path": "testing"}]}};
 
     let productFolderPath = null;
     if (selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]) {

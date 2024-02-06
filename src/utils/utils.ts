@@ -117,7 +117,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
 // Copies jupyter notebook command or product folder path to user clipboard 
 export async function copyTextToClipboard(text: string, successMessage: string) {
     try {
-        await navigator.clipboard.writeText(text).then(() => {Notification.success(successMessage)})
+        await navigator.clipboard.writeText(text).then(() => {Notification.success(successMessage, { autoClose: 3000 })})
     } catch (error) {
         console.warn('Copy failed', error)
     }
