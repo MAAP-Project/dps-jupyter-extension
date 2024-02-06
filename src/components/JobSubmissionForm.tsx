@@ -14,7 +14,7 @@ import { Notification } from "@jupyterlab/apputils"
 import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
-import { copyNotebookCommand } from '../utils/utils'
+import { copyTextToClipboard } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
@@ -55,7 +55,7 @@ export const JobSubmissionForm = ({ uname }) => {
 
     useEffect(() => {
         if (command != '') {
-            copyNotebookCommand(command)
+            copyTextToClipboard(command, "Copied Jupyter Notebook python command to clipboard.")
         }
     }, [command]);
 
