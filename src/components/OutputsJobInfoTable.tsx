@@ -41,15 +41,10 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     // Redux
     const { selectedJob } = useSelector(selectJobs)
 
-    //let selectedJob = {"jobInfo": {"products": [{"urls": ["testing url"], "product_folder_path": "testing"}]}};
-
     let productFolderPath = null;
     if (selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]) {
         productFolderPath = getProductFolderPath(selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]);
     }
-
-    console.log("graceal1 and productFolderPath is ");
-    console.log(productFolderPath);
 
     return (
         <table className='table'>
