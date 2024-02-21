@@ -120,7 +120,8 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             preFilteredRows.forEach((row) => {
                 options.add(row.values[id]);
             });
-            //setStatusFilterOptions(Array.from(options))
+            // what does commenting this out do??
+            setStatusFilterOptions(Array.from(options))
             return [...options.values()];
         }, [id, preFilteredRows]);
     
