@@ -17,7 +17,7 @@ export const InputsJobInfoTable = (): JSX.Element => {
                   // in the API response, so we have to check they exist first.
                   selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor] ?
                   selectedJob['jobInfo'][INPUTS_JOBS_INFO.accessor].map((input: IInputParam) => {
-                    return <tr>
+                    return <tr key={input.name}>
                         <th>{input.name}</th>
                         { input.value ? 
                             (typeof(input.value) === 'string' || typeof(input.value) === 'number') ?

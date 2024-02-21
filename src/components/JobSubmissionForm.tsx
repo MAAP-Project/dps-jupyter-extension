@@ -345,19 +345,19 @@ export const JobSubmissionForm = ({ uname }) => {
                                 : null}
                             {selectedCMRCollection && switchIsChecked ?
                                 <table className="cmr-table">
-                                    <tr>
+                                    <tr key={"concept-id"}>
                                         <td>Concept ID</td>
                                         <td>{selectedCMRCollection["concept-id"]}</td>
                                     </tr>
-                                    <tr>
+                                    <tr key={"name"}>
                                         <td>Name</td>
                                         <td>{selectedCMRCollection["ShortName"]}</td>
                                     </tr>
-                                    <tr>
+                                    <tr key={"description"}>
                                         <td>Description</td>
                                         <td>{selectedCMRCollection["Description"]}</td>
                                     </tr>
-                                    <tr>
+                                    <tr key={"science-keywords"}>
                                         <td>Science Keywords</td>
                                         {parseScienceKeywords(selectedCMRCollection["ScienceKeywords"]).map((item) => item + ", ")}
                                     </tr>
