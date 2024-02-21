@@ -8,6 +8,7 @@ import { JobsOverviewContainer } from './JobsOverviewContainer'
 import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
 
 export const JobsView = ({ jupyterApp }): JSX.Element => {
+
     const [sizes, setSizes] = useState([100, '5%']);
 
 
