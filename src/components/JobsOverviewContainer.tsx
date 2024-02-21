@@ -120,7 +120,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             preFilteredRows.forEach((row) => {
                 options.add(row.values[id]);
             });
-            // what does commenting this out do??
+            // this line is causing a console error but dont see a better way around it 
             setStatusFilterOptions(Array.from(options))
             return [...options.values()];
         }, [id, preFilteredRows]);
