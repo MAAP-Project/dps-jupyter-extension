@@ -322,7 +322,7 @@ export const JobSubmissionForm = ({ uname }) => {
                                 <h5>3. Publish to Content Metadata Repository (CMR)?</h5>
                                 <Form.Group>
                                     <Form.Switch
-                                        custom
+                                        //custom
                                         disabled={switchIsDisabled}
                                         type="switch"
                                         checked={switchIsChecked}
