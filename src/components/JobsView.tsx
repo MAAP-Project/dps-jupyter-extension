@@ -24,7 +24,7 @@ export const JobsView = ({ jupyterApp }): JSX.Element => {
             <SplitPane
                 sashRender={sash}
                 resizerSize={2}
-                sashClassName='sash-resizer'
+                //sashClassName='sash-resizer'
                 split='horizontal'
                 sizes={sizes}
                 onChange={setSizes}

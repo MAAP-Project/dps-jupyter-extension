@@ -16,14 +16,14 @@ export const OutputsJobInfoTable = (): JSX.Element => {
                 {OUTPUTS_JOBS_INFO.map((field) => {
                     {
                         if (selectedJob['jobInfo'][field.accessor]) {
-                            return <tr>
+                            return <tr key={field.header}>
                             <th>{field.header}</th>
                             <td style={{ whiteSpace: 'pre' }}>
                                 {getProducts(selectedJob['jobInfo'][field.accessor])}
                             </td>
                         </tr>
                         } else {
-                            return <tr>
+                            return <tr key={field.header}>
                                 <th>{field.header}</th>
                                 <td>{EMPTY_FIELD_CHAR}</td>
                             </tr>
