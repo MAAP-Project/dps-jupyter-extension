@@ -119,6 +119,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             preFilteredRows.forEach((row) => {
                 options.add(row.values[id]);
             });
+            // this line is causing a console error but dont see a better way around it 
             setStatusFilterOptions(Array.from(options))
             return [...options.values()];
         }, [id, preFilteredRows]);
@@ -474,7 +475,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                 <Table {...getTableProps()} >
                     <thead >
                         {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
+                            <tr {...headerGroup.getHeaderGroupProps()} key={"Header Group"}>
                                 {headerGroup.headers.map(column => (
                                     <th {...column.getHeaderProps()}>
                                         <span className='header-sort' {...column.getSortByToggleProps()}>
@@ -487,12 +488,12 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                             </tr>
                         ))}
                     </thead>
-                    {showSpinner ? <tbody><tr><td colSpan={columns.length} style={{ textAlign: "center" }}><Spinner animation="border" variant="primary" /></td></tr></tbody> :
+                    {showSpinner ? <tbody><tr key={"loading-jobs"}><td colSpan={columns.length} style={{ textAlign: "center" }}><Spinner animation="border" variant="primary" /></td></tr></tbody> :
                         <tbody {...getTableBodyProps()} >
                             {page.map(row => {
                                 prepareRow(row)
                                 return (
-                                    <tr className={selectedJob && (selectedJob.rowIndex === row.index) ? "selected-row" : ""} onClick={() => handleRowClick(row)}>
+                                    <tr key={row.index} className={selectedJob && (selectedJob.rowIndex === row.index) ? "selected-row" : ""} onClick={() => handleRowClick(row)}>
                                         {row.cells.map(cell => {
                                             return (
                                                 <td className="cell-overflow" {...cell.getCellProps({

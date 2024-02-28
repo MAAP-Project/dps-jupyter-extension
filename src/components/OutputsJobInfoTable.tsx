@@ -67,7 +67,7 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                         </td>
                     </tr>
                 </>
-                : <tr>
+                : <tr key="no-outputs">
                         <th>{OUTPUTS_JOBS_INFO.header}</th>
                         <td>{EMPTY_FIELD_CHAR}</td>
                     </tr>

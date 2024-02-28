@@ -17,19 +17,19 @@ export const GeneralJobInfoTable = (): JSX.Element => {
                     {
                         if (selectedJob['jobInfo'][field.accessor]) {
                             switch (field.accessor) {
-                                case "duration": return <tr>
+                                case "duration": return <tr key={field.header}>
                                     <th>{field.header}</th>
                                     <td>
                                         {secondsToReadableString(selectedJob['jobInfo'][field.accessor])}
                                     </td>
                                 </tr>
-                                default: return <tr>
+                                default: return <tr key={field.header}>
                                     <th>{field.header}</th>
                                     <td>{selectedJob['jobInfo'][field.accessor]}</td>
                                 </tr>
                             }
                         } else {
-                            return <tr>
+                            return <tr key={field.header}>
                                 <th>{field.header}</th>
                                 <td>{EMPTY_FIELD_CHAR}</td>
                             </tr>
