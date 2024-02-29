@@ -51,12 +51,6 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
             <tbody>
                 {selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor] ? 
                     <>
-                    <tr key={OUTPUTS_JOBS_INFO.header+ " urls"}>
-                        <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{OUTPUTS_JOBS_INFO.header+ " urls"}</th>
-                        <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
-                            {getProducts(selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor])}
-                        </td>
-                    </tr> 
                     <tr key={OUTPUTS_JOBS_INFO.header+ " folder path"}>
                         <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{OUTPUTS_JOBS_INFO.header+ " folder path"}</th>
                         <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
@@ -66,6 +60,12 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                             <Button variant="primary" onClick={() => copyProductFolderPath(productFolderPath)}><FaFolder />   Copy Folder Path to Clipboard</Button>
                         </td>
                     </tr>
+                    <tr key={OUTPUTS_JOBS_INFO.header+ " urls"}>
+                        <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{OUTPUTS_JOBS_INFO.header+ " urls"}</th>
+                        <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
+                            {getProducts(selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor])}
+                        </td>
+                    </tr> 
                 </>
                 : <tr key="no-outputs">
                         <th>{OUTPUTS_JOBS_INFO.header}</th>
