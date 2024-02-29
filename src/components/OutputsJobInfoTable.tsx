@@ -45,6 +45,8 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     if (selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]) {
         productFolderPath = getProductFolderPath(selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]);
     }
+    console.log("graceal1 product folderPath is ");
+    console.log(productFolderPath);
 
     return (
         <table className='table'>
@@ -55,9 +57,12 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
                         <th style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>{OUTPUTS_JOBS_INFO.header+ " folder path"}</th>
                         <td style={{ whiteSpace: 'pre', verticalAlign: 'middle' }}>
                             <p>{productFolderPath}</p>
-                            <Button variant="primary" onClick={() => navigateToFolder(productFolderPath, jupyterApp)}><FaFolder />   Open in File Browser</Button>
-                            {"        "}
-                            <Button variant="primary" onClick={() => copyProductFolderPath(productFolderPath)}><FaFolder />   Copy Folder Path to Clipboard</Button>
+                            {productFolderPath ? 
+                                <>
+                                    <Button variant="primary" onClick={() => navigateToFolder(productFolderPath, jupyterApp)}><FaFolder />   Open in File Browser</Button>
+                                    {"        "}
+                                    <Button variant="primary" onClick={() => copyProductFolderPath(productFolderPath)}><FaFolder />   Copy Folder Path to Clipboard</Button>
+                                </>: null}
                         </td>
                     </tr>
                     <tr key={OUTPUTS_JOBS_INFO.header+ " urls"}>
