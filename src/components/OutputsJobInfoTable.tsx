@@ -45,8 +45,6 @@ export const OutputsJobInfoTable = ({ jupyterApp }): JSX.Element => {
     if (selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]) {
         productFolderPath = getProductFolderPath(selectedJob['jobInfo'][OUTPUTS_JOBS_INFO.accessor]);
     }
-    console.log("graceal1 product folderPath is ");
-    console.log(productFolderPath);
 
     return (
         <table className='table'>
