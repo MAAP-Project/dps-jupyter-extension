@@ -39,3 +39,14 @@ thead>tr:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.actions-overlay {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    max-width: 100%;
+}
+
+.actions-overlay:hover {
+    cursor: pointer;
+}
