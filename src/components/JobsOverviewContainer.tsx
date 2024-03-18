@@ -592,7 +592,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                     }
                     onClick={() => handleRowClick(row)}
                     onMouseEnter={() => handleRowHover(row.index)}
-                    // onMouseLeave={() => handleRowHover(null)}
+                    onMouseLeave={() => handleRowHover(null)}
                   >
                     {row.cells.map((cell) => {
                       return (
