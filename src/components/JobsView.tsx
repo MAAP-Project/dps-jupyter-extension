@@ -33,7 +33,7 @@ export const JobsView = ({ jupyterApp }): JSX.Element => {
                     <JobsOverviewContainer jupyterApp={jupyterApp} />
                 </Pane>
                 <Pane maxSize='100%' style={{ overflow: 'scroll' }}>
-                    <JobDetailsContainer />
+                    <JobDetailsContainer jupyterApp={jupyterApp} />
                 </Pane>
             </SplitPane>
         </div>

@@ -26,6 +26,7 @@ export const getProducts = (products: []) => {
     // }
 
     const urls = new Set()
+    // note that currently there should only be one element in products
     products.forEach((product: any) => {
         product["urls"].forEach((url) => {
             urls.add(url)
@@ -34,6 +35,26 @@ export const getProducts = (products: []) => {
 
     let urls_str = Array.from(urls).join('\r\n')
     return urls_str
+}
+
+/**
+ * If there is more than one product folder path, print to console because that shouldn't be the case and we will need 
+ * to revisit if it is. Only take the first folder path if that is the case though. 
+ * @param products list of products - should only be be one because only one element in products_staged right now
+ * @returns A single folder path
+ */
+export const getProductFolderPath = (products: []) => {
+    let productFolderPaths = new Set();
+    products.forEach((product: any) => {
+        productFolderPaths.add(product["product_folder_path"])
+    })
+
+    let productFolderPathsArr = Array.from(productFolderPaths);
+    if (productFolderPathsArr.length > 1) {
+        console.error("Folder path length was "+productFolderPathsArr.length+". We are only looking at the first element.");
+    }
+
+    return productFolderPathsArr.length? productFolderPathsArr[0]: null;
 }
 
 
@@ -93,10 +114,10 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
 }
 
 
-// Copies jupyter notebook command to user clipboard
-export async function copyNotebookCommand(text: string) {
+// Copies jupyter notebook command or product folder path to user clipboard 
+export async function copyTextToClipboard(text: string, successMessage: string) {
     try {
-        await navigator.clipboard.writeText(text).then(() => {Notification.success("Copied Jupyter Notebook python command to clipboard.", { autoClose: false })})
+        await navigator.clipboard.writeText(text).then(() => {Notification.success(successMessage, { autoClose: 3000 })})
     } catch (error) {
         console.warn('Copy failed', error)
     }
