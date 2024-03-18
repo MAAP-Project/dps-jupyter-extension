@@ -14,7 +14,7 @@ To activate the UI, navigate to `View -> Activate Command Palette -> View & Subm
 To install the extension, execute:
 
 ```bash
-jupyter labextension install @maap-jupyterlab/dps-jupyter-extension
+pip install maap-dps-jupyter-extension
 ```  
 &nbsp;
 ## Uninstall
@@ -22,7 +22,7 @@ jupyter labextension install @maap-jupyterlab/dps-jupyter-extension
 To remove the extension, execute:
 
 ```bash
-jupyter labextension uninstall @maap-jupyterlab/dps-jupyter-extension
+pip uninstall maap-dps-jupyter-extension
 ```  
 &nbsp;
 ## Development install
@@ -64,7 +64,7 @@ jupyter lab build --minimize=False
 ## Development uninstall
 
 ```bash
-pip uninstall dps_jupyter_extension
+pip uninstall maap_dps_jupyter_extension
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
