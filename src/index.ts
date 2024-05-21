@@ -97,7 +97,7 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    console.log('JupyterLab View Jobs plugin is activated!');
+    console.log('JupyterLab MAAP View Jobs extension is activated!');
   },
   
 };
@@ -160,7 +160,7 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    console.log('JupyterLab Submit Jobs plugin is activated!');
+    console.log('JupyterLab MAAP Submit Jobs plugin is activated!');
   }
 };
 
