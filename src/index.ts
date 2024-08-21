@@ -4,7 +4,6 @@ import { JUPYTER_EXT } from './constants'
 import { ViewJobsReactAppWidget, SubmitJobsReactAppWidget } from './classes/App'
 import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
-import { getUsernameToken } from './utils/utils';
 import { IStateDB } from '@jupyterlab/statedb';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
@@ -73,18 +72,15 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.VIEW_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-            console.log("Got username: ", uname)
-            const content = new ViewJobsReactAppWidget(uname, app);
-            viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
-            viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
-            viewJobsWidget.title.icon = reactIcon;
-            app.shell.add(viewJobsWidget, 'main');
+        const content = new ViewJobsReactAppWidget(app);
+        viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
+        viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
+        viewJobsWidget.title.icon = reactIcon;
+        app.shell.add(viewJobsWidget, 'main');
 
-            // Add widget to the tracker so it will persist on browser refresh
-            viewJobsTracker.save(viewJobsWidget)
-            viewJobsTracker.add(viewJobsWidget)
-        });
+        // Add widget to the tracker so it will persist on browser refresh
+        viewJobsTracker.save(viewJobsWidget)
+        viewJobsTracker.add(viewJobsWidget)
       },
     });
 

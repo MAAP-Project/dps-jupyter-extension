@@ -9,19 +9,17 @@ import { JobSubmissionForm } from '../components/JobSubmissionForm'
 import { JupyterFrontEnd } from '@jupyterlab/application';
 
 export class ViewJobsReactAppWidget extends ReactWidget {
-  uname: string
   jupyterApp: JupyterFrontEnd
-  constructor(uname: string, jupyterApp: JupyterFrontEnd) {
+  constructor(jupyterApp: JupyterFrontEnd) {
     super()
     this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
-    this.uname = uname
     this.jupyterApp = jupyterApp
   }
 
   render(): JSX.Element {
     return (
       <Provider store={store}>
-        <JobsApp uname={this.uname} jupyterApp={this.jupyterApp} />
+        <JobsApp jupyterApp={this.jupyterApp} />
       </Provider>
     )
   }

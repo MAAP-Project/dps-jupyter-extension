@@ -1,7 +1,6 @@
 import { Notification } from "@jupyterlab/apputils"
 import { IStateDB } from '@jupyterlab/statedb';
-import { getEnvironmentInfo } from "../api/maap_py";
-import { DEFAULT_USERNAME, JUPYTER_EXT } from "../constants";
+import { JUPYTER_EXT } from "../constants";
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -68,7 +67,7 @@ export var getUserInfo = function (callback) {
 };
 
 
-export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
+/*export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
     let uname: string = DEFAULT_USERNAME
     let ticket: string = '';
 
@@ -111,7 +110,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
     })
 
 
-}
+}*/
 
 
 // Copies jupyter notebook command or product folder path to user clipboard 

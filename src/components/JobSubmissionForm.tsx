@@ -165,7 +165,7 @@ export const JobSubmissionForm = ({ uname }) => {
             })
 
             // Refresh job list once job has been submitted
-            let response = getUserJobs(username)
+            let response = getUserJobs()
 
             response.then((data) => {
                 dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
@@ -251,6 +251,7 @@ export const JobSubmissionForm = ({ uname }) => {
             }
         }
 
+        // graceal maap.submitJob needs to not require username anymore 
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
                   "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
                   "version=\"" + jobParams.version + "\",\n    " + 
