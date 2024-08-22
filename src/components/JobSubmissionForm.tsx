@@ -18,7 +18,7 @@ import { copyTextToClipboard } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
-export const JobSubmissionForm = ({ uname }) => {
+export const JobSubmissionForm = () => {
 
     // Redux
     const dispatch = useDispatch()
@@ -26,9 +26,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const { setAlgorithm, setResource, setAlgorithmMetadata, setCMRCollection } = algorithmsActions
     const { setUserJobInfo, setJobRefreshTimestamp } = jobsActions
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
-
-    const { username } = useSelector(selectUserInfo)
-    const { setUsername } = userInfoActions
 
     const { toggleValue, toggleDisabled } = CMRSwitchActions
     const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
@@ -39,10 +36,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
     const jobSubmitForm = useRef(null)
-
-    useEffect(() => {
-        dispatch(setUsername(uname))
-      }, []);
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -120,7 +113,6 @@ export const JobSubmissionForm = ({ uname }) => {
             algo_id: null,
             version: null,
             queue: null,
-            username: null,
             identifier: null
         }
         
@@ -134,7 +126,6 @@ export const JobSubmissionForm = ({ uname }) => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = username
         jobParams.identifier = jobTag
 
         let data = new FormData(event.target)
@@ -221,7 +212,6 @@ export const JobSubmissionForm = ({ uname }) => {
             algo_id: null,
             version: null,
             queue: null,
-            username: null,
             identifier: null
         }
         
@@ -235,7 +225,6 @@ export const JobSubmissionForm = ({ uname }) => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = username
         jobParams.identifier = jobTag
 
         let data = new FormData(jobSubmitForm.current)
@@ -251,11 +240,10 @@ export const JobSubmissionForm = ({ uname }) => {
             }
         }
 
-        // graceal maap.submitJob needs to not require username anymore 
+        // graceal maap.submitJob needs to not require username anymore. Or should it as an option? 
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
                   "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
                   "version=\"" + jobParams.version + "\",\n    " + 
-                  "username=\"" + jobParams.username + "\",\n    " + 
                   "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
 
         setCommand(tmp)

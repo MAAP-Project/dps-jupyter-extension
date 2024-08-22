@@ -45,29 +45,6 @@ export async function requestAPI<T>(
   return data;
 }
 
-export async function getJobs(username: string) {
-  var requestUrl = new URL(
-    PageConfig.getBaseUrl() + "jupyter-server-extension/listJobs"
-  );
-
-  requestUrl.searchParams.append("username", username);
-  requestUrl.searchParams.append("proxy-ticket", "");
-
-  let response: any = await fetch(requestUrl.href, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (response.status >= 200 && response.status < 400) {
-    console.log("request went well");
-  } else {
-    console.log("something went wrong with request!!!");
-  }
-
-  return response.json();
-}
-
 const sortAlphabetically = (a, b) => {
   return a.label > b.label ? 1 : b.label > a.label ? -1 : 0;
 };
@@ -299,9 +276,7 @@ export async function getUserJobs() {
       "Content-Type": "application/json",
     },
   });
-  console.log("graceal1 response from getUserJobs is ");
-  console.log(response);
-
+  
   var body = response.json();
   if (response.status >= 200 && response.status < 400) {
     console.log("got user jobs");

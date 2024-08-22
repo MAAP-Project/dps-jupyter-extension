@@ -131,19 +131,15 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.SUBMIT_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-          console.log("Got username: ", uname)
-          const content = new SubmitJobsReactAppWidget("", uname);
-          submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
-          submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
-          submitJobsWidget.title.icon = reactIcon;
-          app.shell.add(submitJobsWidget, 'main');
+        const content = new SubmitJobsReactAppWidget("");
+        submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
+        submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
+        submitJobsWidget.title.icon = reactIcon;
+        app.shell.add(submitJobsWidget, 'main');
 
-          // Add widget to the tracker so it will persist on browser refresh
-          submitJobsTracker.save(submitJobsWidget)
-          submitJobsTracker.add(submitJobsWidget)
-
-        }).catch((error) => console.log(error));
+        // Add widget to the tracker so it will persist on browser refresh
+        submitJobsTracker.save(submitJobsWidget)
+        submitJobsTracker.add(submitJobsWidget)
       },
     });
 
