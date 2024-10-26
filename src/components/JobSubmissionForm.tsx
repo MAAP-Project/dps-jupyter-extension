@@ -240,7 +240,6 @@ export const JobSubmissionForm = () => {
             }
         }
 
-        // graceal maap.submitJob needs to not require username anymore. Or should it as an option? 
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
                   "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
                   "version=\"" + jobParams.version + "\",\n    " + 
