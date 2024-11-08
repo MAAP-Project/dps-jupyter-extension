@@ -45,29 +45,6 @@ export async function requestAPI<T>(
   return data;
 }
 
-export async function getJobs(username: string) {
-  var requestUrl = new URL(
-    PageConfig.getBaseUrl() + "jupyter-server-extension/listJobs"
-  );
-
-  requestUrl.searchParams.append("username", username);
-  requestUrl.searchParams.append("proxy-ticket", "");
-
-  let response: any = await fetch(requestUrl.href, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (response.status >= 200 && response.status < 400) {
-    console.log("request went well");
-  } else {
-    console.log("something went wrong with request!!!");
-  }
-
-  return response.json();
-}
-
 const sortAlphabetically = (a, b) => {
   return a.label > b.label ? 1 : b.label > a.label ? -1 : 0;
 };
@@ -287,11 +264,11 @@ export async function getJobMetrics(job_id: any) {
   return body;
 }
 
-export async function getUserJobs(username: any) {
+export async function getUserJobs() {
   var requestUrl = new URL(
     PageConfig.getBaseUrl() + "jupyter-server-extension/listUserJobs"
   );
-  requestUrl.searchParams.append("username", username);
+  //requestUrl.searchParams.append("username", username);
   console.log("Request url: ", requestUrl);
   // print request url and test it out on postman to make sure it works
   let response: any = await fetch(requestUrl.href, {
@@ -299,32 +276,10 @@ export async function getUserJobs(username: any) {
       "Content-Type": "application/json",
     },
   });
-
+  
   var body = response.json();
   if (response.status >= 200 && response.status < 400) {
     console.log("got user jobs");
-  } else {
-    console.log("something went wrong with user jobs list request!!!");
-  }
-
-  return body;
-}
-
-export async function getEnvironmentInfo() {
-  var requestUrl = new URL(
-    PageConfig.getBaseUrl() + "jupyter-server-extension/getConfig"
-  );
-  console.log("Request url: ", requestUrl);
-  // print request url and test it out on postman to make sure it works
-  let response: any = await fetch(requestUrl.href, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  var body = response.json();
-  if (response.status >= 200 && response.status < 400) {
-    console.log("got environment info");
   } else {
     console.log("something went wrong with user jobs list request!!!");
   }

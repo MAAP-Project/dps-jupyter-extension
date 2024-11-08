@@ -45,7 +45,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   const { itemSize } = useSelector(selectJobsContainer);
   const { selectedJob, userJobInfo, jobRefreshTimestamp } =
     useSelector(selectJobs);
-  const { username } = useSelector(selectUserInfo);
 
   const { setSelectedJob, setUserJobInfo, setJobRefreshTimestamp } =
     jobsActions;
@@ -69,7 +68,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     setShowSpinner(true);
 
     // List all jobs for a given user
-    let response = getUserJobs(username);
+    let response = getUserJobs();
 
     response
       .then((data) => {

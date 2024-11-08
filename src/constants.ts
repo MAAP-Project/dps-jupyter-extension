@@ -32,13 +32,6 @@ export const STYLE_TYPE = {
 
 export const EMPTY_FIELD_CHAR = '-'
 
-
-/*******************************
- * User Info
- *******************************/
-
- export const DEFAULT_USERNAME = "anonymous"
-
 export const SUBMITTING_JOB_TEXT = "Submitting job...";
 export const SUBMITTED_JOB_SUCCESS = "{TIME}\nJob submitted successfully. {ID}";
 export const SUBMITTED_JOB_FAIL = "{TIME}\nJob submission failed because {ERROR}";
