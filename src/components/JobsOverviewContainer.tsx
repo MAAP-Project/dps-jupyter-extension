@@ -498,7 +498,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
           </Button>
         </div>
       </div>
-      {/* <div className="table-toolbar"> */}
       <div>
         <div className="refresh-toolbar">
           <Button
