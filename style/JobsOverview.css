@@ -9,9 +9,12 @@ thead>tr:hover {
 
 .overview-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin: 1rem;
+    margin: 20px;
+}
+
+.overview-header > button {
+    margin-left: 20px;
 }
 
 .pagination {
@@ -57,5 +60,19 @@ thead>tr:hover {
 }
 
 .filter-toolbar {
-    margin: 30px 0 0 10px;
+    display: flex;
+    align-items: center;
+    margin: 30px 0 10px 20px;
+}
+
+.filter-toolbar > button {
+    margin-left: 20px;
+}
+
+.jobs-toolbar {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20px;
 }
