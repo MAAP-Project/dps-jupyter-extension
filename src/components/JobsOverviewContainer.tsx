@@ -498,43 +498,59 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
           </Button>
         </div>
       </div>
-      <div className="table-toolbar">
-        <ButtonGroup className="toolbar-btn">
-          {showFilters ? (
-            <button
-              title="Hide filters"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <MdFilterAltOff />
-            </button>
-          ) : (
-            <button
-              title="Show filters"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <MdFilterAlt />
-            </button>
-          )}
-          <button
-            title="Clear filters"
-            onClick={() =>
-              setAllFilters([{ id: "status", value: statusFilterOptions }])
-            }
+      {/* <div className="table-toolbar"> */}
+      <div>
+        <div className="refresh-toolbar">
+          <Button
+            title="Refresh job list"
+            onClick={(e) => {
+              getJobInfo();
+              e.currentTarget.blur();
+            }}
           >
-            <MdClear />
-          </button>
-          <button title="Refresh job list" onClick={getJobInfo}>
-            <MdRefresh />
-          </button>
-        </ButtonGroup>
-        {jobRefreshTimestamp ? (
-          <div className="refresh-timestamp">
-            Last updated:
-            <br /> {jobRefreshTimestamp}
-          </div>
-        ) : (
-          ""
-        )}
+            Refresh Job List
+          </Button>
+          {jobRefreshTimestamp ? (
+            <div className="refresh-timestamp">
+              Last updated:
+              <br /> {jobRefreshTimestamp}
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="filter-toolbar">
+          {showFilters ? (
+            <Button
+              title="Hide job list filters"
+              onClick={(e) => {
+                setShowFilters(!showFilters);
+                e.currentTarget.blur();
+              }}
+            >
+              Hide Filters
+            </Button>
+          ) : (
+            <Button
+              title="Show job list filters"
+              onClick={(e) => {
+                setShowFilters(!showFilters);
+                e.currentTarget.blur();
+              }}
+            >
+              Show Filters
+            </Button>
+          )}
+          <Button
+            title="Reset job list filters"
+            onClick={(e) => {
+              setAllFilters([{ id: "status", value: statusFilterOptions }]);
+              e.currentTarget.blur();
+            }}
+          >
+            Reset Filters
+          </Button>
+        </div>
       </div>
       {/* <div className="global-filter">
                 <GlobalFilter

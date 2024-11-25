@@ -50,3 +50,12 @@ thead>tr:hover {
 .actions-overlay:hover {
     cursor: pointer;
 }
+
+.refresh-toolbar {
+    display: flex;
+    margin-left: 10px;
+}
+
+.filter-toolbar {
+    margin: 30px 0 0 10px;
+}
