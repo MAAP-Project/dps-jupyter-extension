@@ -292,3 +292,16 @@ div[role=Resizer]:hover > .sash-resizer {
   flex-direction: column;
   align-items: center;
 }
+
+.react-split__sash--horizontal {
+  height: 5px !important;
+}
+
+.jl-ReactAppWidget {
+  overflow-y: hidden !important;
+}
+
+.jobsview-container {
+  height: calc(100vh - 100px);
+  overflow: 'scroll';
+}
