@@ -132,3 +132,13 @@ export const openSubmitJobs = (jupyterApp, data) => {
         }
     }
 }
+
+export const openViewJobs = (jupyterApp, data) => {
+    if (jupyterApp.commands.hasCommand(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND)) {
+        if (data == null) {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, null)
+        }else {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, data)
+        }
+    }
+}

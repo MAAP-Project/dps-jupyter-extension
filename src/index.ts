@@ -131,7 +131,7 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.SUBMIT_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        const content = new SubmitJobsReactAppWidget("");
+        const content = new SubmitJobsReactAppWidget("", app);
         submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
         submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
         submitJobsWidget.title.icon = reactIcon;

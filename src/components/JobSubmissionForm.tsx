@@ -11,14 +11,13 @@ import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsS
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { Notification } from "@jupyterlab/apputils"
-import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
-import { copyTextToClipboard } from '../utils/utils'
+import { copyTextToClipboard, openViewJobs } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
-export const JobSubmissionForm = () => {
+export const JobSubmissionForm = ({ jupyterApp }) => {
 
     // Redux
     const dispatch = useDispatch()
@@ -140,7 +139,13 @@ export const JobSubmissionForm = () => {
             // Submit job
             submitJob(jobParams).then((data) => {
                 let msg = " Job submitted successfully. " + data['response'];
-                Notification.success(msg, { autoClose: false });
+                Notification.success(msg, { autoClose: false, actions: [{
+                    label: "View Jobs",
+                    callback: () => {
+                        openViewJobs(jupyterApp, null);
+                      }
+
+                }] })
                 setSubmittedJobText(true, data['response'], null);
                 setTimeout(() => {
                     enableSubmitButton()
@@ -358,9 +363,14 @@ export const JobSubmissionForm = () => {
 
                 <hr />
                 <ButtonToolbar>
+                    <div style={{ display: 'flex', gap: '8px' }}>
                     <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
-                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                    </div>
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                    <Button variant="outline-primary" onClick={() => openViewJobs(jupyterApp, null)}>View Jobs</Button>
+                    <Button variant="outline-primary" onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                    </div>
                 </ButtonToolbar>
                 <br />
                 <p id={SUBMITTED_JOB_ELEMENT_ID}></p>
