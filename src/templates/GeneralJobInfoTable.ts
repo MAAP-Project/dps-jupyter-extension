@@ -7,10 +7,6 @@ import { IJobInfoTable } from "../types/types";
 
 export const GENERAL_JOBS_INFO: IJobInfoTable[] = [
     {
-        header: "Actions",
-        accessor: "actions"
-    },
-    {
         header: "Tag",
         accessor: "tags"
     },

@@ -16,28 +16,20 @@ import {
   Button,
   InputGroup,
   FormControl,
-  ButtonGroup,
   Form,
 } from "react-bootstrap";
 import { JobStatusBadge } from "./JobStatusBadge";
-import { BsArrowClockwise } from "react-icons/bs";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import { Search } from "react-bootstrap-icons";
 import { jobsActions, selectJobs } from "../redux/slices/jobsSlice";
 import { selectJobsContainer } from "../redux/slices/JobsContainerSlice";
-import { selectUserInfo } from "../redux/slices/userInfoSlice";
 import { parseJobData } from "../utils/mapping";
-import { cancelJob, getUserJobs } from "../api/maap_py";
+import { getUserJobs } from "../api/maap_py";
 import { openSubmitJobs } from "../utils/utils";
 import "../../style/JobsOverview.css";
 import {
-  MdClear,
-  MdFilterAlt,
-  MdFilterAltOff,
   MdRefresh,
-  MdStop,
 } from "react-icons/md";
-import { Notification } from "@jupyterlab/apputils";
 
 export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   // Redux
@@ -98,23 +90,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         return;
       }
     });
-  };
-
-  const handleCancelJob = (e: any, job_id: string) => {
-    // Don't invoke row onclick event
-    e.stopPropagation();
-
-    cancelJob(job_id)
-      .then((response) => {
-        if (response["exception_code"] === "") {
-          Notification.success(response["response"], { autoClose: false });
-          return;
-        }
-        Notification.error(response["response"], { autoClose: false });
-      })
-      .catch((error) => {
-        Notification.error(error.message, { autoClose: false });
-      });
   };
 
   const MultipleFilter = (rows, filler, filterValue) => {
@@ -531,7 +506,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
           </Button>
           {jobRefreshTimestamp ? (
             <div className="refresh-timestamp">
-              Last updated:
+              List last updated:
               <br /> {jobRefreshTimestamp}
             </div>
           ) : (
@@ -610,18 +585,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                         </td>
                       );
                     })}
-                    {hoveredRowIndex === row.index && (
-                      <div className="actions-overlay">
-                        <MdStop
-                          title="Stop Job"
-                          size="24px"
-                          color="red"
-                          onClick={(e) =>
-                            handleCancelJob(e, row.values.payload_id)
-                          }
-                        />
-                      </div>
-                    )}
                   </tr>
                 );
               })}
