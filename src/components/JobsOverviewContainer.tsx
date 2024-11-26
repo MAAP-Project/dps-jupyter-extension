@@ -25,7 +25,7 @@ import { jobsActions, selectJobs } from "../redux/slices/jobsSlice";
 import { selectJobsContainer } from "../redux/slices/JobsContainerSlice";
 import { parseJobData } from "../utils/mapping";
 import { getUserJobs } from "../api/maap_py";
-import { openSubmitJobs } from "../utils/utils";
+import { openSubmitJobs, secondsToReadableString } from "../utils/utils";
 import "../../style/JobsOverview.css";
 import {
   MdRefresh,
@@ -369,6 +369,14 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         ),
         Filter: SelectColumnFilter,
         filter: MultipleFilter,
+      },
+      {
+        Header: () => <div style={{ textAlign: "center" }}>Duration</div>,
+        accessor: "duration" as const,
+        Cell: (row) => <div style={{ textAlign: "center" }}>{secondsToReadableString(row.value)}</div>,
+        sortType: dateSort,
+        Filter: TextColumnFilter,
+        maxWidth: 300,
       },
       {
         Header: () => <div style={{ textAlign: "center" }}>Queued Time</div>,
