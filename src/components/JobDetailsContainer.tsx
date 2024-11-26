@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Nav, Tab } from 'react-bootstrap'
+import { Button, Tab, Tabs } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { GeneralJobInfoTable } from './GeneralJobInfoTable'
 import { InputsJobInfoTable } from './InputsJobInfoTable'
@@ -45,60 +45,43 @@ export const JobDetailsContainer = ({ jupyterApp }): JSX.Element => {
           ) : null}
         </div>
         <Tab.Container id="left-tabs-example" defaultActiveKey="general">
-          <Nav variant="pills" className="nav-menu">
-            <Nav.Item>
-              <Nav.Link eventKey="general">General</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="inputs">Inputs</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="outputs">Outputs</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="errors">Errors</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="metrics">Metrics</Nav.Link>
-            </Nav.Item>
-          </Nav>
-          <Tab.Content className="content-padding">
-            <Tab.Pane eventKey="general">
+          <Tabs defaultActiveKey="general">
+            <Tab eventKey="general" title="General">
               {selectedJob ? (
                 <GeneralJobInfoTable />
               ) : (
-                <div className="subtext">No job selected</div>
+                <div className="subtext mt-4">No job selected</div>
               )}
-            </Tab.Pane>
-            <Tab.Pane eventKey="inputs">
+            </Tab>
+            <Tab eventKey="inputs" title="Inputs">
               {selectedJob ? (
                 <InputsJobInfoTable />
               ) : (
-                <span className="subtext">No job selected</span>
+                <span className="subtext mt-4">No job selected</span>
               )}
-            </Tab.Pane>
-            <Tab.Pane eventKey="outputs">
+            </Tab>
+            <Tab eventKey="outputs" title="Outputs">
               {selectedJob ? (
                 <OutputsJobInfoTable jupyterApp={jupyterApp} />
               ) : (
-                <span className="subtext">No job selected</span>
+                <span className="subtext mt-4">No job selected</span>
               )}
-            </Tab.Pane>
-            <Tab.Pane eventKey="errors">
+            </Tab>
+            <Tab eventKey="errors" title="Errors">
               {selectedJob ? (
                 <ErrorsJobInfoTable />
               ) : (
-                <span className="subtext">No job selected</span>
+                <span className="subtext mt-4">No job selected</span>
               )}
-            </Tab.Pane>
-            <Tab.Pane eventKey="metrics">
+            </Tab>
+            <Tab eventKey="metrics" title='Metrics'>
               {selectedJob ? (
                 <MetricsJobInfoTable />
               ) : (
-                <span className="subtext">No job selected</span>
+                <span className="subtext mt-4">No job selected</span>
               )}
-            </Tab.Pane>
-          </Tab.Content>
+            </Tab>
+          </Tabs>
         </Tab.Container>
       </div>
     );
