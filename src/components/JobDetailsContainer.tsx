@@ -35,12 +35,14 @@ export const JobDetailsContainer = ({ jupyterApp }): JSX.Element => {
 
     return (
       <div className="job-details-container">
-        <div>
+        <div className='job-details-toolbar'>
           <h2>Job Details</h2>
           {selectedJob && cancelableStatuses.includes(selectedJob["jobInfo"]["status"]) ? (
             // TODO
-            <Button variant="outline-primary" onClick={() =>
+            <Button variant="outline-primary" onClick={(e) => {
                 handleCancelJob(selectedJob["jobInfo"]["payload_id"])
+                e.currentTarget.blur();
+            }
               }>Cancel Job</Button>
           ) : null}
         </div>

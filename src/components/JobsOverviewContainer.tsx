@@ -101,21 +101,13 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   };
 
   function setFilteredParams(filterArr, val) {
-    console.log("Check filter");
-    console.log(filterArr);
-    console.log(val);
     if (filterArr.includes(val)) {
-      console.log("test");
-
       filterArr = filterArr.filter((n) => {
         return n !== val;
       });
     } else {
-      console.log("test2");
       filterArr.push(val);
     }
-
-    //if (filterArr.length === 0) filterArr = undefined;
     return filterArr;
   }
 
@@ -124,10 +116,9 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   }) => {
     const options = useMemo(() => {
       const options = new Set();
-      preFilteredRows.forEach((row) => {
+      preFilteredRows.forEach((row) => {      
         options.add(row.values[id]);
       });
-      // this line is causing a console error but dont see a better way around it
       setStatusFilterOptions(Array.from(options));
       return [...options.values()];
     }, [id, preFilteredRows]);
@@ -373,7 +364,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
       {
         Header: () => <div style={{ textAlign: "center" }}>Duration</div>,
         accessor: "duration" as const,
-        Cell: (row) => <div style={{ textAlign: "center" }}>{secondsToReadableString(row.value)}</div>,
+        Cell: (row) => <div style={{ textAlign: "center" }}>{secondsToReadableString(row.value) === "" ? "-" : secondsToReadableString(row.value)}</div>,
         sortType: dateSort,
         Filter: TextColumnFilter,
         maxWidth: 300,
@@ -455,7 +446,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         filters: [
           {
             id: "status",
-            value: statusFilterOptions,
+            value: statusFilterOptions
           },
         ],
       },

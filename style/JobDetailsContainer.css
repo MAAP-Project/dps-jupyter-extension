@@ -11,3 +11,11 @@
 .nav-menu {
     margin-bottom: 1rem;
 }
+
+.job-details-toolbar {
+    display: flex;
+}
+
+.job-details-toolbar > button {
+    margin-left: 20px;
+}
