@@ -7,7 +7,7 @@ import { MdArrowDropUp, MdArrowDropDown } from 'react-icons/md';
 
 export const JobsView = ({ jupyterApp }): JSX.Element => {
 
-    const [sizes, setSizes] = useState([100, '5%']);
+    const [sizes, setSizes] = useState([100, 20]);
 
     const sash = () => {
         return <div className='sash-resizer'>
