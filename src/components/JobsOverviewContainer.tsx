@@ -46,6 +46,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
   const [statusFilterOptions, setStatusFilterOptions] = useState([]);
+  const [filterStates, setFilterStates] = useState([]);
 
   const data = useMemo(() => userJobInfo, [userJobInfo]);
 
@@ -75,6 +76,15 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         // setGlobalFilter(state.globalFilter)
       });
   };
+
+  const captureFilterState = () => {
+    setFilterStates(filters)
+  }
+
+  const getInitialStateFilter = (field: string) => {
+    const item = filterStates.find((obj) => obj.id === field);
+    return item ? item.value : undefined; 
+  }
 
   // Set selected row
   const handleRowClick = (row) => {
@@ -111,50 +121,33 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     return filterArr;
   }
 
-  const SelectColumnFilter = ({
-    column: { filterValue = [], setFilter, preFilteredRows, id },
-  }) => {
+  function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id }
+  }) {
     const options = useMemo(() => {
       const options = new Set();
-      preFilteredRows.forEach((row) => {      
+      preFilteredRows.forEach(row => {
         options.add(row.values[id]);
       });
-      setStatusFilterOptions(Array.from(options));
       return [...options.values()];
     }, [id, preFilteredRows]);
 
     return (
-      <Fragment>
-        <div className="block">
-          {options.map((option: any, i) => {
-            return (
-              <Fragment key={i}>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    defaultChecked={true}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                    id={option}
-                    name={option}
-                    value={option}
-                    onChange={(e) => {
-                      setFilter(setFilteredParams(filterValue, e.target.value));
-                    }}
-                  ></input>
-                  <label
-                    htmlFor={option}
-                    className="ml-1.5 font-medium text-gray-700"
-                  >
-                    {option}
-                  </label>
-                </div>
-              </Fragment>
-            );
-          })}
-        </div>
-      </Fragment>
+      <select
+        value={filterValue || "All"}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value="">All</option>
+        {options.map((option, i) => (
+          <option key={i} value={option as string}>
+            {option as string}
+          </option>
+        ))}
+      </select>
     );
-  };
+  }
 
   // Text filter for a single column
   const TextColumnFilter = ({
@@ -359,7 +352,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
           </div>
         ),
         Filter: SelectColumnFilter,
-        filter: MultipleFilter,
+        filter: "includes"
       },
       {
         Header: () => <div style={{ textAlign: "center" }}>Duration</div>,
@@ -428,7 +421,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     setPageSize,
     visibleColumns,
     setAllFilters,
-    state: { pageIndex, pageSize, sortBy },
+    state: { pageIndex, pageSize, sortBy, filters },
   } = useTable(
     {
       columns,
@@ -445,8 +438,36 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         ],
         filters: [
           {
+            id: "tags",
+            value: getInitialStateFilter("tags") || ""
+          },
+          {
+            id: "job_type",
+            value: getInitialStateFilter("job_type") || ""
+          },
+          {
             id: "status",
-            value: statusFilterOptions
+            value: getInitialStateFilter("status") || statusFilterOptions
+          },
+          {
+            id: "duration",
+            value: getInitialStateFilter("duration") || ""
+          },
+          {
+            id: "time_queued",
+            value: getInitialStateFilter("time_queued") || ""
+          },
+          {
+            id: "time_start",
+            value: getInitialStateFilter("time_start") || ""
+          },
+          {
+            id: "time_end",
+            value: getInitialStateFilter("time_end") || ""
+          },
+          {
+            id: "payload_id",
+            value: getInitialStateFilter("payload_id") || ""
           },
         ],
       },
@@ -498,6 +519,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
             title="Refresh job list"
             onClick={(e) => {
               getJobInfo();
+              captureFilterState()
               e.currentTarget.blur();
             }}
           >
