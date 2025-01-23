@@ -297,10 +297,6 @@ div[role=Resizer]:hover > .sash-resizer {
   height: 5px !important;
 }
 
-.jl-ReactAppWidget {
-  overflow-y: hidden !important;
-}
-
 .jobsview-container {
   height: calc(100vh - 100px);
   overflow: 'scroll';
