@@ -10,6 +10,10 @@ import { JUPYTER_EXT } from "../constants";
  */
 export const secondsToReadableString = (seconds: string) => {
     let d = Number(seconds)
+    if (isNaN(d)) {
+        return "";
+    }
+
     let h = Math.floor(d / 3600)
     let m = Math.floor(d % 3600 / 60)
     let s = Math.floor(d % 3600 % 60)
@@ -129,6 +133,16 @@ export const openSubmitJobs = (jupyterApp, data) => {
             jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, null)
         }else {
             jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, data)
+        }
+    }
+}
+
+export const openViewJobs = (jupyterApp, data) => {
+    if (jupyterApp.commands.hasCommand(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND)) {
+        if (data == null) {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, null)
+        }else {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, data)
         }
     }
 }

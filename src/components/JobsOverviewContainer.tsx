@@ -16,27 +16,20 @@ import {
   Button,
   InputGroup,
   FormControl,
-  ButtonGroup,
+  Form,
 } from "react-bootstrap";
 import { JobStatusBadge } from "./JobStatusBadge";
-import { BsArrowClockwise } from "react-icons/bs";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import { Search } from "react-bootstrap-icons";
 import { jobsActions, selectJobs } from "../redux/slices/jobsSlice";
 import { selectJobsContainer } from "../redux/slices/JobsContainerSlice";
-import { selectUserInfo } from "../redux/slices/userInfoSlice";
 import { parseJobData } from "../utils/mapping";
-import { cancelJob, getUserJobs } from "../api/maap_py";
-import { openSubmitJobs } from "../utils/utils";
+import { getUserJobs } from "../api/maap_py";
+import { openSubmitJobs, secondsToReadableString } from "../utils/utils";
 import "../../style/JobsOverview.css";
 import {
-  MdClear,
-  MdFilterAlt,
-  MdFilterAltOff,
   MdRefresh,
-  MdStop,
 } from "react-icons/md";
-import { Notification } from "@jupyterlab/apputils";
 
 export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   // Redux
@@ -53,6 +46,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [showFilters, setShowFilters] = useState(true);
   const [statusFilterOptions, setStatusFilterOptions] = useState([]);
+  const [filterStates, setFilterStates] = useState([]);
 
   const data = useMemo(() => userJobInfo, [userJobInfo]);
 
@@ -83,6 +77,15 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
       });
   };
 
+  const captureFilterState = () => {
+    setFilterStates(filters)
+  }
+
+  const getInitialStateFilter = (field: string) => {
+    const item = filterStates.find((obj) => obj.id === field);
+    return item ? item.value : undefined; 
+  }
+
   // Set selected row
   const handleRowClick = (row) => {
     userJobInfo.map((job) => {
@@ -99,23 +102,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     });
   };
 
-  const handleCancelJob = (e: any, job_id: string) => {
-    // Don't invoke row onclick event
-    e.stopPropagation();
-
-    cancelJob(job_id)
-      .then((response) => {
-        if (response["exception_code"] === "") {
-          Notification.success(response["response"], { autoClose: false });
-          return;
-        }
-        Notification.error(response["response"], { autoClose: false });
-      })
-      .catch((error) => {
-        Notification.error(error.message, { autoClose: false });
-      });
-  };
-
   const MultipleFilter = (rows, filler, filterValue) => {
     const arr = [];
     rows.forEach((val) => {
@@ -125,69 +111,43 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
   };
 
   function setFilteredParams(filterArr, val) {
-    console.log("Check filter");
-    console.log(filterArr);
-    console.log(val);
     if (filterArr.includes(val)) {
-      console.log("test");
-
       filterArr = filterArr.filter((n) => {
         return n !== val;
       });
     } else {
-      console.log("test2");
       filterArr.push(val);
     }
-
-    //if (filterArr.length === 0) filterArr = undefined;
     return filterArr;
   }
 
-  const SelectColumnFilter = ({
-    column: { filterValue = [], setFilter, preFilteredRows, id },
-  }) => {
+  function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id }
+  }) {
     const options = useMemo(() => {
       const options = new Set();
-      preFilteredRows.forEach((row) => {
+      preFilteredRows.forEach(row => {
         options.add(row.values[id]);
       });
-      // this line is causing a console error but dont see a better way around it
-      setStatusFilterOptions(Array.from(options));
       return [...options.values()];
     }, [id, preFilteredRows]);
 
     return (
-      <Fragment>
-        <div className="block">
-          {options.map((option: any, i) => {
-            return (
-              <Fragment key={i}>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    defaultChecked={true}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                    id={option}
-                    name={option}
-                    value={option}
-                    onChange={(e) => {
-                      setFilter(setFilteredParams(filterValue, e.target.value));
-                    }}
-                  ></input>
-                  <label
-                    htmlFor={option}
-                    className="ml-1.5 font-medium text-gray-700"
-                  >
-                    {option}
-                  </label>
-                </div>
-              </Fragment>
-            );
-          })}
-        </div>
-      </Fragment>
+      <select
+        value={filterValue || "All"}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value="">All</option>
+        {options.map((option, i) => (
+          <option key={i} value={option as string}>
+            {option as string}
+          </option>
+        ))}
+      </select>
     );
-  };
+  }
 
   // Text filter for a single column
   const TextColumnFilter = ({
@@ -392,7 +352,15 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
           </div>
         ),
         Filter: SelectColumnFilter,
-        filter: MultipleFilter,
+        filter: "includes"
+      },
+      {
+        Header: () => <div style={{ textAlign: "center" }}>Duration</div>,
+        accessor: "duration" as const,
+        Cell: (row) => <div style={{ textAlign: "center" }}>{secondsToReadableString(row.value) === "" ? "-" : secondsToReadableString(row.value)}</div>,
+        sortType: dateSort,
+        Filter: TextColumnFilter,
+        maxWidth: 300,
       },
       {
         Header: () => <div style={{ textAlign: "center" }}>Queued Time</div>,
@@ -453,7 +421,7 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
     setPageSize,
     visibleColumns,
     setAllFilters,
-    state: { pageIndex, pageSize, sortBy },
+    state: { pageIndex, pageSize, sortBy, filters },
   } = useTable(
     {
       columns,
@@ -470,8 +438,36 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         ],
         filters: [
           {
+            id: "tags",
+            value: getInitialStateFilter("tags") || ""
+          },
+          {
+            id: "job_type",
+            value: getInitialStateFilter("job_type") || ""
+          },
+          {
             id: "status",
-            value: statusFilterOptions,
+            value: getInitialStateFilter("status") || statusFilterOptions
+          },
+          {
+            id: "duration",
+            value: getInitialStateFilter("duration") || ""
+          },
+          {
+            id: "time_queued",
+            value: getInitialStateFilter("time_queued") || ""
+          },
+          {
+            id: "time_start",
+            value: getInitialStateFilter("time_start") || ""
+          },
+          {
+            id: "time_end",
+            value: getInitialStateFilter("time_end") || ""
+          },
+          {
+            id: "payload_id",
+            value: getInitialStateFilter("payload_id") || ""
           },
         ],
       },
@@ -489,52 +485,55 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
         <div>
           <h1>My Jobs</h1>
         </div>
-        <div>
           <Button
             variant="primary"
             onClick={() => openSubmitJobs(jupyterApp, null)}
           >
-            + Submit New Job
+            Submit New Job
+          </Button>
+      </div>
+      <div className="jobs-toolbar">
+        <div className="filter-toolbar">
+          <Form.Check
+            type="switch"
+            id="toggle-filters"
+            label="Show Filters"
+            checked={showFilters}
+            onChange={(e) => setShowFilters(e.target.checked)}
+          />
+          <Button
+            disabled={!showFilters}
+            variant="outline-primary"
+            title="Reset job list filters"
+            onClick={(e) => {
+              setAllFilters([{ id: "status", value: statusFilterOptions }]);
+              e.currentTarget.blur();
+            }}
+          >
+            Reset Filters
           </Button>
         </div>
-      </div>
-      <div className="table-toolbar">
-        <ButtonGroup className="toolbar-btn">
-          {showFilters ? (
-            <button
-              title="Hide filters"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <MdFilterAltOff />
-            </button>
-          ) : (
-            <button
-              title="Show filters"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <MdFilterAlt />
-            </button>
-          )}
-          <button
-            title="Clear filters"
-            onClick={() =>
-              setAllFilters([{ id: "status", value: statusFilterOptions }])
-            }
+        <div className="refresh-toolbar">
+          <Button
+          variant="secondary"
+            title="Refresh job list"
+            onClick={(e) => {
+              getJobInfo();
+              captureFilterState()
+              e.currentTarget.blur();
+            }}
           >
-            <MdClear />
-          </button>
-          <button title="Refresh job list" onClick={getJobInfo}>
             <MdRefresh />
-          </button>
-        </ButtonGroup>
-        {jobRefreshTimestamp ? (
-          <div className="refresh-timestamp">
-            Last updated:
-            <br /> {jobRefreshTimestamp}
-          </div>
-        ) : (
-          ""
-        )}
+          </Button>
+          {jobRefreshTimestamp ? (
+            <div className="refresh-timestamp">
+              List last updated:
+              <br /> {jobRefreshTimestamp}
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
       {/* <div className="global-filter">
                 <GlobalFilter
@@ -607,18 +606,6 @@ export const JobsOverviewContainer = ({ jupyterApp }): JSX.Element => {
                         </td>
                       );
                     })}
-                    {hoveredRowIndex === row.index && (
-                      <div className="actions-overlay">
-                        <MdStop
-                          title="Stop Job"
-                          size="24px"
-                          color="red"
-                          onClick={(e) =>
-                            handleCancelJob(e, row.values.payload_id)
-                          }
-                        />
-                      </div>
-                    )}
                   </tr>
                 );
               })}

@@ -36,3 +36,6 @@ export const SUBMITTING_JOB_TEXT = "Submitting job...";
 export const SUBMITTED_JOB_SUCCESS = "{TIME}\nJob submitted successfully. {ID}";
 export const SUBMITTED_JOB_FAIL = "{TIME}\nJob submission failed because {ERROR}";
 export const SUBMITTED_JOB_ELEMENT_ID = "submitting_job_text";
+
+export const JOB_STARTED = "job-started";
+export const JOB_QUEUED = "job-queued";

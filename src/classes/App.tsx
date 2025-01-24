@@ -27,18 +27,18 @@ export class ViewJobsReactAppWidget extends ReactWidget {
 
 export class SubmitJobsReactAppWidget extends ReactWidget {
   data: any
-  constructor(data: any) {
+  jupyterApp: JupyterFrontEnd
+  constructor(data: any, jupyterApp: JupyterFrontEnd) {
     super()
     this.addClass(JUPYTER_EXT.EXTENSION_CSS_CLASSNAME)
     this.data = data
+    this.jupyterApp = jupyterApp
   }
 
   render(): JSX.Element {
     return (
       <Provider store={store}>
-        {/* <div>This is the jobs submission plugin</div> */}
-        <JobSubmissionForm />
-        {/* <Registering /> */}
+        <JobSubmissionForm jupyterApp={this.jupyterApp} />
       </Provider>
     )
   }
