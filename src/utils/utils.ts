@@ -1,7 +1,6 @@
 import { Notification } from "@jupyterlab/apputils"
 import { IStateDB } from '@jupyterlab/statedb';
-import { getEnvironmentInfo } from "../api/maap_py";
-import { DEFAULT_USERNAME, JUPYTER_EXT } from "../constants";
+import { JUPYTER_EXT } from "../constants";
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -11,6 +10,10 @@ import { DEFAULT_USERNAME, JUPYTER_EXT } from "../constants";
  */
 export const secondsToReadableString = (seconds: string) => {
     let d = Number(seconds)
+    if (isNaN(d)) {
+        return "";
+    }
+
     let h = Math.floor(d / 3600)
     let m = Math.floor(d % 3600 / 60)
     let s = Math.floor(d % 3600 % 60)
@@ -68,7 +71,7 @@ export var getUserInfo = function (callback) {
 };
 
 
-export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
+/*export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
     let uname: string = DEFAULT_USERNAME
     let ticket: string = '';
 
@@ -111,7 +114,7 @@ export async function getUsernameToken(state: IStateDB, profileId: string, callb
     })
 
 
-}
+}*/
 
 
 // Copies jupyter notebook command or product folder path to user clipboard 
@@ -130,6 +133,16 @@ export const openSubmitJobs = (jupyterApp, data) => {
             jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, null)
         }else {
             jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, data)
+        }
+    }
+}
+
+export const openViewJobs = (jupyterApp, data) => {
+    if (jupyterApp.commands.hasCommand(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND)) {
+        if (data == null) {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, null)
+        }else {
+            jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, data)
         }
     }
 }

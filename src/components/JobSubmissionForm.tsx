@@ -11,14 +11,13 @@ import { algorithmsActions, selectAlgorithms } from '../redux/slices/algorithmsS
 import { parseScienceKeywords } from '../utils/ogc_parsers'
 import '../../style/JobSubmission.css'
 import { Notification } from "@jupyterlab/apputils"
-import { selectUserInfo, userInfoActions } from '../redux/slices/userInfoSlice'
 import { jobsActions } from '../redux/slices/jobsSlice'
 import { parseJobData } from '../utils/mapping'
-import { copyTextToClipboard } from '../utils/utils'
+import { copyTextToClipboard, openViewJobs } from '../utils/utils'
 import { SUBMITTING_JOB_TEXT, SUBMITTED_JOB_SUCCESS, SUBMITTED_JOB_FAIL, SUBMITTED_JOB_ELEMENT_ID } from '../constants'
 
 
-export const JobSubmissionForm = ({ uname }) => {
+export const JobSubmissionForm = ({ jupyterApp }) => {
 
     // Redux
     const dispatch = useDispatch()
@@ -26,9 +25,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const { setAlgorithm, setResource, setAlgorithmMetadata, setCMRCollection } = algorithmsActions
     const { setUserJobInfo, setJobRefreshTimestamp } = jobsActions
     const { selectedAlgorithm, selectedResource, selectedAlgorithmMetadata, selectedCMRCollection } = useSelector(selectAlgorithms)
-
-    const { username } = useSelector(selectUserInfo)
-    const { setUsername } = userInfoActions
 
     const { toggleValue, toggleDisabled } = CMRSwitchActions
     const { switchIsChecked, switchIsDisabled } = useSelector(selectCMRSwitch)
@@ -39,10 +35,6 @@ export const JobSubmissionForm = ({ uname }) => {
     const [command, setCommand] = useState('')
     const [showWaitCursor, setShowWaitCursor] = useState(false)
     const jobSubmitForm = useRef(null)
-
-    useEffect(() => {
-        dispatch(setUsername(uname))
-      }, []);
 
     useEffect(() => {
         if (selectedAlgorithm != null) {
@@ -120,7 +112,6 @@ export const JobSubmissionForm = ({ uname }) => {
             algo_id: null,
             version: null,
             queue: null,
-            username: null,
             identifier: null
         }
         
@@ -134,7 +125,6 @@ export const JobSubmissionForm = ({ uname }) => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = username
         jobParams.identifier = jobTag
 
         let data = new FormData(event.target)
@@ -149,7 +139,13 @@ export const JobSubmissionForm = ({ uname }) => {
             // Submit job
             submitJob(jobParams).then((data) => {
                 let msg = " Job submitted successfully. " + data['response'];
-                Notification.success(msg, { autoClose: false });
+                Notification.success(msg, { autoClose: false, actions: [{
+                    label: "View Jobs",
+                    callback: () => {
+                        openViewJobs(jupyterApp, null);
+                      }
+
+                }] })
                 setSubmittedJobText(true, data['response'], null);
                 setTimeout(() => {
                     enableSubmitButton()
@@ -165,7 +161,7 @@ export const JobSubmissionForm = ({ uname }) => {
             })
 
             // Refresh job list once job has been submitted
-            let response = getUserJobs(username)
+            let response = getUserJobs()
 
             response.then((data) => {
                 dispatch(setUserJobInfo(parseJobData(data["response"]["jobs"])))
@@ -221,7 +217,6 @@ export const JobSubmissionForm = ({ uname }) => {
             algo_id: null,
             version: null,
             queue: null,
-            username: null,
             identifier: null
         }
         
@@ -235,7 +230,6 @@ export const JobSubmissionForm = ({ uname }) => {
             jobParams.queue = selectedResource.value
         }
 
-        jobParams.username = username
         jobParams.identifier = jobTag
 
         let data = new FormData(jobSubmitForm.current)
@@ -254,7 +248,6 @@ export const JobSubmissionForm = ({ uname }) => {
         let tmp = "maap.submitJob(identifier=\"" + jobParams.identifier + "\",\n    " + 
                   "algo_id=\"" + jobParams.algo_id + "\",\n    " + 
                   "version=\"" + jobParams.version + "\",\n    " + 
-                  "username=\"" + jobParams.username + "\",\n    " + 
                   "queue=\"" + jobParams.queue + "\",\n    " + inputStr + ")"
 
         setCommand(tmp)
@@ -370,9 +363,14 @@ export const JobSubmissionForm = ({ uname }) => {
 
                 <hr />
                 <ButtonToolbar>
+                    <div style={{ display: 'flex', gap: '8px' }}>
                     <Button type="submit" onClick={() => setShowWaitCursor(true)}>Submit Job</Button>
                     <Button variant="outline-secondary" onClick={clearForm}>Clear</Button>
-                    <Button variant="outline-primary" style={{marginLeft: 'auto'}} onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                    </div>
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                    <Button variant="outline-primary" onClick={() => openViewJobs(jupyterApp, null)}>View Jobs</Button>
+                    <Button variant="outline-primary" onClick={buildNotebookCommand}>Copy as Jupyter Notebook Code</Button>
+                    </div>
                 </ButtonToolbar>
                 <br />
                 <p id={SUBMITTED_JOB_ELEMENT_ID}></p>

@@ -4,7 +4,6 @@ import { JUPYTER_EXT } from './constants'
 import { ViewJobsReactAppWidget, SubmitJobsReactAppWidget } from './classes/App'
 import { reactIcon } from '@jupyterlab/ui-components';
 import { ILauncher } from '@jupyterlab/launcher';
-import { getUsernameToken } from './utils/utils';
 import { IStateDB } from '@jupyterlab/statedb';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
@@ -73,18 +72,15 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.VIEW_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-            console.log("Got username: ", uname)
-            const content = new ViewJobsReactAppWidget(uname, app);
-            viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
-            viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
-            viewJobsWidget.title.icon = reactIcon;
-            app.shell.add(viewJobsWidget, 'main');
+        const content = new ViewJobsReactAppWidget(app);
+        viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
+        viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
+        viewJobsWidget.title.icon = reactIcon;
+        app.shell.add(viewJobsWidget, 'main');
 
-            // Add widget to the tracker so it will persist on browser refresh
-            viewJobsTracker.save(viewJobsWidget)
-            viewJobsTracker.add(viewJobsWidget)
-        });
+        // Add widget to the tracker so it will persist on browser refresh
+        viewJobsTracker.save(viewJobsWidget)
+        viewJobsTracker.add(viewJobsWidget)
       },
     });
 
@@ -97,7 +93,7 @@ const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    console.log('JupyterLab View Jobs plugin is activated!');
+    console.log('JupyterLab MAAP View Jobs extension is activated!');
   },
   
 };
@@ -135,19 +131,15 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       label: JUPYTER_EXT.SUBMIT_JOBS_NAME,
       icon: (args) => (args['isPalette'] ? null : reactIcon),
       execute: () => {
-        getUsernameToken(state, profileId, function (uname: string, ticket: string) {
-          console.log("Got username: ", uname)
-          const content = new SubmitJobsReactAppWidget("", uname);
-          submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
-          submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
-          submitJobsWidget.title.icon = reactIcon;
-          app.shell.add(submitJobsWidget, 'main');
+        const content = new SubmitJobsReactAppWidget("", app);
+        submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
+        submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
+        submitJobsWidget.title.icon = reactIcon;
+        app.shell.add(submitJobsWidget, 'main');
 
-          // Add widget to the tracker so it will persist on browser refresh
-          submitJobsTracker.save(submitJobsWidget)
-          submitJobsTracker.add(submitJobsWidget)
-
-        }).catch((error) => console.log(error));
+        // Add widget to the tracker so it will persist on browser refresh
+        submitJobsTracker.save(submitJobsWidget)
+        submitJobsTracker.add(submitJobsWidget)
       },
     });
 
@@ -160,7 +152,7 @@ const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
       });
     }
 
-    console.log('JupyterLab Submit Jobs plugin is activated!');
+    console.log('JupyterLab MAAP Submit Jobs plugin is activated!');
   }
 };
 
