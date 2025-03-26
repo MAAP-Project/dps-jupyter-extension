@@ -76,9 +76,11 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.26.0",
     "@jupyterlab/builder": "^4.0.0",
+    "@jupyterlab/testutils": "^4.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.13",
     "@types/match-sorter": "^6.0.0",
     "@types/react-dom": "^18.0.6",
     "@types/react-table": "7.7.15",
