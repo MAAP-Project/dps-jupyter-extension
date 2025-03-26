@@ -41,3 +41,17 @@ maap.cfg
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# IDE
+.vscode/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.idea
+
+labextension.list
+junit.xml
+ui-tests/test-results
+ui-tests/playwright-report
+coverage/
