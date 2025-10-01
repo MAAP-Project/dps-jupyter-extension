@@ -39,3 +39,12 @@ export const SUBMITTED_JOB_ELEMENT_ID = "submitting_job_text";
 
 export const JOB_STARTED = "job-started";
 export const JOB_QUEUED = "job-queued";
+
+/*******************************
+ * MAAP API OGC ENDPOINTS
+ *******************************/
+export const MAAP_API_OGC_ENDPOINTS = {
+    SUBMIT_JOB : "api/ogc/processes/{PROCESS_ID}/execution",
+    GET_JOB : "api/ogc/jobs",
+    GET_JOB_BY_ID: "api/ogc/jobs/{JOB_ID}"
+}
