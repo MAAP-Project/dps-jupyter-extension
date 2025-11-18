@@ -5,7 +5,7 @@ export const JUPYTER_EXT = {
     EXTENSION_CSS_CLASSNAME : 'jl-ReactAppWidget',
 
     VIEW_JOBS_PLUGIN_ID : 'jobs_view:plugin',
-    VIEW_JOBS_NAME : 'View Jobs',
+    VIEW_JOBS_NAME : 'View My Jobs',
     VIEW_JOBS_OPEN_COMMAND : 'jobs_view:open',
 
     SUBMIT_JOBS_PLUGIN_ID : 'jobs_submit:plugin',
