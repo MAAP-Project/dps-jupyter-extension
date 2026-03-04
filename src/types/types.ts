@@ -63,3 +63,9 @@ declare global {
       _keycloak: any;
   }
 }
+
+export interface InitialJobData {
+  processID?: number;
+  initialInputs?: Record<string, any>;
+  queue?: string;
+}

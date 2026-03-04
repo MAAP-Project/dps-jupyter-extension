@@ -15,7 +15,7 @@ export interface JobLink {
  *  https://raw.githubusercontent.com/MAAP-Project/joint-open-api-specs/refs/heads/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/submittedJob.yaml?token=GHSAT0AAAAAADHRRGGMUURGUBMKZFHZQ55S2GLKJGA 
  */
 export interface ProcessExecutionSuccessResponse {
-    id: string;
+    jobID: string;
     title?: string;
     description?: string;
     keywords?: string[];
@@ -42,7 +42,28 @@ export interface ProcessExecutionFailureResponse {
     instance?: string;
 }
 
-/** TODO: update jobs type
+export interface Job {
+  jobID: string;
+  type: string;
+  status: string;
+  processID: number;
+}
+
+export interface JobOverviewResponse extends Job {
+  created: string;
+  started: string;
+  finished: string;
+  //processName: string;
+  tags: string[];
+}
+
+export interface JobsOverviewResponse {
+  jobs: JobOverviewResponse[];
+  links: JobLink[];
+}
+
+
+/**
  * Schema defined here:
  * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/jobList.yaml
  */
@@ -71,3 +92,89 @@ export interface JobResponse {
     outputs?: any[];
     exception?: any; //TODO: implement exception type
 }
+
+/**
+ * Schema defined here:
+ * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/processSummary.yaml
+ */
+export interface ProcessSummary {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    metadata?: any[];
+    id: string;
+    version: string;
+    processID?: number;
+    cwlLink?: JobLink;
+    jobControlOptions?: any[];
+    links?: JobLink[];
+}
+
+/**
+ * Schema defined here:
+ * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/processList.yaml
+ */
+export interface ProcessListResponse {
+    processes: ProcessSummary[];
+    links: JobLink[];
+}
+
+export interface ProcessResponse {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    metadata?: any[];
+    id?: string;
+    processID?: string | number;
+    version?: string;
+    jobControlOptions?: any[];
+    author?: string;
+    deployedBy?: string;
+    githubUrl?: string;
+    gitCommitHash?: string | null;
+    cwlLink?: string | JobLink;
+    ramMin?: number;
+    coresMin?: number;
+    baseCommand?: string;
+    links?: JobLink[];
+    inputs?: InputObj;
+    data?: any;
+}
+
+export interface ProcessInput {
+  name: string;
+  description: string;
+  type: string;
+  placeholder: string; // placeholder is what HySDS stores label as
+  default?: string | number | boolean;
+  optional?: boolean;
+};
+
+export interface InputObj {
+  [key: string]: ProcessInput;
+};
+
+export interface ResourceResponse {
+    message: string;
+    code: number;
+    queues?: string[];
+}
+
+export type JobResultResponse =
+  | Record<string, { links: JobLink[]; id: string }>
+  | { detail: string };
+
+
+export interface OgcApiError {
+  type?: string | null;
+  title?: string;
+  status?: number;
+  detail?: string;
+  instance?: string;
+}
+
+
+//TODO: dps/job/cancel/ endpoint currently returns WPS style response, which we want to move away from.
+// export interface CancelExecutionResponse {
+    
+// }

@@ -1,335 +1,243 @@
-import { MAAP_API_OGC_ENDPOINTS } from "../constants";
-import { JobResponse, JobsListResponse, ProcessExecutionFailureResponse, ProcessExecutionSuccessResponse } from "../types/api";
-import { Notification } from '@jupyterlab/apputils';
-import { PageConfig } from '@jupyterlab/coreutils';
+import { MAAP_API_ENDPOINTS } from "../constants";
+import {
+  JobResponse,
+  JobResultResponse,
+  ProcessExecutionFailureResponse,
+  ProcessExecutionSuccessResponse,
+  ProcessListResponse,
+  ProcessResponse,
+  ResourceResponse,
+} from "../types/api";
+import { PageConfig } from "@jupyterlab/coreutils";
 
-const BASE_URL = PageConfig.getBaseUrl();
-const MAAP_API_URL = await getMaapApiUrl();
+export const BASE_URL = PageConfig.getBaseUrl();
 
-/**
- * Retrieves the XSRF token from browser local storage
- * @returns {string | undefined} The XSRF token string or undefined if not found
- */
-function _getXsrfToken(): string | undefined {
-  return document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("_xsrf="))
-    ?.split("=")[1];
-}
-
-/**
- * Validates if a string is a valid environment variable value
- * @param value - The string to validate
- * @returns {boolean} True if the string is a valid environment variable value, false otherwise
- */
-function isValidEnvVarValue(value: string): boolean {
-  return /^[\x20-\x7E]+$/.test(value)
-}
-
-/**
- * Fetches the MAAP API URL from the MAAP Jupyter server extension endpoint.
- *
- * This function sends a GET request to the backend route
- * `maap-jupyter-server-extension/get-api-url` and attempts to retrieve the
- * `MAAP_API_URL` environment variable from the server. If the variable is not
- * set or an error occurs during the fetch, the function raises an error and
- * returns `null`.
- *
- * @returns {Promise<string | null>} A promise that resolves to the MAAP API URL
- * if successfully retrieved, or `null` if the request fails or the variable is missing.
- *
- * @throws {Error} Throws an error if the HTTP request fails or the variable is missing.
- */
-export async function getMaapApiUrl(): Promise<string | null> {
-  try {
-    const response = await fetch(`${BASE_URL}maap-jupyter-server-extension/get-api-url`);
-    const data = await response.json();
-
-    if (response.status >= 400 || !data?.apiUrl) {
-      throw new Error(`Failed to retrieve MAAP_API_URL. ${data?.error ?? ""}`);
-    }
-
-    return data.apiUrl;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-/**
- * Retrieves the MAAP authentication token from browser local storage
- * @returns {string | null} The MAAP PGT token string or null if not found or invalid
- * @throws {Error} Throws an error if the token is not valid environment variable value.
- */
-export function getMaapTokenFromLocalStorage(): string | null {
-  try {
-    const token = localStorage.getItem('MAAP_PGT_TOKEN');
-    if (!isValidEnvVarValue(token)) {
-      throw new Error(`Failed to retrieve MAAP_PGT_TOKEN from browser local storage. Invalid environment variable value: ${token}`);
-    }
-    return token;
-  } catch (error) {
-    return null;
-  }
+type MaapSettings = {
+  maapApiUrl: string;
+  maapToken: string;
 };
 
-/**
- * Stores the MAAP authentication token in browser local storage
- * @param token - The MAAP PGT token to store
- * @throws {Error} Throws an error if the token is not a valid environment variable value.
- */
-export function setMaapTokenToLocalStorage(token: string): void {
-   try {
-    if (!isValidEnvVarValue(token)) {
-      throw new Error(`Failed to set MAAP_PGT_TOKEN in browser local storage. Invalid environment variable value: ${token}`);
-    }
-    localStorage.setItem('MAAP_PGT_TOKEN', token);
-   } catch (error) {
-    console.error(error);
-   }
+export type GetLatestSettings = () => Promise<MaapSettings>;
+
+type RequestOptions = Omit<RequestInit, "headers"> & {
+  endpoint?: string;
+  url?: string;
+  auth?: boolean;
+  headers?: Record<string, string>;
+  rawBody?: boolean;
 };
 
-/**
- * Retrieves the MAAP_PGT_TOKEN for the current user.
- *
- * This function first attempts to fetch the token from the Jupyter server
- * extension endpoint (`/maap-jupyter-server-extension/get-token`).
- * If the request fails or throws an error, it falls back to retrieving the
- * token from the browser's local storage.
- *
- * @async
- * @function getToken
- * @returns {Promise<string | null>} 
- * Resolves to the MAAP_PGT_TOKEN string if successfully retrieved,
- * otherwise returns `null` if both the server request and local storage
- * retrieval fail.
- *
- * @throws {Error} 
- * Throws an error if the HTTP request fails or the token cannot
- * be retrieved.
- */
-export async function getToken(): Promise<string | null> {
-  try {
-    const response = await fetch(`${BASE_URL}maap-jupyter-server-extension/get-token`);
-    const data = await response.json();
-
-    if (response.status >= 400 || !data?.token) {
-      throw new Error(`Failed to retrieve MAAP_PGT_TOKEN environment variable. ${data?.error ?? ""}`);
-    }
-
-    return data.token;
-  } catch (error) {
-    console.error(error);
-    
-    // Fallback to local storage
-    try {
-      const token = getMaapTokenFromLocalStorage();
-      if (!token) {
-        // TODO: if not in local storage, prompt user to set token?
-        throw new Error("Failed to retrieve MAAP_PGT_TOKEN from browser local storage.");
-      }
-      return token;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  }
+function joinUrl(base: string, path: string): string {
+  const b = base.endsWith("/") ? base.slice(0, -1) : base;
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${b}${p}`;
 }
 
-/**
- * Attempts to set the `MAAP_PGT_TOKEN` environment variable on the server via a POST request.
- *
- * If the request fails or the server returns an error (e.g. due to invalid JSON,
- * missing token, or a 4xx/5xx status), it falls back to storing the token in
- * the browser's local storage.
- *
- * This function also includes support for CSRF protection using the X-XSRFToken header,
- * and uses `same-origin` credentials to include cookies in the request.
- *
- * @param {string} token - The token string to be stored either in the server's environment
- *                         or in local storage as a fallback.
- * @returns {Promise<void>} Resolves when the token is successfully stored on the server
- *                          or in local storage. Errors are logged to the console but not thrown.
- *
- * @example
- * await setToken("abc123");
- *
- * @throws {Error} If the request to the server fails and storing in local storage also fails,
- *                 the errors are logged but not re-thrown.
- */
-export async function setToken(token: string): Promise<void> {
-  try {
-    const response = await fetch(`${BASE_URL}maap-jupyter-server-extension/set-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-XSRFToken": _getXsrfToken() ?? ""
-      },
-      credentials: "same-origin",
-      body: JSON.stringify({ token })
-    });
-    const data = await response.json();
+export function createMaapApi(getLatestSettings: GetLatestSettings) {
+  /**
+   * Single request helper: always reads latest settings right before calling fetch.
+   */
+  async function request<T = any>(opts: RequestOptions): Promise<T> {
+    const { maapApiUrl, maapToken } = await getLatestSettings();
 
-    if (response.status >= 400 || !data?.message) {
-      throw new Error(`Failed to set MAAP_PGT_TOKEN environment variable. ${data?.error ?? ""}`);
+    const finalUrl =
+      opts.url ??
+      (opts.endpoint ? joinUrl(maapApiUrl, opts.endpoint) : undefined);
+
+    if (!finalUrl) {
+      throw new Error("request() requires either url or endpoint");
     }
-  } catch (error) {
-    console.error(error);
-    
-    // Fallback to local storage
-    try {
-      setMaapTokenToLocalStorage(token);
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  }
-};
 
-/**
- * Internal function to make authenticated HTTP requests to MAAP API
- * @param url - The URL to make the request to
- * @param method - HTTP method (defaults to "GET")
- * @param body - Request body data (optional, only included if not null)
- * @returns Promise that resolves to the JSON response
- * @throws Error if authentication token is missing or request fails
- */
-async function _request( url: string, method: string = "GET", body?: any ) {
-  const controller = new AbortController();
-  let message = "";
-
-  const token = await getToken();
-
-  if (!token) {
-    message = "No authentication token available.";
-    Notification.error(message, { autoClose: false });
-    throw new Error(message);
-  }
-
-  try {
-    const fetchOptions: RequestInit = {
-      method: method,
-      headers: { cpticket: token, "Content-Type": "application/json" },
-      signal: controller.signal
+    const headers: Record<string, string> = {
+      ...(opts.headers ?? {}),
     };
 
-    if (body !== null) {
-      fetchOptions.body = body;
+    // Only set JSON content-type by default when caller is NOT sending raw body
+    if (!opts.rawBody && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
     }
 
-    const response: Response = await fetch(url, fetchOptions);
-
-    if (response.status >= 400) throw new Error(`HTTP error ${response.statusText}`);
-    return await response.json();
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error(error);
+    if (opts.auth) {
+      headers["cpticket"] = maapToken;
     }
+
+    const response = await fetch(finalUrl, {
+      ...opts,
+      headers,
+    });
+
+    if (!response.ok) {
+      const details = await response.json();
+      throw details;
+    }
+
+    // Try JSON first; fall back to text if no JSON
+    const ct = response.headers.get("content-type") || "";
+    if (ct.includes("application/json")) {
+      return (await response.json()) as T;
+    }
+
+    // If it isn't JSON, return text (as any)
+    return (await response.text()) as any as T;
   }
-};
 
-/**
- * Submits a new job to the MAAP OGC API processes endpoint
- * @param processId - The ID of the process to execute
- * @param data - The job submission data
- * @returns Promise that resolves when job is submitted
- * @throws Error if authentication fails or job submission fails
- */
-export async function submitJob(
+  // -------------------------
+  // API methods
+  // -------------------------
+
+  async function submitJob(
     processId: string,
-    data: any, // TODO: add type
-  ){
+    data: any,
+  ): Promise<
+    ProcessExecutionSuccessResponse | ProcessExecutionFailureResponse
+  > {
     try {
-      const url = new URL(MAAP_API_URL + MAAP_API_OGC_ENDPOINTS.SUBMIT_JOB.replace("{PROCESS_ID}", processId));
-      const response = await _request(url.toString(), "POST", data);
+      const endpoint = MAAP_API_ENDPOINTS.SUBMIT_JOB.replace(
+        "{PROCESS_ID}",
+        processId,
+      );
 
-      // Process execution submission is successful if response.processID is present in repsonse
+      const response = await request<any>({
+        endpoint,
+        method: "POST",
+        auth: true,
+        body: JSON.stringify(data),
+      });
+
+      // Process execution submission is successful if response.processID is present
       if (response.processID) {
         const successResponse: ProcessExecutionSuccessResponse = {
-            ...response
-          };
-        Notification.success(successResponse.status, { autoClose: false });
+          ...response,
+        };
+        return successResponse;
       } else {
+        // Response code is okay, but process failed to execute
         const failureResponse: ProcessExecutionFailureResponse = {
-            ...response
-          };
-        Notification.error(failureResponse.detail, { autoClose: false });
-        throw new Error(failureResponse.detail);
+          ...response,
+        };
+        return failureResponse;
       }
     } catch (error) {
-        Notification.error(error as string, { autoClose: false });
+      throw error;
     }
+  }
+
+  async function fetchProcesses(
+    id?: string | number,
+  ): Promise<ProcessListResponse | ProcessResponse | null> {
+    try {
+      const endpoint = id
+        ? `${MAAP_API_ENDPOINTS.GET_PROCESSES}/${id}`
+        : MAAP_API_ENDPOINTS.GET_PROCESSES;
+
+      if (id) {
+        const data = await request<ProcessResponse>({
+          endpoint,
+          method: "GET",
+          auth: true,
+        });
+        return data;
+      } else {
+        const data = await request<ProcessListResponse>({
+          endpoint,
+          method: "GET",
+          auth: true,
+        });
+
+        if (!data?.processes || !Array.isArray(data.processes)) {
+          throw new Error("Failed to list processes. Invalid response format.");
+        }
+
+        return data;
+      }
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
+  async function fetchJobs(params: Record<string, string> = {}): Promise<any> {
+    const searchParams = new URLSearchParams(params);
+    const queryString = searchParams.toString();
+    const endpoint =
+      MAAP_API_ENDPOINTS.GET_JOBS + (queryString ? `?${queryString}` : "");
+
+    return await request<any>({
+      endpoint,
+      method: "GET",
+      auth: true,
+    });
+  }
+
+  async function fetchJobById(
+    jobId: string,
+    params: Record<string, string> = {},
+  ): Promise<JobResponse | unknown> {
+    const searchParams = new URLSearchParams(params);
+    const queryString = searchParams.toString();
+    const endpoint =
+      MAAP_API_ENDPOINTS.GET_JOB_BY_ID.replace("{JOB_ID}", jobId) +
+      (queryString ? `?${queryString}` : "");
+
+    return await request<JobResponse>({
+      endpoint,
+      method: "GET",
+      auth: true,
+    });
+  }
+
+  async function fetchJobResults(
+    jobId: string,
+  ): Promise<JobResultResponse | unknown> {
+    const endpoint = MAAP_API_ENDPOINTS.GET_JOB_RESULTS.replace(
+      "{JOB_ID}",
+      jobId,
+    );
+    return await request<JobResultResponse>({
+      endpoint,
+      method: "GET",
+      auth: true,
+    });
+  }
+
+  async function fetchResources(): Promise<ResourceResponse | unknown> {
+    const endpoint = MAAP_API_ENDPOINTS.GET_RESOURCES;
+    return await request<ResourceResponse>({
+      endpoint,
+      method: "GET",
+      auth: true,
+    });
+  }
+
+  // TODO: update response type
+  async function cancelExecution(
+    jobId: string,
+  ): Promise<any | unknown> {
+    try {
+      const endpoint = MAAP_API_ENDPOINTS.CANCEL_EXECUTION.replace(
+        "{JOB_ID}",
+        jobId,
+      );
+      return await request<any>({
+        endpoint,
+        method: "POST",
+        auth: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  return {
+    request,
+    submitJob,
+    fetchProcesses,
+    fetchJobs,
+    fetchJobById,
+    fetchJobResults,
+    fetchResources,
+    cancelExecution,
   };
-
-
-/**
- * Fetches a list of jobs from the MAAP OGC API processes endpoint
- * @param params - Query parameters to filter jobs (e.g., status, limit, offset)
- * @param jobFields - Array of field names to include in the job object response (joined as comma-separated "fields" parameter)
- * @returns Promise that resolves to JobsListResponse containing the list of jobs
- * @throws Error if the request fails
- */
-export async function fetchJobs(
-  params: Record<string, string>,
-  jobFields: string[] = []
-): Promise<JobsListResponse> {
-  try {
-    const url = new URL(MAAP_API_URL + MAAP_API_OGC_ENDPOINTS.GET_JOB);
-
-    for (const [key, value] of Object.entries(params)) {
-      url.searchParams.append(key, value);
-    }
-
-    if (jobFields && jobFields.length > 0) {
-      url.searchParams.append("fields", jobFields.join(","));
-    }
-
-    const response = await _request(url.toString(), "GET");
-
-    return response;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
 
-/**
- * Fetches a specific job by its ID from the MAAP OGC API processes endpoint
- * 
- * Schema defined here:
- * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/statusInfo.yaml
- * 
- * @param jobId - The unique identifier of the job to fetch
- * @param params - Additional query parameters for the request
- * @param jobFields - Array of field names to include in the response (joined as comma-separated "fields" parameter)
- * @returns Promise that resolves to JobResponse containing the job details
- * @throws Error if job ID is not provided or if the request fails
- */
-export async function fetchJob(
-  jobId: string,
-  params: Record<string, string>,
-  jobFields: string[] = []
-): Promise<JobResponse> {
-  try {
-    if (!jobId) {
-      throw new Error("Failed to fetch job. Job ID is required.");
-    }
-    const url = new URL(MAAP_API_URL + MAAP_API_OGC_ENDPOINTS.GET_JOB_BY_ID.replace("{JOB_ID}", jobId));
-
-    for (const [key, value] of Object.entries(params)) {
-      url.searchParams.append(key, value);
-    }
-    
-    if (jobFields && jobFields.length > 0) {
-      url.searchParams.append("fields", jobFields.join(","));
-    }
-  
-    const response = await _request(url.toString(), "GET");
-    return response;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
+export type MaapApi = ReturnType<typeof createMaapApi>;
