@@ -87,6 +87,7 @@
   },
   "devDependencies": {
     "@jupyterlab/builder": "^4.5.4",
+    "@mui/icons-material": "^6.4.4",
     "@mui/material": "^7.3.8",
     "@mui/x-date-pickers": "^7.20.0",
     "@tanstack/match-sorter-utils": "^8.15.1",
