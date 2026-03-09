@@ -29,7 +29,8 @@ export const getProducts = (products: []) => {
   // note that currently there should only be one element in products
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   products.forEach((product: any) => {
-    product['urls'].forEach((url) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    product['urls'].forEach((url: any) => {
       urls.add(url);
     });
   });
@@ -74,7 +75,8 @@ export async function copyTextToClipboard(text: string, successMessage: string) 
   }
 }
 
-export const openSubmitJobs = (jupyterApp, data) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const openSubmitJobs = (jupyterApp: any, data: any) => {
   if (jupyterApp.commands.hasCommand(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND)) {
     if (data == null) {
       jupyterApp.commands.execute(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, null);
@@ -84,7 +86,8 @@ export const openSubmitJobs = (jupyterApp, data) => {
   }
 };
 
-export const openViewJobs = (jupyterApp, data) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const openViewJobs = (jupyterApp: any, data: any) => {
   if (jupyterApp.commands.hasCommand(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND)) {
     if (data == null) {
       jupyterApp.commands.execute(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, null);

@@ -68,7 +68,7 @@
   "jupyter-releaser": {
     "hooks": {
       "before-build-npm": [
-        "python -m pip install jupyterlab~=4.1",
+        "python -m pip install jupyterlab~=4.4",
         "jlpm"
       ],
       "before-build-python": [
@@ -92,7 +92,7 @@
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@jupyterlab/builder": "^4.5.4",
-    "@mui/icons-material": "^6.5.0",
+    "@mui/icons-material": "^6.4.4",
     "@mui/material": "^7.3.8",
     "@mui/x-date-pickers": "^7.20.0",
     "@tanstack/match-sorter-utils": "^8.15.1",
