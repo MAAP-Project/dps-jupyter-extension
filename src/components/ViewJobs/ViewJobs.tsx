@@ -59,7 +59,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
         setJobs(null);
         setError('Failed to load jobs');
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
       if (error?.code === 401) {
@@ -79,11 +79,10 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     loadJobs();
   }, [api]);
 
-
   const handleTokenSubmitted = () => {
-    setShowTokenModal(false)
-    loadJobs()
-  }
+    setShowTokenModal(false);
+    loadJobs();
+  };
 
   useEffect(() => {
     if (!selectedJob) {
@@ -340,7 +339,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     <>
       <TokenModal
         open={showTokenModal}
-        message='A token is required to view your jobs.'
+        message="A token is required to view your jobs."
         onClose={() => setShowTokenModal(false)}
         onSubmit={handleTokenSubmitted}
       />

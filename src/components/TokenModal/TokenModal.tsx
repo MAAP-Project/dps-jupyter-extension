@@ -60,8 +60,7 @@ export const TokenModal = ({ open, message, onClose, onSubmit }: TokenModalProps
 
       <DialogContent sx={{ paddingBottom: 0 }}>
         <DialogContentText>
-          {message} 
-          {' '}Retrieve your token from{' '}
+          {message} Retrieve your token from{' '}
           <a
             href={profileUrl}
             target="_blank"

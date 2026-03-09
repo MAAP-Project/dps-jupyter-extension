@@ -368,7 +368,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     <>
       <TokenModal
         open={showTokenModal}
-        message='A token is required to submit jobs.'
+        message="A token is required to submit jobs."
         onClose={() => setShowTokenModal(false)}
         onSubmit={() => setShowTokenModal(false)}
       />
