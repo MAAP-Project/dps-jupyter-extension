@@ -1,4 +1,4 @@
-import { MAAP_API_ENDPOINTS } from "../constants";
+import { MAAP_API_ENDPOINTS } from '../constants';
 import {
   JobResponse,
   JobResultResponse,
@@ -7,8 +7,8 @@ import {
   ProcessListResponse,
   ProcessResponse,
   ResourceResponse,
-} from "../types/api";
-import { PageConfig } from "@jupyterlab/coreutils";
+} from '../types/api';
+import { PageConfig } from '@jupyterlab/coreutils';
 
 export const BASE_URL = PageConfig.getBaseUrl();
 
@@ -19,7 +19,7 @@ type MaapSettings = {
 
 export type GetLatestSettings = () => Promise<MaapSettings>;
 
-type RequestOptions = Omit<RequestInit, "headers"> & {
+type RequestOptions = Omit<RequestInit, 'headers'> & {
   endpoint?: string;
   url?: string;
   auth?: boolean;
@@ -28,8 +28,8 @@ type RequestOptions = Omit<RequestInit, "headers"> & {
 };
 
 function joinUrl(base: string, path: string): string {
-  const b = base.endsWith("/") ? base.slice(0, -1) : base;
-  const p = path.startsWith("/") ? path : `/${path}`;
+  const b = base.endsWith('/') ? base.slice(0, -1) : base;
+  const p = path.startsWith('/') ? path : `/${path}`;
   return `${b}${p}`;
 }
 
@@ -37,15 +37,14 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
   /**
    * Single request helper: always reads latest settings right before calling fetch.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function request<T = any>(opts: RequestOptions): Promise<T> {
     const { maapApiUrl, maapToken } = await getLatestSettings();
 
-    const finalUrl =
-      opts.url ??
-      (opts.endpoint ? joinUrl(maapApiUrl, opts.endpoint) : undefined);
+    const finalUrl = opts.url ?? (opts.endpoint ? joinUrl(maapApiUrl, opts.endpoint) : undefined);
 
     if (!finalUrl) {
-      throw new Error("request() requires either url or endpoint");
+      throw new Error('request() requires either url or endpoint');
     }
 
     const headers: Record<string, string> = {
@@ -53,12 +52,12 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     };
 
     // Only set JSON content-type by default when caller is NOT sending raw body
-    if (!opts.rawBody && !headers["Content-Type"]) {
-      headers["Content-Type"] = "application/json";
+    if (!opts.rawBody && !headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
     }
 
     if (opts.auth) {
-      headers["cpticket"] = maapToken;
+      headers['cpticket'] = maapToken;
     }
 
     const response = await fetch(finalUrl, {
@@ -72,12 +71,13 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     }
 
     // Try JSON first; fall back to text if no JSON
-    const ct = response.headers.get("content-type") || "";
-    if (ct.includes("application/json")) {
+    const ct = response.headers.get('content-type') || '';
+    if (ct.includes('application/json')) {
       return (await response.json()) as T;
     }
 
     // If it isn't JSON, return text (as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (await response.text()) as any as T;
   }
 
@@ -85,45 +85,49 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
   // API methods
   // -------------------------
 
+  /********************************************************************************
+   * Submit a job to the Data Processing System (DPS).
+   * @param processId OGC process ID
+   * @param data
+   * @returns
+   */
   async function submitJob(
     processId: string,
-    data: any,
-  ): Promise<
-    ProcessExecutionSuccessResponse | ProcessExecutionFailureResponse
-  > {
-    try {
-      const endpoint = MAAP_API_ENDPOINTS.SUBMIT_JOB.replace(
-        "{PROCESS_ID}",
-        processId,
-      );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any
+  ): Promise<ProcessExecutionSuccessResponse | ProcessExecutionFailureResponse> {
+    const endpoint = MAAP_API_ENDPOINTS.SUBMIT_JOB.replace('{PROCESS_ID}', processId);
 
-      const response = await request<any>({
-        endpoint,
-        method: "POST",
-        auth: true,
-        body: JSON.stringify(data),
-      });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = await request<any>({
+      endpoint,
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify(data),
+    });
 
-      // Process execution submission is successful if response.processID is present
-      if (response.processID) {
-        const successResponse: ProcessExecutionSuccessResponse = {
-          ...response,
-        };
-        return successResponse;
-      } else {
-        // Response code is okay, but process failed to execute
-        const failureResponse: ProcessExecutionFailureResponse = {
-          ...response,
-        };
-        return failureResponse;
-      }
-    } catch (error) {
-      throw error;
+    // Process execution submission is successful if response.processID is present
+    if (response.processID) {
+      const successResponse: ProcessExecutionSuccessResponse = {
+        ...response,
+      };
+      return successResponse;
+    } else {
+      // Response code is okay, but process failed to execute
+      const failureResponse: ProcessExecutionFailureResponse = {
+        ...response,
+      };
+      return failureResponse;
     }
   }
 
+  /********************************************************************************
+   * Fetch Processes
+   * @param id
+   * @returns
+   */
   async function fetchProcesses(
-    id?: string | number,
+    id?: string | number
   ): Promise<ProcessListResponse | ProcessResponse | null> {
     try {
       const endpoint = id
@@ -133,19 +137,19 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
       if (id) {
         const data = await request<ProcessResponse>({
           endpoint,
-          method: "GET",
+          method: 'GET',
           auth: true,
         });
         return data;
       } else {
         const data = await request<ProcessListResponse>({
           endpoint,
-          method: "GET",
+          method: 'GET',
           auth: true,
         });
 
         if (!data?.processes || !Array.isArray(data.processes)) {
-          throw new Error("Failed to list processes. Invalid response format.");
+          throw new Error('Failed to list processes. Invalid response format.');
         }
 
         return data;
@@ -156,76 +160,92 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     }
   }
 
+  /********************************************************************************
+   * Fetch Jobs
+   * @param params
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function fetchJobs(params: Record<string, string> = {}): Promise<any> {
     const searchParams = new URLSearchParams(params);
     const queryString = searchParams.toString();
-    const endpoint =
-      MAAP_API_ENDPOINTS.GET_JOBS + (queryString ? `?${queryString}` : "");
+    const endpoint = MAAP_API_ENDPOINTS.GET_JOBS + (queryString ? `?${queryString}` : '');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return await request<any>({
       endpoint,
-      method: "GET",
+      method: 'GET',
       auth: true,
     });
   }
 
+  /********************************************************************************
+   *
+   * @param jobId Fetch Jobs by ID
+   * @param params
+   * @returns
+   */
   async function fetchJobById(
     jobId: string,
-    params: Record<string, string> = {},
+    params: Record<string, string> = {}
   ): Promise<JobResponse | unknown> {
     const searchParams = new URLSearchParams(params);
     const queryString = searchParams.toString();
     const endpoint =
-      MAAP_API_ENDPOINTS.GET_JOB_BY_ID.replace("{JOB_ID}", jobId) +
-      (queryString ? `?${queryString}` : "");
+      MAAP_API_ENDPOINTS.GET_JOB_BY_ID.replace('{JOB_ID}', jobId) +
+      (queryString ? `?${queryString}` : '');
 
     return await request<JobResponse>({
       endpoint,
-      method: "GET",
+      method: 'GET',
       auth: true,
     });
   }
 
-  async function fetchJobResults(
-    jobId: string,
-  ): Promise<JobResultResponse | unknown> {
-    const endpoint = MAAP_API_ENDPOINTS.GET_JOB_RESULTS.replace(
-      "{JOB_ID}",
-      jobId,
-    );
+  /********************************************************************************
+   *
+   * @param jobId Fetch Job results
+   * @returns
+   */
+  async function fetchJobResults(jobId: string): Promise<JobResultResponse | unknown> {
+    const endpoint = MAAP_API_ENDPOINTS.GET_JOB_RESULTS.replace('{JOB_ID}', jobId);
     return await request<JobResultResponse>({
       endpoint,
-      method: "GET",
+      method: 'GET',
       auth: true,
     });
   }
 
+  /********************************************************************************
+   *
+   * @returns Fetch resources
+   */
   async function fetchResources(): Promise<ResourceResponse | unknown> {
     const endpoint = MAAP_API_ENDPOINTS.GET_RESOURCES;
     return await request<ResourceResponse>({
       endpoint,
-      method: "GET",
+      method: 'GET',
       auth: true,
     });
   }
 
+  /********************************************************************************
+   * Cancel exec
+   * @param jobId
+   * @returns
+   */
   // TODO: update response type
   async function cancelExecution(
-    jobId: string,
+    jobId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any | unknown> {
-    try {
-      const endpoint = MAAP_API_ENDPOINTS.CANCEL_EXECUTION.replace(
-        "{JOB_ID}",
-        jobId,
-      );
-      return await request<any>({
-        endpoint,
-        method: "POST",
-        auth: true,
-      });
-    } catch (error) {
-      throw error;
-    }
+    const endpoint = MAAP_API_ENDPOINTS.CANCEL_EXECUTION.replace('{JOB_ID}', jobId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return await request<any>({
+      endpoint,
+      method: 'POST',
+      auth: true,
+    });
   }
 
   return {

@@ -1,6 +1,6 @@
-import React from 'react'
-import { ReactWidget } from '@jupyterlab/apputils'
-import { JupyterFrontEnd } from '@jupyterlab/application'
+import React from 'react';
+import { ReactWidget } from '@jupyterlab/apputils';
+import { JupyterFrontEnd } from '@jupyterlab/application';
 import { ViewJobs } from '../components/ViewJobs/ViewJobs';
 import { SubmitJobs } from '../components/SubmitJob/SubmitJob';
 import { MaapProvider } from '../MaapContext';
@@ -11,11 +11,8 @@ export class ViewJobsReactAppWidget extends ReactWidget {
   settings: ISettingRegistry.ISettings | null;
   app: JupyterFrontEnd;
 
-  constructor(
-    settings: ISettingRegistry.ISettings | null,
-    app: JupyterFrontEnd
-  ) {
-    super()
+  constructor(settings: ISettingRegistry.ISettings | null, app: JupyterFrontEnd) {
+    super();
     this.settings = settings;
     this.app = app;
   }
@@ -25,10 +22,10 @@ export class ViewJobsReactAppWidget extends ReactWidget {
       return <div>Settings not available</div>;
     }
     return (
-        <MaapProvider settings={this.settings}>
-          <ViewJobs app={this.app} />
-        </MaapProvider>
-    )
+      <MaapProvider settings={this.settings}>
+        <ViewJobs app={this.app} />
+      </MaapProvider>
+    );
   }
 }
 
@@ -42,7 +39,7 @@ export class SubmitJobsReactAppWidget extends ReactWidget {
     app: JupyterFrontEnd,
     initialData?: InitialJobData
   ) {
-    super()
+    super();
     this.settings = settings;
     this.app = app;
     this.initialData = initialData;
@@ -53,9 +50,9 @@ export class SubmitJobsReactAppWidget extends ReactWidget {
       return <div>Settings not available</div>;
     }
     return (
-        <MaapProvider settings={this.settings}>
-          <SubmitJobs app={this.app} initialData={this.initialData} />
-        </MaapProvider>
-    )
+      <MaapProvider settings={this.settings}>
+        <SubmitJobs app={this.app} initialData={this.initialData} />
+      </MaapProvider>
+    );
   }
 }

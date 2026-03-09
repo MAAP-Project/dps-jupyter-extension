@@ -1,6 +1,5 @@
-import { Notification } from "@jupyterlab/apputils";
-import { IStateDB } from "@jupyterlab/statedb";
-import { JUPYTER_EXT } from "../constants";
+import { Notification } from '@jupyterlab/apputils';
+import { JUPYTER_EXT } from '../constants';
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -9,15 +8,15 @@ import { JUPYTER_EXT } from "../constants";
  * @param seconds - string
  */
 export const secondsToReadableString = (seconds: string) => {
-  let d = Number(seconds);
+  const d = Number(seconds);
   if (isNaN(d)) {
-    return "";
+    return '';
   }
 
-  let h = Math.floor(d / 3600);
-  let m = Math.floor((d % 3600) / 60);
-  let s = Math.floor((d % 3600) % 60);
-  var str = h + "h " + m + "m " + s + "s ";
+  const h = Math.floor(d / 3600);
+  const m = Math.floor((d % 3600) / 60);
+  const s = Math.floor((d % 3600) % 60);
+  const str = h + 'h ' + m + 'm ' + s + 's ';
   return str;
 };
 
@@ -28,13 +27,14 @@ export const getProducts = (products: []) => {
 
   const urls = new Set();
   // note that currently there should only be one element in products
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   products.forEach((product: any) => {
-    product["urls"].forEach((url) => {
+    product['urls'].forEach((url) => {
       urls.add(url);
     });
   });
 
-  let urls_str = Array.from(urls).join("\r\n");
+  const urls_str = Array.from(urls).join('\r\n');
   return urls_str;
 };
 
@@ -45,90 +45,32 @@ export const getProducts = (products: []) => {
  * @returns A single folder path
  */
 export const getProductFolderPath = (products: []) => {
-  let productFolderPaths = new Set();
+  const productFolderPaths = new Set();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   products.forEach((product: any) => {
-    productFolderPaths.add(product["product_folder_path"]);
+    productFolderPaths.add(product['product_folder_path']);
   });
 
-  let productFolderPathsArr = Array.from(productFolderPaths);
+  const productFolderPathsArr = Array.from(productFolderPaths);
   if (productFolderPathsArr.length > 1) {
     console.error(
-      "Folder path length was " +
+      'Folder path length was ' +
         productFolderPathsArr.length +
-        ". We are only looking at the first element.",
+        '. We are only looking at the first element.'
     );
   }
 
   return productFolderPathsArr.length ? productFolderPathsArr[0] : null;
 };
 
-export var getUserInfo = function (callback) {
-  window.parent._keycloak
-    .loadUserInfo()
-    .success(function (profile) {
-      callback(profile);
-    })
-    .error(function () {
-      return "error";
-    });
-};
-
-/*export async function getUsernameToken(state: IStateDB, profileId: string, callback) {
-    let uname: string = DEFAULT_USERNAME
-    let ticket: string = '';
-
-    let ade_server = ''
-    let response = getEnvironmentInfo()
-
-    response.then((data) => {
-        console.log("ADE SERVER: ", data["ade_server"])
-        ade_server = data["ade_server"]
-    }).finally(() => {
-        if ("https://" + ade_server === document.location.origin) {
-            getUserInfo(function (profile: any) {
-                if (profile['cas:username'] === undefined) {
-                    Notification.error("Get profile failed.", { autoClose: false });
-                } else {
-                    console.log("Getting username...")
-                    uname = profile['cas:username'];
-                    ticket = profile['proxyGrantingTicket'];
-                    callback(uname, ticket);
-                    Notification.success("Got profile.");
-                }
-            });
-        } else {
-            console.log("Getting username...1")
-            console.log(state)
-            state.fetch(profileId).then((profile) => {
-                let profileObj = JSON.parse(JSON.stringify(profile));
-                console.log(profileObj)
-                Notification.success("Got profile.");
-                uname = profileObj.preferred_username;
-                ticket = profileObj.proxyGrantingTicket;
-                callback(uname, ticket);
-            }).catch((error) => {
-                console.log("failed to get profile")
-                console.log(error)
-                callback(uname, ticket);
-                Notification.error("Get profile failed. ", { autoClose: false });
-            });
-        }
-    })
-
-
-}*/
-
 // Copies jupyter notebook command or product folder path to user clipboard
-export async function copyTextToClipboard(
-  text: string,
-  successMessage: string,
-) {
+export async function copyTextToClipboard(text: string, successMessage: string) {
   try {
     await navigator.clipboard.writeText(text).then(() => {
       Notification.success(successMessage, { autoClose: 3000 });
     });
   } catch (error) {
-    console.warn("Copy failed", error);
+    console.warn('Copy failed', error);
   }
 }
 
@@ -158,14 +100,14 @@ export const handleCopyToClipboard = (text: string) => {
 
 export const calculateDuration = (
   started: string | undefined,
-  finished: string | undefined,
+  finished: string | undefined
 ): string => {
-  if (!started || !finished) return "-";
+  if (!started || !finished) return '-';
   const startDate = new Date(started);
   const finishDate = new Date(finished);
   const durationMs = finishDate.getTime() - startDate.getTime();
 
-  if (durationMs < 0) return "-";
+  if (durationMs < 0) return '-';
 
   const seconds = Math.floor(durationMs / 1000);
   const hours = Math.floor(seconds / 3600);

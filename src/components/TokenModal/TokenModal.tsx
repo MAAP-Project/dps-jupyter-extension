@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  TextField
+  TextField,
 } from '@mui/material';
 import { MAAP_PROFILE_URL } from '../../constants';
 import { useMaapContext } from '../../MaapContext';
@@ -52,8 +52,8 @@ export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
 
       <DialogContent sx={{ paddingBottom: 0 }}>
         <DialogContentText>
-          To submit jobs, you need to provide your MAAP
-          PGT Token. You can get this token by visiting{' '}
+          To submit jobs, you need to provide your MAAP PGT Token. You can get this token by
+          visiting{' '}
           <a
             href={profileUrl}
             target="_blank"
@@ -72,7 +72,7 @@ export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
           type="password"
           fullWidth
           variant="outlined"
-          onChange={e => setMaapToken(e.target.value)}
+          onChange={(e) => setMaapToken(e.target.value)}
           sx={{ mt: 2 }}
         />
 

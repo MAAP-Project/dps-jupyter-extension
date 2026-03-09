@@ -5,7 +5,7 @@ import React, {
   useMemo,
   ReactNode,
   useCallback,
-  useEffect
+  useEffect,
 } from 'react';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
@@ -15,7 +15,9 @@ type MaapSettings = {
 };
 
 interface IMaapContextType extends MaapSettings {
+  // eslint-disable-next-line no-unused-vars
   setMaapApiUrl: (url: string) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   setMaapToken: (token: string) => Promise<void>;
 
   /**
@@ -46,14 +48,11 @@ interface IMaapProviderProps {
 }
 
 const DEFAULTS: MaapSettings = {
-  maapApiUrl: 'api.uat1.maap-project.org',
-  maapToken: ''
+  maapApiUrl: '',
+  maapToken: '',
 };
 
-export const MaapProvider: React.FC<IMaapProviderProps> = ({
-  children,
-  settings
-}) => {
+export const MaapProvider: React.FC<IMaapProviderProps> = ({ children, settings }) => {
   const [state, setState] = useState<MaapSettings>(DEFAULTS);
 
   // Load initial values from settings once on mount
@@ -65,8 +64,7 @@ export const MaapProvider: React.FC<IMaapProviderProps> = ({
         const apiUrlRes = await settings.get('maapApiUrl');
         const tokenRes = await settings.get('maapToken');
 
-        const maapApiUrl =
-          (apiUrlRes.composite as string) ?? DEFAULTS.maapApiUrl;
+        const maapApiUrl = (apiUrlRes.composite as string) ?? DEFAULTS.maapApiUrl;
         const maapToken = (tokenRes.composite as string) ?? DEFAULTS.maapToken;
 
         if (!cancelled) {
@@ -85,8 +83,7 @@ export const MaapProvider: React.FC<IMaapProviderProps> = ({
   const setMaapApiUrl = useCallback(
     async (maapApiUrl: string) => {
       await settings.set('maapApiUrl', maapApiUrl);
-      // Keep local state consistent for UI consumers
-      setState(prev => ({ ...prev, maapApiUrl }));
+      setState((prev) => ({ ...prev, maapApiUrl }));
     },
     [settings]
   );
@@ -94,20 +91,17 @@ export const MaapProvider: React.FC<IMaapProviderProps> = ({
   const setMaapToken = useCallback(
     async (maapToken: string) => {
       await settings.set('maapToken', maapToken);
-      // Keep local state consistent for UI consumers
-      setState(prev => ({ ...prev, maapToken }));
+      setState((prev) => ({ ...prev, maapToken }));
     },
     [settings]
   );
 
   const getLatestSettings = useCallback(async (): Promise<MaapSettings> => {
-    const apiUrlRes = await settings.get('maapApiUrl');
-    const tokenRes = await settings.get('maapToken');
+    const apiUrlRes = settings.get('maapApiUrl');
+    const tokenRes = settings.get('maapToken');
 
     const maapApiUrl = (apiUrlRes.composite as string) ?? DEFAULTS.maapApiUrl;
     const maapToken = (tokenRes.composite as string) ?? DEFAULTS.maapToken;
-
-    // Optional: update local state so UI reflects latest values
     setState({ maapApiUrl, maapToken });
 
     return { maapApiUrl, maapToken };
@@ -119,7 +113,7 @@ export const MaapProvider: React.FC<IMaapProviderProps> = ({
       setMaapApiUrl,
       setMaapToken,
       getLatestSettings,
-      settings
+      settings,
     }),
     [state, setMaapApiUrl, setMaapToken, getLatestSettings, settings]
   );

@@ -1,45 +1,47 @@
 /**
- * Schema defined here: 
+ * Schema defined here:
  * https://raw.githubusercontent.com/MAAP-Project/joint-open-api-specs/refs/heads/nasa-adaptation/ogc-api-processes/openapi-template/schemas/common-core/link.yaml?token=GHSAT0AAAAAADHRRGGMBURECIJ47XPIVTBU2GLKSXQ
  */
 export interface JobLink {
-    href: string;
-    rel?: string;
-    type?: string;
-    hreflang?: string;
-    title?: string;
+  href: string;
+  rel?: string;
+  type?: string;
+  hreflang?: string;
+  title?: string;
 }
 
 /**
  *  Schema defined here:
- *  https://raw.githubusercontent.com/MAAP-Project/joint-open-api-specs/refs/heads/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/submittedJob.yaml?token=GHSAT0AAAAAADHRRGGMUURGUBMKZFHZQ55S2GLKJGA 
+ *  https://raw.githubusercontent.com/MAAP-Project/joint-open-api-specs/refs/heads/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/submittedJob.yaml?token=GHSAT0AAAAAADHRRGGMUURGUBMKZFHZQ55S2GLKJGA
  */
 export interface ProcessExecutionSuccessResponse {
-    jobID: string;
-    title?: string;
-    description?: string;
-    keywords?: string[];
-    metadata?: any[];
-    processID?: number;
-    type?: string | null;
-    request?: any | null;
-    status?: string;
-    message?: string | null;
-    created?: string;
-    updated?: string | null;
-    links?: JobLink[];
+  jobID: string;
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: any[];
+  processID?: number;
+  type?: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  request?: any | null;
+  status?: string;
+  message?: string | null;
+  created?: string;
+  updated?: string | null;
+  links?: JobLink[];
 }
 
 /**
- * Schema defined here: 
+ * Schema defined here:
  * https://raw.githubusercontent.com/MAAP-Project/joint-open-api-specs/refs/heads/nasa-adaptation/ogc-api-processes/openapi-template/schemas/common-core/exception.yaml?token=GHSAT0AAAAAADHRRGGMB4YS3QWLXMJBJY6O2GLKCSQ
  */
 export interface ProcessExecutionFailureResponse {
-    status: number;
-    type?: string;
-    title?: string;
-    detail?: string;
-    instance?: string;
+  status: number;
+  type?: string;
+  title?: string;
+  detail?: string;
+  instance?: string;
 }
 
 export interface Job {
@@ -62,14 +64,14 @@ export interface JobsOverviewResponse {
   links: JobLink[];
 }
 
-
 /**
  * Schema defined here:
  * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/jobList.yaml
  */
 export interface JobsListResponse {
-    jobs: any[];
-    links: JobLink[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jobs: any[];
+  links: JobLink[];
 }
 
 /**
@@ -77,20 +79,23 @@ export interface JobsListResponse {
  * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/statusInfo.yaml
  */
 export interface JobResponse {
-    id: string;
-    processID?: number;
-    type?: string;
-    request?: any;
-    status?: string;
-    message?: string;
-    created?: string;
-    started?: string;
-    updated?: string;
-    finished?: string;
-    links?: JobLink[];
-    progress?: number;
-    outputs?: any[];
-    exception?: any; //TODO: implement exception type
+  id: string;
+  processID?: number;
+  type?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  request?: any;
+  status?: string;
+  message?: string;
+  created?: string;
+  started?: string;
+  updated?: string;
+  finished?: string;
+  links?: JobLink[];
+  progress?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  outputs?: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  exception?: any; //TODO: implement exception type
 }
 
 /**
@@ -98,16 +103,18 @@ export interface JobResponse {
  * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/processSummary.yaml
  */
 export interface ProcessSummary {
-    title?: string;
-    description?: string;
-    keywords?: string[];
-    metadata?: any[];
-    id: string;
-    version: string;
-    processID?: number;
-    cwlLink?: JobLink;
-    jobControlOptions?: any[];
-    links?: JobLink[];
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: any[];
+  id: string;
+  version: string;
+  processID?: number;
+  cwlLink?: JobLink;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jobControlOptions?: any[];
+  links?: JobLink[];
 }
 
 /**
@@ -115,30 +122,33 @@ export interface ProcessSummary {
  * https://github.com/MAAP-Project/joint-open-api-specs/blob/nasa-adaptation/ogc-api-processes/openapi-template/schemas/processes-core/processList.yaml
  */
 export interface ProcessListResponse {
-    processes: ProcessSummary[];
-    links: JobLink[];
+  processes: ProcessSummary[];
+  links: JobLink[];
 }
 
 export interface ProcessResponse {
-    title?: string;
-    description?: string;
-    keywords?: string[];
-    metadata?: any[];
-    id?: string;
-    processID?: string | number;
-    version?: string;
-    jobControlOptions?: any[];
-    author?: string;
-    deployedBy?: string;
-    githubUrl?: string;
-    gitCommitHash?: string | null;
-    cwlLink?: string | JobLink;
-    ramMin?: number;
-    coresMin?: number;
-    baseCommand?: string;
-    links?: JobLink[];
-    inputs?: InputObj;
-    data?: any;
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata?: any[];
+  id?: string;
+  processID?: string | number;
+  version?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jobControlOptions?: any[];
+  author?: string;
+  deployedBy?: string;
+  githubUrl?: string;
+  gitCommitHash?: string | null;
+  cwlLink?: string | JobLink;
+  ramMin?: number;
+  coresMin?: number;
+  baseCommand?: string;
+  links?: JobLink[];
+  inputs?: InputObj;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
 }
 
 export interface ProcessInput {
@@ -148,22 +158,21 @@ export interface ProcessInput {
   placeholder: string; // placeholder is what HySDS stores label as
   default?: string | number | boolean;
   optional?: boolean;
-};
+}
 
 export interface InputObj {
   [key: string]: ProcessInput;
-};
+}
 
 export interface ResourceResponse {
-    message: string;
-    code: number;
-    queues?: string[];
+  message: string;
+  code: number;
+  queues?: string[];
 }
 
 export type JobResultResponse =
   | Record<string, { links: JobLink[]; id: string }>
   | { detail: string };
-
 
 export interface OgcApiError {
   type?: string | null;
@@ -173,8 +182,7 @@ export interface OgcApiError {
   instance?: string;
 }
 
-
 //TODO: dps/job/cancel/ endpoint currently returns WPS style response, which we want to move away from.
 // export interface CancelExecutionResponse {
-    
+
 // }

@@ -1,33 +1,24 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
-} from "material-react-table";
-import {
-  Box,
-  CircularProgress,
-  Alert,
-  Tabs,
-  Tab,
-  Chip,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { JupyterFrontEnd } from "@jupyterlab/application";
-import { Notification } from "@jupyterlab/apputils";
-import { useMaapApi } from "../../hooks/useMaapApi";
+} from 'material-react-table';
+import { Box, CircularProgress, Alert, Tabs, Tab, Chip, IconButton, Tooltip } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { JupyterFrontEnd } from '@jupyterlab/application';
+import { Notification } from '@jupyterlab/apputils';
+import { useMaapApi } from '../../hooks/useMaapApi';
 import {
   JobOverviewResponse,
   JobResponse,
   JobsOverviewResponse,
   ProcessResponse,
-} from "../../types/api";
-import { InitialJobData } from "../../types/types";
-import { CopyableField } from "../CopyableField/CopyableField";
-import { calculateDuration, handleCopyToClipboard } from "../../utils/generic";
+} from '../../types/api';
+import { InitialJobData } from '../../types/types';
+import { CopyableField } from '../CopyableField/CopyableField';
+import { calculateDuration, handleCopyToClipboard, openSubmitJobs } from '../../utils/generic';
 
 interface ViewJobsProps {
   app?: JupyterFrontEnd;
@@ -38,55 +29,40 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   const [jobs, setJobs] = useState<JobOverviewResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedJob, setSelectedJob] = useState<JobOverviewResponse | null>(
-    null,
-  );
-  const [selectedJobDetails, setSelectedJobDetails] = useState<any | null>(
-    null,
-  );
-  const [selectedJobProcess, setSelectedJobProcess] =
-    useState<ProcessResponse | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobOverviewResponse | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [selectedJobDetails, setSelectedJobDetails] = useState<any | null>(null);
+  const [selectedJobProcess, setSelectedJobProcess] = useState<ProcessResponse | null>(null);
   const [loadingJobDetails, setLoadingJobDetails] = useState(false);
-  const [selectedJobResults, setSelectedJobResults] = useState<any | null>(
-    null,
-  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [selectedJobResults, setSelectedJobResults] = useState<any | null>(null);
   const [loadingJobResults, setLoadingJobResults] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
 
-  const nonterminalJobStatuses = ["accepted", "running", "queued"];
+  const nonterminalJobStatuses = ['accepted', 'running', 'queued'];
 
   const loadJobs = async () => {
     setLoading(true);
     setError(null);
     try {
       const result: JobsOverviewResponse = await api.fetchJobs({
-        fields: "created,started,finished,tags",
+        fields: 'created,started,finished,tags',
       }); // TODO: add processName.
-      console.log("Fetching jobs", result.jobs);
+      console.log('Fetching jobs', result.jobs);
       if (result) {
         setJobs(result.jobs);
         setLastRefreshTime(new Date());
       } else {
         setJobs(null);
-        setError("Failed to load jobs");
+        setError('Failed to load jobs');
       }
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while loading jobs",
-      );
+      setError(err instanceof Error ? err.message : 'An error occurred while loading jobs');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log("In useeffect: ");
-    console.log(selectedJob);
-    console.log(selectedJobDetails);
-  }, [selectedJob, selectedJobDetails]);
 
   useEffect(() => {
     loadJobs();
@@ -102,22 +78,20 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
       setLoadingJobDetails(true);
       try {
         const details = (await api.fetchJobById(selectedJob.jobID, {
-          fields: "inputs,created,started,finished,tags",
+          fields: 'inputs,created,started,finished,tags',
         })) as JobResponse;
-        console.log("Details: ", details);
+        console.log('Details: ', details);
         if (details) {
           setSelectedJobDetails(details);
 
           // Get process definition of selected job to get input types
           try {
-            const process = (await api.fetchProcesses(
-              details.processID,
-            )) as ProcessResponse;
+            const process = (await api.fetchProcesses(details.processID)) as ProcessResponse;
             if (process) {
               setSelectedJobProcess(process);
             }
           } catch (error) {
-            let message = `Failed to fetch process definition for processID '${selectedJob.processID}': ${error}`;
+            const message = `Failed to fetch process definition for processID '${selectedJob.processID}': ${error}`;
             Notification.error(message, { autoClose: false });
             throw new Error(message);
           }
@@ -126,7 +100,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
         }
       } catch (err) {
         setSelectedJobDetails(null);
-        console.error("Failed to fetch job details:", err);
+        console.error('Failed to fetch job details:', err);
       } finally {
         setLoadingJobDetails(false);
       }
@@ -150,7 +124,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             setSelectedJobResults(results);
           }
         } catch (error) {
-          let message = `Failed to fetch job results: ${error}`;
+          const message = `Failed to fetch job results: ${error}`;
           console.error(message);
           Notification.error(message, { autoClose: false });
         } finally {
@@ -164,96 +138,84 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
 
   const formatDateTime = (value: string) => {
     const date = new Date(value);
-    return date.toISOString().split(".")[0] + "Z";
+    return date.toISOString().split('.')[0] + 'Z';
   };
 
   const columns = useMemo<MRT_ColumnDef<JobOverviewResponse>[]>(
     () => [
       {
-        accessorKey: "job_type",
-        header: "Job Type",
+        accessorKey: 'job_type',
+        header: 'Job Type',
       },
       {
-        accessorKey: "tags",
-        header: "Tags",
+        accessorKey: 'tags',
+        header: 'Tags',
       },
       {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: 'status',
+        header: 'Status',
         Cell: ({ cell }) => {
           const status = cell.getValue<string>();
           const statusColors: Record<
             string,
-            | "default"
-            | "primary"
-            | "secondary"
-            | "error"
-            | "info"
-            | "success"
-            | "warning"
+            'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'
           > = {
-            successful: "success",
-            failed: "error",
-            running: "info",
-            queued: "warning",
-            accepted: "warning",
+            successful: 'success',
+            failed: 'error',
+            running: 'info',
+            queued: 'warning',
+            accepted: 'warning',
           };
-          const color = statusColors[status?.toLowerCase()] || "default";
+          const color = statusColors[status?.toLowerCase()] || 'default';
           return (
             <Chip
               label={status}
               color={color}
               variant="filled"
               size="small"
-              sx={{ color: "white" }}
+              sx={{ color: 'white' }}
             />
           );
         },
-        muiTableBodyCellProps: { align: "center" },
-        muiTableHeadCellProps: { align: "center" },
+        muiTableBodyCellProps: { align: 'center' },
+        muiTableHeadCellProps: { align: 'center' },
         enableSorting: false,
-        filterVariant: "select",
-        filterSelectOptions: [
-          "successful",
-          "failed",
-          "running",
-          "queued",
-          "accepted",
-        ],
+        filterVariant: 'select',
+        filterSelectOptions: ['successful', 'failed', 'running', 'queued', 'accepted'],
       },
       {
-        accessorKey: "created",
-        header: "Queued",
+        accessorKey: 'created',
+        header: 'Queued',
         Cell: ({ cell }) => {
           const value = cell.getValue<string>();
-          if (!value) return "";
+          if (!value) return '';
           return formatDateTime(value);
         },
       },
       {
-        accessorKey: "started",
-        header: "Started",
+        accessorKey: 'started',
+        header: 'Started',
         Cell: ({ cell }) => {
           const value = cell.getValue<string>();
-          if (!value) return "";
+          if (!value) return '';
           return formatDateTime(value);
         },
       },
       {
-        accessorKey: "finished",
-        header: "Completed",
+        accessorKey: 'finished',
+        header: 'Completed',
         Cell: ({ cell }) => {
           const value = cell.getValue<string>();
-          if (!value) return "";
+          if (!value) return '';
           return formatDateTime(value);
         },
       },
       {
-        accessorKey: "jobID",
-        header: "Job ID",
+        accessorKey: 'jobID',
+        header: 'Job ID',
       },
     ],
-    [],
+    []
   );
 
   const table = useMaterialReactTable({
@@ -263,17 +225,17 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
       isLoading: loading,
     },
     initialState: {
-      density: "compact",
+      density: 'compact',
     },
     enableColumnFilters: true,
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <button className="st-button" onClick={loadJobs} disabled={loading}>
           Refresh
         </button>
         {lastRefreshTime && (
-          <span style={{ fontSize: "0.85rem", color: "#666" }}>
+          <span style={{ fontSize: '0.85rem', color: '#666' }}>
             Last updated: {lastRefreshTime.toLocaleTimeString()}
           </span>
         )}
@@ -281,20 +243,18 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     ),
     muiTableBodyRowProps: ({ row }) => ({
       onClick: () => {
-        console.log("Selected job: ", row.original);
+        console.log('Selected job: ', row.original);
         setSelectedJob(row.original);
       },
       sx: {
-        cursor: "pointer",
+        cursor: 'pointer',
         backgroundColor:
-          selectedJob?.jobID === row.original.jobID
-            ? "rgba(33, 150, 243, 0.1)"
-            : "transparent",
-        "&:hover": {
+          selectedJob?.jobID === row.original.jobID ? 'rgba(33, 150, 243, 0.1)' : 'transparent',
+        '&:hover': {
           backgroundColor:
             selectedJob?.jobID === row.original.jobID
-              ? "rgba(33, 150, 243, 0.15)"
-              : "rgba(0, 0, 0, 0.04)",
+              ? 'rgba(33, 150, 243, 0.15)'
+              : 'rgba(0, 0, 0, 0.04)',
         },
       },
     }),
@@ -313,10 +273,10 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     return (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
         }}
       >
         <CircularProgress />
@@ -326,14 +286,14 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
 
   const handleSubmitNewJob = () => {
     if (app) {
-      app.commands.execute("jobs_submit:open");
+      openSubmitJobs(app, null);
     }
   };
 
   // TODO: API endpoint needs to be updated
-  const handleCancelJob = async (jobID: string) => {
-    let response = await api.cancelExecution(jobID);
-  };
+  // const handleCancelJob = async (jobID: string) => {
+  //   const response = await api.cancelExecution(jobID);
+  // };
 
   // async function navigateToFolder(): Promise<void> {
   //   const contents = app.serviceManager.contents;
@@ -363,9 +323,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     <Box sx={{ padding: 2 }}>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           marginBottom: 2,
         }}
       >
@@ -379,19 +339,19 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
         <Box
           sx={{
             marginTop: 3,
-            backgroundColor: "#f5f5f5",
+            backgroundColor: '#f5f5f5',
             borderRadius: 1,
-            border: "1px solid #ddd",
+            border: '1px solid #ddd',
           }}
         >
           <Box
             sx={{
               borderBottom: 1,
-              borderColor: "divider",
+              borderColor: 'divider',
               padding: 2,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <h3 style={{ margin: 0 }}>Job Details</h3>
@@ -403,11 +363,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             }
               }>Cancel Job</button>
           ) : null} */}
-            <IconButton
-              size="small"
-              onClick={() => setSelectedJob(null)}
-              sx={{ color: "#666" }}
-            >
+            <IconButton size="small" onClick={() => setSelectedJob(null)} sx={{ color: '#666' }}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -416,8 +372,8 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             onChange={(_, newValue) => setActiveTab(newValue)}
             sx={{
               borderBottom: 1,
-              borderColor: "divider",
-              backgroundColor: "white",
+              borderColor: 'divider',
+              backgroundColor: 'white',
             }}
           >
             <Tab label="General" />
@@ -428,9 +384,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
 
           <Box sx={{ padding: 2 }}>
             {activeTab === 0 && (
-              <Box
-                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
-              >
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
                 <CopyableField label="Job ID" value={selectedJob.jobID} />
                 <CopyableField
                   label="Queued"
@@ -439,13 +393,10 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                       ? formatDateTime(selectedJobDetails.created)
                       : selectedJob.created
                         ? formatDateTime(selectedJob.created)
-                        : "-"
+                        : '-'
                   }
                 />
-                <CopyableField
-                  label="Process ID"
-                  value={selectedJobDetails?.processID}
-                />
+                <CopyableField label="Process ID" value={selectedJobDetails?.processID} />
                 <CopyableField
                   label="Started"
                   value={
@@ -453,7 +404,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                       ? formatDateTime(selectedJobDetails.started)
                       : selectedJob.started
                         ? formatDateTime(selectedJob.started)
-                        : "-"
+                        : '-'
                   }
                 />
                 <CopyableField label="Status" value={selectedJob.status} />
@@ -464,18 +415,15 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                       ? formatDateTime(selectedJobDetails.finished)
                       : selectedJob.finished
                         ? formatDateTime(selectedJob.finished)
-                        : "-"
+                        : '-'
                   }
                 />
-                <CopyableField
-                  label="Tags"
-                  value={selectedJob.tags?.join(", ") || "-"}
-                />
+                <CopyableField label="Tags" value={selectedJob.tags?.join(', ') || '-'} />
                 <CopyableField
                   label="Duration"
                   value={calculateDuration(
                     selectedJobDetails?.started || selectedJob.started,
-                    selectedJobDetails?.finished || selectedJob.finished,
+                    selectedJobDetails?.finished || selectedJob.finished
                   )}
                 />
               </Box>
@@ -484,67 +432,67 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             {activeTab === 1 && (
               <Box>
                 {loadingJobDetails ? (
-                  <p style={{ color: "#666" }}>Loading inputs...</p>
+                  <p style={{ color: '#666' }}>Loading inputs...</p>
                 ) : selectedJobDetails?.inputs ? (
                   <>
                     <Box
                       sx={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr 1fr",
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr 1fr',
                         gap: 2,
-                        alignItems: "start",
+                        alignItems: 'start',
                       }}
                     >
                       <Box
                         sx={{
-                          fontWeight: "bold",
+                          fontWeight: 'bold',
                           paddingBottom: 1,
-                          borderBottom: "1px solid #ddd",
+                          borderBottom: '1px solid #ddd',
                         }}
                       >
                         Input Name
                       </Box>
                       <Box
                         sx={{
-                          fontWeight: "bold",
+                          fontWeight: 'bold',
                           paddingBottom: 1,
-                          borderBottom: "1px solid #ddd",
+                          borderBottom: '1px solid #ddd',
                         }}
                       >
                         Type
                       </Box>
                       <Box
                         sx={{
-                          fontWeight: "bold",
+                          fontWeight: 'bold',
                           paddingBottom: 1,
-                          borderBottom: "1px solid #ddd",
+                          borderBottom: '1px solid #ddd',
                         }}
                       >
                         Value
                       </Box>
                       {Array.isArray(selectedJobDetails.inputs) ? (
                         selectedJobDetails.inputs.map(
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (input: any, index: number) => (
                             <React.Fragment key={index}>
-                              <Box sx={{ fontWeight: "bold" }}>
+                              <Box sx={{ fontWeight: 'bold' }}>
                                 {input.name || `Input ${index}`}
                               </Box>
 
-                              <Box sx={{ fontSize: "0.9rem" }}>
-                                {selectedJobProcess?.inputs?.[input.name]
-                                  ?.type || "-"}
+                              <Box sx={{ fontSize: '0.9rem' }}>
+                                {selectedJobProcess?.inputs?.[input.name]?.type || '-'}
                               </Box>
 
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  alignItems: 'center',
                                   gap: 0.5,
-                                  "&:hover .copy-button": { opacity: 1 },
+                                  '&:hover .copy-button': { opacity: 1 },
                                 }}
                               >
                                 <span>
-                                  {typeof input.value === "string"
+                                  {typeof input.value === 'string'
                                     ? input.value
                                     : JSON.stringify(input.value)}
                                 </span>
@@ -552,90 +500,87 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                                   size="small"
                                   onClick={() =>
                                     handleCopyToClipboard(
-                                      typeof input.value === "string"
+                                      typeof input.value === 'string'
                                         ? input.value
-                                        : JSON.stringify(input.value),
+                                        : JSON.stringify(input.value)
                                     )
                                   }
                                   sx={{
                                     opacity: 0,
-                                    transition: "opacity 0.2s",
-                                    padding: "2px",
-                                    "&:hover": {
-                                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                                    transition: 'opacity 0.2s',
+                                    padding: '2px',
+                                    '&:hover': {
+                                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
                                     },
                                   }}
                                   className="copy-button"
                                 >
-                                  <ContentCopyIcon sx={{ fontSize: "1rem" }} />
+                                  <ContentCopyIcon sx={{ fontSize: '1rem' }} />
                                 </IconButton>
                               </Box>
                             </React.Fragment>
-                          ),
+                          )
                         )
-                      ) : typeof selectedJobDetails.inputs === "object" ? (
+                      ) : typeof selectedJobDetails.inputs === 'object' ? (
                         Object.entries(selectedJobDetails.inputs).map(
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           ([key, value]: [string, any]) => (
                             <React.Fragment key={key}>
-                              <Box sx={{ fontWeight: "bold" }}>{key}</Box>
+                              <Box sx={{ fontWeight: 'bold' }}>{key}</Box>
 
-                              <Box sx={{ color: "#666", fontSize: "0.9rem" }}>
-                                {typeof value === "string"
-                                  ? "string"
-                                  : typeof value === "number"
-                                    ? "number"
-                                    : typeof value === "boolean"
-                                      ? "boolean"
-                                      : "object"}
+                              <Box sx={{ color: '#666', fontSize: '0.9rem' }}>
+                                {typeof value === 'string'
+                                  ? 'string'
+                                  : typeof value === 'number'
+                                    ? 'number'
+                                    : typeof value === 'boolean'
+                                      ? 'boolean'
+                                      : 'object'}
                               </Box>
 
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
+                                  display: 'flex',
+                                  alignItems: 'center',
                                   gap: 0.5,
-                                  "&:hover .copy-button": { opacity: 1 },
+                                  '&:hover .copy-button': { opacity: 1 },
                                 }}
                               >
                                 <span>
-                                  {typeof value === "string"
-                                    ? value
-                                    : JSON.stringify(value)}
+                                  {typeof value === 'string' ? value : JSON.stringify(value)}
                                 </span>
                                 <IconButton
                                   size="small"
                                   onClick={() =>
                                     handleCopyToClipboard(
-                                      typeof value === "string"
-                                        ? value
-                                        : JSON.stringify(value),
+                                      typeof value === 'string' ? value : JSON.stringify(value)
                                     )
                                   }
                                   sx={{
                                     opacity: 0,
-                                    transition: "opacity 0.2s",
-                                    padding: "2px",
-                                    "&:hover": {
-                                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                                    transition: 'opacity 0.2s',
+                                    padding: '2px',
+                                    '&:hover': {
+                                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
                                     },
                                   }}
                                   className="copy-button"
                                 >
-                                  <ContentCopyIcon sx={{ fontSize: "1rem" }} />
+                                  <ContentCopyIcon sx={{ fontSize: '1rem' }} />
                                 </IconButton>
                               </Box>
                             </React.Fragment>
-                          ),
+                          )
                         )
                       ) : (
-                        <Box sx={{ gridColumn: "1 / -1", color: "#666" }}>
+                        <Box sx={{ gridColumn: '1 / -1', color: '#666' }}>
                           No input data available
                         </Box>
                       )}
                     </Box>
                   </>
                 ) : (
-                  <p style={{ color: "#666" }}>No input data available</p>
+                  <p style={{ color: '#666' }}>No input data available</p>
                 )}
 
                 {selectedJob && app && !loadingJobDetails && (
@@ -649,7 +594,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                             queue: selectedJobDetails?.queue,
                             processID: selectedJobDetails?.processID,
                           };
-                          app.commands.execute("jobs_submit:open", {
+                          app.commands.execute('jobs_submit:open', {
                             ...initialData,
                           });
                         }}
@@ -665,96 +610,86 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             {activeTab === 2 && (
               <Box>
                 {loadingJobResults ? (
-                  <p style={{ color: "#666" }}>Loading output data...</p>
-                ) : selectedJobResults && !("detail" in selectedJobResults) ? (
-                  <Box
-                    sx={{ display: "grid", gridTemplateColumns: "1fr", gap: 2 }}
-                  >
+                  <p style={{ color: '#666' }}>Loading output data...</p>
+                ) : selectedJobResults && !('detail' in selectedJobResults) ? (
+                  <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
                     {Object.entries(selectedJobResults).map(
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       ([outputKey, outputData]: [string, any]) => (
                         <Box
                           key={outputKey}
                           sx={{
                             padding: 2,
-                            border: "1px solid #ddd",
+                            border: '1px solid #ddd',
                             borderRadius: 1,
-                            backgroundColor: "#fafafa",
+                            backgroundColor: '#fafafa',
                           }}
                         >
                           {outputData.id && (
                             <Box
                               sx={{
                                 marginTop: 1,
-                                fontSize: "0.85rem",
-                                color: "#666",
+                                fontSize: '0.85rem',
+                                color: '#666',
                               }}
                             >
                               <strong>ID: {outputData.id}</strong>
                             </Box>
                           )}
-                          {outputData.links &&
-                            Array.isArray(outputData.links) && (
-                              <Box sx={{ marginTop: 1 }}>
-                                <strong style={{ fontSize: "0.9rem" }}>
-                                  Links:
-                                </strong>
-                                <Box
-                                  sx={{ marginTop: 1, display: "grid", gap: 1 }}
-                                >
-                                  {outputData.links.map(
-                                    (link: any, linkIndex: number) => (
-                                      <Box
-                                        key={linkIndex}
-                                        sx={{
-                                          padding: 1,
-                                          backgroundColor: "white",
-                                          border: "1px solid #eee",
-                                          borderRadius: 1,
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: 1,
+                          {outputData.links && Array.isArray(outputData.links) && (
+                            <Box sx={{ marginTop: 1 }}>
+                              <strong style={{ fontSize: '0.9rem' }}>Links:</strong>
+                              <Box sx={{ marginTop: 1, display: 'grid', gap: 1 }}>
+                                {outputData.links.map(
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  (link: any, linkIndex: number) => (
+                                    <Box
+                                      key={linkIndex}
+                                      sx={{
+                                        padding: 1,
+                                        backgroundColor: 'white',
+                                        border: '1px solid #eee',
+                                        borderRadius: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                      }}
+                                    >
+                                      <a
+                                        href={link.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                          flex: 1,
+                                          color: '#1976d2',
+                                          textDecoration: 'none',
+                                          wordBreak: 'break-all',
+                                          fontSize: '0.85rem',
                                         }}
                                       >
-                                        <a
-                                          href={link.href}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          style={{
-                                            flex: 1,
-                                            color: "#1976d2",
-                                            textDecoration: "none",
-                                            wordBreak: "break-all",
-                                            fontSize: "0.85rem",
-                                          }}
-                                        >
-                                          {link.href}
-                                        </a>
-                                        <IconButton
-                                          size="small"
-                                          onClick={() =>
-                                            handleCopyToClipboard(link.href)
-                                          }
-                                          sx={{
-                                            padding: "2px",
-                                            flexShrink: 0,
-                                            "&:hover": {
-                                              backgroundColor:
-                                                "rgba(0, 0, 0, 0.04)",
-                                            },
-                                          }}
-                                        >
-                                          <ContentCopyIcon
-                                            sx={{ fontSize: "1rem" }}
-                                          />
-                                        </IconButton>
-                                      </Box>
-                                    ),
-                                  )}
-                                </Box>
+                                        {link.href}
+                                      </a>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => handleCopyToClipboard(link.href)}
+                                        sx={{
+                                          padding: '2px',
+                                          flexShrink: 0,
+                                          '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                          },
+                                        }}
+                                      >
+                                        <ContentCopyIcon sx={{ fontSize: '1rem' }} />
+                                      </IconButton>
+                                    </Box>
+                                  )
+                                )}
                               </Box>
-                            )}
+                            </Box>
+                          )}
                         </Box>
-                      ),
+                      )
                     )}
                     {/* <button
                       className="st-button"
@@ -764,7 +699,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                     </button> */}
                   </Box>
                 ) : (
-                  <p style={{ color: "#666" }}>No output data available</p>
+                  <p style={{ color: '#666' }}>No output data available</p>
                 )}
               </Box>
             )}
@@ -772,71 +707,61 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             {activeTab === 3 && (
               <Box>
                 {loadingJobResults ? (
-                  <p style={{ color: "#666" }}>Loading error information...</p>
+                  <p style={{ color: '#666' }}>Loading error information...</p>
                 ) : selectedJobResults ? (
                   <>
-                    {"detail" in selectedJobResults ? (
+                    {'detail' in selectedJobResults ? (
                       <Box
                         sx={{
                           padding: 2,
-                          backgroundColor: "#ffebee",
-                          border: "1px solid #ef5350",
+                          backgroundColor: '#ffebee',
+                          border: '1px solid #ef5350',
                           borderRadius: 1,
                           marginBottom: 2,
                         }}
                       >
                         <Box
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
                             marginBottom: 1,
                           }}
                         >
-                          <strong style={{ color: "#c62828" }}>Error:</strong>
+                          <strong style={{ color: '#c62828' }}>Error:</strong>
                           <IconButton
                             size="small"
-                            onClick={() =>
-                              handleCopyToClipboard(selectedJobResults.detail)
-                            }
+                            onClick={() => handleCopyToClipboard(selectedJobResults.detail)}
                             sx={{
-                              padding: "4px",
-                              "&:hover": {
-                                backgroundColor: "rgba(198, 40, 40, 0.1)",
+                              padding: '4px',
+                              '&:hover': {
+                                backgroundColor: 'rgba(198, 40, 40, 0.1)',
                               },
                             }}
                           >
-                            <ContentCopyIcon
-                              sx={{ fontSize: "1rem", color: "#c62828" }}
-                            />
+                            <ContentCopyIcon sx={{ fontSize: '1rem', color: '#c62828' }} />
                           </IconButton>
                         </Box>
-                        <p style={{ margin: 0, color: "#c62828" }}>
-                          {selectedJobResults.detail}
-                        </p>
+                        <p style={{ margin: 0, color: '#c62828' }}>{selectedJobResults.detail}</p>
                       </Box>
                     ) : (
                       <Box
                         sx={{
                           padding: 2,
-                          backgroundColor: "#e8f5e9",
-                          border: "1px solid #66bb6a",
+                          backgroundColor: '#e8f5e9',
+                          border: '1px solid #66bb6a',
                           borderRadius: 1,
                         }}
                       >
-                        <strong style={{ color: "#2e7d32" }}>
-                          No errors detected
-                        </strong>
-                        <p style={{ margin: "8px 0 0 0", color: "#2e7d32" }}>
+                        <strong style={{ color: '#2e7d32' }}>No errors detected</strong>
+                        <p style={{ margin: '8px 0 0 0', color: '#2e7d32' }}>
                           Job completed successfully
                         </p>
                       </Box>
                     )}
                   </>
                 ) : (
-                  <p style={{ color: "#666" }}>
-                    No error information available
-                  </p>
+                  <p style={{ color: '#666' }}>No error information available</p>
                 )}
               </Box>
             )}
