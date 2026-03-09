@@ -93,10 +93,6 @@ To test using the interactive UI, run the following instead:
 jlpm run start & jlpm run test --ui
 ```
 
-## Release
-
-See [RELEASE](RELEASE.md)
-
 ## Contribute
 
 See [CONTRIBUTING](CONTRIBUTING.md)
