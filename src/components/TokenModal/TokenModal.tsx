@@ -13,11 +13,12 @@ import { useMaapContext } from '../../MaapContext';
 
 type TokenModalProps = {
   open: boolean;
+  message: string;
   onClose: () => void;
   onSubmit?: () => void | Promise<void>;
 };
 
-export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
+export const TokenModal = ({ open, message, onClose, onSubmit }: TokenModalProps) => {
   const { getLatestSettings, setMaapToken } = useMaapContext();
   const [profileUrl, setProfileUrl] = useState<string>(MAAP_PROFILE_URL);
 
@@ -26,6 +27,13 @@ export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
       await onSubmit();
     }
     onClose();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   useEffect(() => {
@@ -52,8 +60,8 @@ export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
 
       <DialogContent sx={{ paddingBottom: 0 }}>
         <DialogContentText>
-          To submit jobs, you need to provide your MAAP PGT Token. You can get this token by
-          visiting{' '}
+          {message} 
+          {' '}Retrieve your token from{' '}
           <a
             href={profileUrl}
             target="_blank"
@@ -73,6 +81,7 @@ export const TokenModal = ({ open, onClose, onSubmit }: TokenModalProps) => {
           fullWidth
           variant="outlined"
           onChange={(e) => setMaapToken(e.target.value)}
+          onKeyDown={handleKeyDown}
           sx={{ mt: 2 }}
         />
 
