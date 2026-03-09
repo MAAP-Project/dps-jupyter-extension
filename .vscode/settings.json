@@ -23,6 +23,7 @@
     "apputils",
     "coreutils",
     "cpticket",
+    "jlpm",
     "maap",
     "nonterminal",
     "settingregistry"
