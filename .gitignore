@@ -1,6 +1,7 @@
 # Jupyter
 .ipynb_checkpoints
 maap_dps_jupyter_extension/labextension
+maap_dps_jupyter_extension/_version.py
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
