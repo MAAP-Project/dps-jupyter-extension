@@ -92,21 +92,22 @@
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@jupyterlab/builder": "^4.5.4",
-    "@mui/icons-material": "^6.4.4",
+    "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
     "@mui/x-date-pickers": "^7.20.0",
     "@tanstack/match-sorter-utils": "^8.15.1",
     "@tanstack/react-table": "^8.20.3",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-react": "^7.34.0",
     "material-react-table": "^3.0.3",
     "prettier": "^3.0.0",
     "rimraf": "^5.0.1",
-    "typescript": "~5.4.5"
+    "typescript": "~5.4.5",
+    "typescript-eslint": "^8.57.0"
   }
 }
