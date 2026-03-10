@@ -261,9 +261,9 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   }, [initialData, processDetails]);
 
   // Get unique processes names
-  const uniqueProcessNames = Array.from(
-    new Map(processes.map((p) => [p.id, p])).values()
-  ).sort((a, b) => a.id.localeCompare(b.id));
+  const uniqueProcessNames = Array.from(new Map(processes.map((p) => [p.id, p])).values()).sort(
+    (a, b) => a.id.localeCompare(b.id)
+  );
 
   const validateInputs = (): boolean => {
     const errors: Record<string, string> = {};
