@@ -80,7 +80,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       if (!result.queues || result.queues.length === 0) {
         throw new Error('No queues returned.');
       }
-      setQueues(result.queues);
+      setQueues(result.queues.sort());
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
@@ -223,6 +223,11 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     console.log('Process details: ', processDetails);
   }, [processDetails]);
 
+  const handleTokenSubmitted = () => {
+    setShowTokenModal(false);
+    loadQueues();
+  };
+
   useEffect(() => {
     if (initialData && formInputs) {
       if (initialData.initialInputs && processDetails?.inputs) {
@@ -256,7 +261,9 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   }, [initialData, processDetails]);
 
   // Get unique processes names
-  const uniqueProcessNames = Array.from(new Map(processes.map((p) => [p.id, p])).values());
+  const uniqueProcessNames = Array.from(
+    new Map(processes.map((p) => [p.id, p])).values()
+  ).sort((a, b) => a.id.localeCompare(b.id));
 
   const validateInputs = (): boolean => {
     const errors: Record<string, string> = {};
@@ -271,6 +278,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     }
     if (!selectedQueue) {
       errors.queue = 'Queue is required';
+      setShowTokenModal(true);
     }
 
     console.log('Process details: ', processDetails);
@@ -370,7 +378,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
         open={showTokenModal}
         message="A token is required to submit jobs."
         onClose={() => setShowTokenModal(false)}
-        onSubmit={() => setShowTokenModal(false)}
+        onSubmit={handleTokenSubmitted}
       />
       <div className="submit-jobs-container">
         <h2>Submit MAAP Jobs</h2>
