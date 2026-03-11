@@ -13,12 +13,19 @@ import { useMaapApi } from '../../hooks/useMaapApi';
 import {
   JobOverviewResponse,
   JobResponse,
+  JobResultObj,
   JobsOverviewResponse,
+  LinkObj,
   ProcessResponse,
 } from '../../types/api';
 import { InitialJobData } from '../../types/types';
 import { CopyableField } from '../CopyableField/CopyableField';
-import { calculateDuration, handleCopyToClipboard, openSubmitJobs } from '../../utils/generic';
+import {
+  calculateDuration,
+  getOutputWorkspacePath,
+  handleCopyToClipboard,
+  openSubmitJobs,
+} from '../../utils/generic';
 import { TokenModal } from '../TokenModal/TokenModal';
 
 interface ViewJobsProps {
@@ -311,29 +318,28 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   //   const response = await api.cancelExecution(jobID);
   // };
 
-  // async function navigateToFolder(): Promise<void> {
-  //   const contents = app.serviceManager.contents;
+  async function navigateToFolder(outputObj: JobResultObj): Promise<void> {
+    const contents = app.serviceManager.contents;
 
-  //   if (path) {
-  //     contents
-  //       .get(path)
-  //       .then(() => {
-  //         app.shell.activateById("filebrowser");
-  //         app.commands.execute("filebrowser:go-to-path", {
-  //           path: path,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         let errorMessage = `Error navigating to folder: ${error.message}`;
-  //         console.error(errorMessage);
-  //         Notification.error(errorMessage, { autoClose: false });
-  //       });
-  //   } else {
-  //     Notification.error("No folder path to open.", { autoClose: false });
-  //   }
-  //   const activeElement = document.activeElement as HTMLElement | null;
-  //   if (activeElement) activeElement.blur();
-  // }
+    const outputPath = getOutputWorkspacePath(outputObj);
+    if (outputPath) {
+      contents
+        .get(outputPath)
+        .then(() => {
+          app.shell.activateById('filebrowser');
+          app.commands.execute('filebrowser:go-to-path', {
+            path: outputPath,
+          });
+        })
+        .catch((error) => {
+          const errorMessage = `Error navigating to folder: ${error.message}`;
+          console.error(errorMessage);
+          Notification.error(errorMessage, { autoClose: false });
+        });
+    } else {
+      Notification.error('No S3 path to outputs found.', { autoClose: false });
+    }
+  }
 
   return (
     <>
@@ -651,75 +657,72 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                             {outputData.id && (
                               <Box
                                 sx={{
-                                  marginTop: 1,
-                                  fontSize: '0.85rem',
-                                  color: '#666',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
                                 }}
                               >
-                                <strong>ID: {outputData.id}</strong>
+                                Output ID: {outputData.id}
+                                <button
+                                  className="st-button"
+                                  onClick={() => navigateToFolder(outputData)}
+                                >
+                                  Open in Workspace
+                                </button>
                               </Box>
                             )}
                             {outputData.links && Array.isArray(outputData.links) && (
                               <Box sx={{ marginTop: 1 }}>
-                                <strong style={{ fontSize: '0.9rem' }}>Links:</strong>
+                                Links:
                                 <Box sx={{ marginTop: 1, display: 'grid', gap: 1 }}>
-                                  {outputData.links.map(
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                    (link: any, linkIndex: number) => (
-                                      <Box
-                                        key={linkIndex}
-                                        sx={{
-                                          padding: 1,
-                                          backgroundColor: 'white',
-                                          border: '1px solid #eee',
-                                          borderRadius: 1,
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          gap: 1,
+                                  {outputData.links.map((link: LinkObj, linkIndex: number) => (
+                                    <Box
+                                      key={linkIndex}
+                                      sx={{
+                                        padding: 1,
+                                        backgroundColor: 'white',
+                                        border: '1px solid #eee',
+                                        borderRadius: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                      }}
+                                    >
+                                      <a
+                                        href={link.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                          flex: 1,
+                                          color: '#1976d2',
+                                          textDecoration: 'none',
+                                          wordBreak: 'break-all',
+                                          fontSize: '0.85rem',
                                         }}
                                       >
-                                        <a
-                                          href={link.href}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          style={{
-                                            flex: 1,
-                                            color: '#1976d2',
-                                            textDecoration: 'none',
-                                            wordBreak: 'break-all',
-                                            fontSize: '0.85rem',
-                                          }}
-                                        >
-                                          {link.href}
-                                        </a>
-                                        <IconButton
-                                          size="small"
-                                          onClick={() => handleCopyToClipboard(link.href)}
-                                          sx={{
-                                            padding: '2px',
-                                            flexShrink: 0,
-                                            '&:hover': {
-                                              backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                                            },
-                                          }}
-                                        >
-                                          <ContentCopyIcon sx={{ fontSize: '1rem' }} />
-                                        </IconButton>
-                                      </Box>
-                                    )
-                                  )}
+                                        {link.href}
+                                      </a>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => handleCopyToClipboard(link.href)}
+                                        sx={{
+                                          padding: '2px',
+                                          flexShrink: 0,
+                                          '&:hover': {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                          },
+                                        }}
+                                      >
+                                        <ContentCopyIcon sx={{ fontSize: '1rem' }} />
+                                      </IconButton>
+                                    </Box>
+                                  ))}
                                 </Box>
                               </Box>
                             )}
                           </Box>
                         )
                       )}
-                      {/* <button
-                      className="st-button"
-                      onClick={() => navigateToFolder()}
-                    >
-                      Open in File Browser
-                    </button> */}
                     </Box>
                   ) : (
                     <p style={{ color: '#666' }}>No output data available</p>

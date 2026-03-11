@@ -182,6 +182,15 @@ export interface OgcApiError {
   instance?: string;
 }
 
+export interface LinkObj {
+  href: string;
+}
+
+export interface JobResultObj {
+  id: string;
+  links: LinkObj[];
+}
+
 //TODO: dps/job/cancel/ endpoint currently returns WPS style response, which we want to move away from.
 // export interface CancelExecutionResponse {
 

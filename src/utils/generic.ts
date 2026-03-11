@@ -1,5 +1,6 @@
 import { Notification } from '@jupyterlab/apputils';
 import { JUPYTER_EXT } from '../constants';
+import { JobResultObj, LinkObj } from '../types/api';
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -124,4 +125,19 @@ export const calculateDuration = (
   } else {
     return `${secs}s`;
   }
+};
+
+export const getOutputWorkspacePath = (output: JobResultObj): string | undefined => {
+  // Find the path the output was written to in the mounted bucket
+  const s3Link = Object.values(output.links).find((link: LinkObj) =>
+    link.href.startsWith('s3://')
+  )?.href;
+
+  if (!s3Link) return;
+
+  const workspacePath = s3Link.includes('dps_output')
+    ? s3Link.slice(s3Link.indexOf('dps_output'))
+    : s3Link;
+
+  return workspacePath;
 };
