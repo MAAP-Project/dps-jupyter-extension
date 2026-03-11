@@ -11,9 +11,9 @@ To activate the UIs, select `View My Jobs` or `Submit Jobs` from the launcher pa
 
 | Package | Version |
 |---------|---------|
-| JupyterLab | v4.4 |
-| NodeJS | v20.19.0 |
-| Python | >= v3.8 |
+| JupyterLab | 4.4 |
+| Node.js | 24.14.0 |
+| Python | >= 3.8 |
 
 These are the recommended versions. Others may be suitable, but are not actively supported.
 
