@@ -220,7 +220,6 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   // Initialize form inputs with default values from process details
   useEffect(() => {
     setFormProcessInputDefaults();
-    console.log('Process details: ', processDetails);
   }, [processDetails]);
 
   const handleTokenSubmitted = () => {
@@ -280,8 +279,6 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       errors.queue = 'Queue is required';
       setShowTokenModal(true);
     }
-
-    console.log('Process details: ', processDetails);
 
     if (processDetails && processDetails.inputs) {
       Object.entries(processDetails.inputs).forEach(([key, input]) => {

@@ -103,7 +103,6 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
         const details = (await api.fetchJobById(selectedJob.jobID, {
           fields: 'inputs,created,started,finished,tags',
         })) as JobResponse;
-        console.log('Details: ', details);
         if (details) {
           setSelectedJobDetails(details);
 

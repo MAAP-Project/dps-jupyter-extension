@@ -136,8 +136,10 @@ export const getOutputWorkspacePath = (output: JobResultObj): string | undefined
   if (!s3Link) return;
 
   const workspacePath = s3Link.includes('dps_output')
-    ? s3Link.slice(s3Link.indexOf('dps_output'))
+    ? 'my-private-bucket/' + s3Link.slice(s3Link.indexOf('dps_output'))
     : s3Link;
+
+  console.log('Path: ', workspacePath);
 
   return workspacePath;
 };
