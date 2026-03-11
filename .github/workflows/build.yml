@@ -10,7 +10,7 @@ on:
 jobs:
   pre_build:
     name: Run linter & prettier
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 
@@ -37,7 +37,7 @@ jobs:
         run: jlpm run format:check
 
   build:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-24.04
     needs: pre_build
     steps:
       - uses: actions/checkout@v5
