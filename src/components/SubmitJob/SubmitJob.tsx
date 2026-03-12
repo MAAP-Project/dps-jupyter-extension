@@ -345,7 +345,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       const response = (await api.submitJob(processDetails.processID.toString(), {
         inputs: inputParams,
         queue: selectedQueue,
-        job_tag: jobTag,
+        tag: jobTag,
       })) as ProcessExecutionSuccessResponse;
       setFormInputs({});
       setValidationErrors({});
