@@ -101,7 +101,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
       setLoadingJobDetails(true);
       try {
         const details = (await api.fetchJobById(selectedJob.jobID, {
-          fields: 'inputs,created,started,finished,tags',
+          fields: 'inputs,created,started,finished,tags,job_queue',
         })) as JobResponse;
         if (details) {
           setSelectedJobDetails(details);
@@ -454,6 +454,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                       selectedJobDetails?.finished || selectedJob.finished
                     )}
                   />
+                  <CopyableField label="Resource" value={selectedJobDetails?.job_queue} />
                 </Box>
               )}
 
@@ -619,7 +620,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                           onClick={() => {
                             const initialData: InitialJobData = {
                               initialInputs: selectedJobDetails?.inputs,
-                              queue: selectedJobDetails?.queue,
+                              queue: selectedJobDetails?.job_queue,
                               processID: selectedJobDetails?.processID,
                             };
                             app.commands.execute('jobs_submit:open', {

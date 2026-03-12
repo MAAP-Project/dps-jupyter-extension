@@ -157,6 +157,21 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     }
   }, [availableVersions, processes]);
 
+  useEffect(() => {
+    if (initialData && queues.length > 0) {
+      if (initialData.queue) {
+        const matchingQueue: string = queues.find((q) => q === initialData.queue);
+        if (!matchingQueue) {
+          Notification.error(`Resource queue "${initialData.queue}" not found`, {
+            autoClose: false,
+          });
+          return;
+        }
+        setSelectedQueue(matchingQueue);
+      }
+    }
+  }, [queues]);
+
   // Reset form when user selects a new process
   useEffect(() => {
     setSelectedVersion('');
