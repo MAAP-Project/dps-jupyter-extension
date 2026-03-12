@@ -640,7 +640,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 <Box>
                   {loadingJobResults ? (
                     <p style={{ color: '#666' }}>Loading output data...</p>
-                  ) : selectedJobResults && !('detail' in selectedJobResults) ? (
+                  ) : selectedJobResults &&
+                    Object.keys(selectedJobResults).length > 0 &&
+                    !('detail' in selectedJobResults) ? (
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
                       {Object.entries(selectedJobResults).map(
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -734,7 +736,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 <Box>
                   {loadingJobResults ? (
                     <p style={{ color: '#666' }}>Loading error information...</p>
-                  ) : selectedJobResults ? (
+                  ) : selectedJobResults && Object.keys(selectedJobResults).length > 0 ? (
                     <>
                       {'detail' in selectedJobResults ? (
                         <Box
