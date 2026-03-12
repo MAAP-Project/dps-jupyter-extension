@@ -770,7 +770,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                               <ContentCopyIcon sx={{ fontSize: '1rem', color: '#c62828' }} />
                             </IconButton>
                           </Box>
-                          <p style={{ margin: 0, color: '#c62828' }}>{selectedJobResults.detail}</p>
+                          <p style={{ margin: 0, color: '#c62828', whiteSpace: 'pre-wrap' }}>
+                            {selectedJobResults.detail}
+                          </p>
                         </Box>
                       ) : (
                         <Box
