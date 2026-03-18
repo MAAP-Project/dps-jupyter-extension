@@ -41,6 +41,12 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
   async function request<T = any>(opts: RequestOptions): Promise<T> {
     const { maapApiUrl, maapToken } = await getLatestSettings();
 
+    if (!maapApiUrl) {
+      throw new Error(
+        'Request failed because no MAAP API URL was specified. Open Jupyter Settings and specify MAAP API URL.'
+      );
+    }
+
     const finalUrl = opts.url ?? (opts.endpoint ? joinUrl(maapApiUrl, opts.endpoint) : undefined);
 
     if (!finalUrl) {
@@ -128,35 +134,28 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
    */
   async function fetchProcesses(
     id?: string | number
-  ): Promise<ProcessListResponse | ProcessResponse | null> {
+  ): Promise<ProcessListResponse | ProcessResponse | unknown> {
     try {
       const endpoint = id
         ? `${MAAP_API_ENDPOINTS.GET_PROCESSES}/${id}`
         : MAAP_API_ENDPOINTS.GET_PROCESSES;
 
       if (id) {
-        const data = await request<ProcessResponse>({
+        return await request<ProcessResponse>({
           endpoint,
           method: 'GET',
           auth: true,
         });
-        return data;
       } else {
-        const data = await request<ProcessListResponse>({
+        return await request<ProcessListResponse>({
           endpoint,
           method: 'GET',
           auth: true,
         });
-
-        if (!data?.processes || !Array.isArray(data.processes)) {
-          throw new Error('Failed to list processes. Invalid response format.');
-        }
-
-        return data;
       }
-    } catch (err) {
-      console.error(err);
-      return null;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 

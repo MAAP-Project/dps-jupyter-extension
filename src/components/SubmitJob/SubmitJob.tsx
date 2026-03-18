@@ -11,7 +11,12 @@ import {
   ProcessSummary,
 } from '../../types/api';
 import { TokenModal } from '../TokenModal/TokenModal';
-import { InitialJobData } from '../../types/types';
+import { InitialJobData, JobExecution } from '../../types/types';
+import {
+  buildSubmitNotebookCode,
+  copyTextToClipboard,
+  getProcessIdFromLinks,
+} from '../../utils/generic';
 
 interface SubmitJobsProps {
   app?: JupyterFrontEnd;
@@ -37,85 +42,23 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
 
-  const loadProcesses = async () => {
-    setLoading(true);
-    const result = (await api.fetchProcesses()) as ProcessListResponse;
-    console.log('Process list: ', result.processes);
-    if (result) {
-      // Extract process ID from the process links for easy access
-      const processesExtended = result.processes.map((process) => ({
-        ...process,
-        processID: getProcessIdFromLinks(process),
-      }));
-      console.log('Process list with metadata: ', processesExtended);
-      setProcesses(processesExtended);
-    }
-    setLoading(false);
-  };
-
-  /**
-   *
-   * @param process
-   * @returns
-   */
-  const getProcessIdFromLinks = (process: ProcessSummary): number | undefined => {
-    const selfLink = process.links?.find((link) => link.rel === 'self');
-    if (selfLink?.href) {
-      const match = selfLink.href.match(/processes\/([^/]+)$/);
-      return match ? parseInt(match[1], 10) : undefined;
-    }
-    return process.processID;
-  };
-
-  /**
-   * Fetch resource queues user has access to. If response indicates invalid authorization,
-   * display a modal prompting user to enter their token. All other failures will be
-   * captured as a toast.
-   */
-  const loadQueues = async () => {
-    setLoadingQueues(true);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await api.fetchResources();
-      if (!result.queues || result.queues.length === 0) {
-        throw new Error('No queues returned.');
-      }
-      setQueues(result.queues.sort());
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.error(error);
-      if (error?.code === 401) {
-        setShowTokenModal(true);
-      } else {
-        const message = error?.message || JSON.stringify(error);
-        Notification.error(`Failed to load resource queues: ${message}`, {
-          autoClose: false,
-        });
-      }
-    } finally {
-      setLoadingQueues(false);
-    }
-  };
-
   useEffect(() => {
     loadProcesses();
     loadQueues();
   }, [api]);
-
-  // Get unique versions for the selected process
-  const getVersionsForProcess = (processName: string): string[] => {
-    return [...new Set(processes.filter((p) => p.id === processName).map((p) => p.version))].sort();
-  };
 
   useEffect(() => {
     const versions = getVersionsForProcess(selectedProcessName);
     setAvailableVersions(versions);
   }, [selectedProcessName, processes]);
 
+  useEffect(() => {
+    loadProcessDetails();
+  }, [selectedProcessName, selectedVersion, processes, api]);
+
   // If opening submit jobs ui with args passed in, set the process
   useEffect(() => {
     if (initialData && processes.length > 0) {
-      console.log('The initial data: ', initialData);
       if (initialData.processID) {
         // Confirm the process that was passed in exists in the list of registered processes
         const matchingProcess: ProcessSummary = processes.find(
@@ -157,6 +100,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     }
   }, [availableVersions, processes]);
 
+  // If opening submit jobs ui with args passed in, set the queue
   useEffect(() => {
     if (initialData && queues.length > 0) {
       if (initialData.queue) {
@@ -172,76 +116,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     }
   }, [queues]);
 
-  // Reset form when user selects a new process
-  useEffect(() => {
-    setSelectedVersion('');
-    setFormInputs({});
-    setValidationErrors({});
-  }, [selectedProcessName]);
-
-  const loadProcessDetails = async () => {
-    if (!selectedProcessName || !selectedVersion) {
-      setProcessDetails(null);
-      return;
-    }
-
-    const selectedProcess = processes.find(
-      (p) => p.id === selectedProcessName && p.version === selectedVersion
-    );
-
-    if (!selectedProcess || !selectedProcess.processID) {
-      setProcessDetails(null);
-      return;
-    }
-
-    setLoadingDetails(true);
-    const details = (await api.fetchProcesses(selectedProcess.processID)) as ProcessResponse;
-    setProcessDetails(details);
-    setLoadingDetails(false);
-  };
-
-  // Fetch process details when both process and version are selected
-  useEffect(() => {
-    loadProcessDetails();
-  }, [selectedProcessName, selectedVersion, processes, api]);
-
-  const setFormProcessInputDefaults = () => {
-    if (processDetails && processDetails.inputs) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const initialInputs: Record<string, any> = {};
-      Object.entries(processDetails.inputs).forEach(([key, input]) => {
-        if (input.default !== undefined && input.default !== null) {
-          switch (input.type?.toLowerCase()) {
-            case 'boolean':
-              initialInputs[key] = String(input.default).toLowerCase() === 'true' ? true : false;
-              break;
-            case 'number':
-              initialInputs[key] = Number(input.default);
-              break;
-            default:
-              initialInputs[key] = String(input.default);
-          }
-        } else {
-          initialInputs[key] = null;
-        }
-      });
-      setFormInputs((prev) => ({
-        ...initialInputs,
-        ...prev,
-      }));
-    }
-  };
-
-  // Initialize form inputs with default values from process details
-  useEffect(() => {
-    setFormProcessInputDefaults();
-  }, [processDetails]);
-
-  const handleTokenSubmitted = () => {
-    setShowTokenModal(false);
-    loadQueues();
-  };
-
+  // If opening submit jobs ui with args passed in, set the process input values
   useEffect(() => {
     if (initialData && formInputs) {
       if (initialData.initialInputs && processDetails?.inputs) {
@@ -274,7 +149,136 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     }
   }, [initialData, processDetails]);
 
-  // Get unique processes names
+  useEffect(() => {
+    setFormProcessInputDefaults();
+  }, [processDetails]);
+
+  // Reset form when user selects a new process
+  useEffect(() => {
+    setSelectedVersion('');
+    setFormInputs({});
+    setValidationErrors({});
+  }, [selectedProcessName]);
+
+  const loadProcesses = async () => {
+    setLoading(true);
+    try {
+      const result = (await api.fetchProcesses()) as ProcessListResponse;
+
+      // Extract process ID from the process links for easy access
+      const processesExtended = result.processes.map((process) => ({
+        ...process,
+        processID: getProcessIdFromLinks(process),
+      }));
+
+      setProcesses(processesExtended);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.message || JSON.stringify(error);
+      Notification.error(`Failed to load processes: ${message}`, {
+        autoClose: false,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadQueues = async () => {
+    setLoadingQueues(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: any = await api.fetchResources();
+      if (!result.queues || result.queues.length === 0) {
+        throw new Error('No queues returned.');
+      }
+      setQueues(result.queues.sort());
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error(error);
+      if (error?.code === 401) {
+        setShowTokenModal(true);
+      } else {
+        const message = error?.message || error?.detail || JSON.stringify(error);
+        Notification.error(`Failed to load resource queues: ${message}`, {
+          autoClose: false,
+        });
+      }
+    } finally {
+      setLoadingQueues(false);
+    }
+  };
+
+  const getVersionsForProcess = (processName: string): string[] => {
+    return [...new Set(processes.filter((p) => p.id === processName).map((p) => p.version))].sort();
+  };
+
+  const loadProcessDetails = async () => {
+    if (!selectedProcessName || !selectedVersion) {
+      setProcessDetails(null);
+      return;
+    }
+
+    const selectedProcess = processes.find(
+      (p) => p.id === selectedProcessName && p.version === selectedVersion
+    );
+
+    if (!selectedProcess || !selectedProcess.processID) {
+      setProcessDetails(null);
+      return;
+    }
+
+    setLoadingDetails(true);
+    try {
+      const details = (await api.fetchProcesses(selectedProcess.processID)) as ProcessResponse;
+      setProcessDetails(details);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error(error);
+      const message = error?.detail || JSON.stringify(error);
+      Notification.error(
+        `Failed to load process definition for process ID ${selectedProcess.processID}: ${message}`,
+        {
+          autoClose: false,
+        }
+      );
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  const setFormProcessInputDefaults = () => {
+    if (processDetails && processDetails.inputs) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const initialInputs: Record<string, any> = {};
+      Object.entries(processDetails.inputs).forEach(([key, input]) => {
+        if (input.default !== undefined && input.default !== null) {
+          switch (input.type?.toLowerCase()) {
+            case 'boolean':
+              initialInputs[key] = String(input.default).toLowerCase() === 'true' ? true : false;
+              break;
+            case 'number':
+              initialInputs[key] = Number(input.default);
+              break;
+            default:
+              initialInputs[key] = String(input.default);
+          }
+        } else {
+          initialInputs[key] = null;
+        }
+      });
+      setFormInputs((prev) => ({
+        ...initialInputs,
+        ...prev,
+      }));
+    }
+  };
+
+  const handleTokenSubmitted = () => {
+    setShowTokenModal(false);
+    loadQueues();
+  };
+
   const uniqueProcessNames = Array.from(new Map(processes.map((p) => [p.id, p])).values()).sort(
     (a, b) => a.id.localeCompare(b.id)
   );
@@ -334,13 +338,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    if (!validateInputs()) {
-      return;
-    }
-
-    setSubmitting(true);
-
+  const checkOptionalInputs = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const inputParams: Record<string, any> = {};
     Object.entries(formInputs).forEach(([key, value]) => {
@@ -353,8 +351,36 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       }
       inputParams[key] = value;
     });
+    return inputParams;
+  };
 
-    console.log('Input params to use: ', inputParams);
+  const copySubmitNotebookCode = () => {
+    if (!validateInputs()) {
+      return;
+    }
+
+    const inputParams = checkOptionalInputs();
+    const data: JobExecution = {
+      processID: processDetails.processID.toString(),
+      tag: jobTag,
+      queue: selectedQueue,
+      inputs: inputParams,
+    };
+
+    const command = buildSubmitNotebookCode(data);
+
+    copyTextToClipboard(command, 'Jupyter Notebook code copied to clipboard');
+    setValidationErrors({});
+  };
+
+  const handleSubmit = async () => {
+    if (!validateInputs()) {
+      return;
+    }
+    setValidationErrors({});
+    setSubmitting(true);
+
+    const inputParams = checkOptionalInputs();
 
     try {
       const response = (await api.submitJob(processDetails.processID.toString(), {
@@ -362,8 +388,6 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
         queue: selectedQueue,
         tag: jobTag,
       })) as ProcessExecutionSuccessResponse;
-      setFormInputs({});
-      setValidationErrors({});
       Notification.success(`Job submitted successfully. Job ID: \n ${response.jobID}`, {
         autoClose: false,
         actions: [
@@ -377,7 +401,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const message = error?.title || error?.detail || 'Failed to submit job.';
+      const message = error?.detail || 'Failed to submit job.';
       Notification.error(message, { autoClose: false });
     } finally {
       setSubmitting(false);
@@ -670,13 +694,9 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
           </div>
 
           <div className="form-actions-right">
-            {/* <button
-              disabled={true}
-              className="st-button secondary"
-              onClick={() => {}}
-            >
+            <button className="st-button secondary" onClick={() => copySubmitNotebookCode()}>
               Copy Jupyter Notebook Code
-            </button> */}
+            </button>
             <button
               className="st-button secondary"
               onClick={() => {

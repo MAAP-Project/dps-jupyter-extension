@@ -69,3 +69,11 @@ export interface InitialJobData {
   initialInputs?: Record<string, any>;
   queue?: string;
 }
+
+export interface JobExecution {
+  processID: string | number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  inputs: Record<string, any>;
+  queue: string;
+  tag?: string;
+}

@@ -1,6 +1,7 @@
 import { Notification } from '@jupyterlab/apputils';
 import { JUPYTER_EXT } from '../constants';
-import { JobResultObj, LinkObj } from '../types/api';
+import { JobResultObj, LinkObj, ProcessSummary } from '../types/api';
+import { JobExecution } from '../types/types';
 
 /**
  * Converts seconds to a human-readable string using this format:
@@ -72,7 +73,7 @@ export async function copyTextToClipboard(text: string, successMessage: string) 
       Notification.success(successMessage, { autoClose: 3000 });
     });
   } catch (error) {
-    console.warn('Copy failed', error);
+    console.warn('Failed to copy text to clipboard: ', error);
   }
 }
 
@@ -142,4 +143,24 @@ export const getOutputWorkspacePath = (output: JobResultObj): string | undefined
   console.log('Path: ', workspacePath);
 
   return workspacePath;
+};
+
+export const buildSubmitNotebookCode = (data: JobExecution) => {
+  data.inputs = {};
+  const formattedInputs = JSON.stringify(data.inputs, null, 2).replace(/\n/g, '\n    ');
+  return `maap.submit_job(process_id=${data.processID},\nqueue=${JSON.stringify(data.queue)},\ninputs=${formattedInputs}${data.tag ? `,\ntag=${JSON.stringify(data.tag)}` : ''})`;
+};
+
+/**
+ *
+ * @param process
+ * @returns
+ */
+export const getProcessIdFromLinks = (process: ProcessSummary): number | undefined => {
+  const selfLink = process.links?.find((link) => link.rel === 'self');
+  if (selfLink?.href) {
+    const match = selfLink.href.match(/processes\/([^/]+)$/);
+    return match ? parseInt(match[1], 10) : undefined;
+  }
+  return process.processID;
 };
