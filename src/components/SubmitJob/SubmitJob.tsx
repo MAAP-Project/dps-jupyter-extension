@@ -28,6 +28,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   const [processes, setProcesses] = useState<ProcessSummary[]>([]);
   const [selectedProcessName, setSelectedProcessName] = useState<string>('');
   const [selectedVersion, setSelectedVersion] = useState<string>('');
+  const [selectedDeployedBy, setSelectedDeployedBy] = useState<string>('');
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [processDetails, setProcessDetails] = useState<ProcessResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   const [loadingQueues, setLoadingQueues] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
+  const [availableDeployedBy, setAvailableDeployedBy] = useState<string[]>([]);
 
   useEffect(() => {
     loadProcesses();
@@ -53,8 +55,13 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   }, [selectedProcessName, processes]);
 
   useEffect(() => {
+    const deployedByList = getDeployedByForProcessVersion(selectedProcessName, selectedVersion);
+    setAvailableDeployedBy(deployedByList);
+  }, [selectedProcessName, selectedVersion]);
+
+  useEffect(() => {
     loadProcessDetails();
-  }, [selectedProcessName, selectedVersion, processes, api]);
+  }, [selectedProcessName, selectedVersion, selectedDeployedBy, processes, api]);
 
   // If opening submit jobs ui with args passed in, set the process
   useEffect(() => {
@@ -156,6 +163,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   // Reset form when user selects a new process
   useEffect(() => {
     setSelectedVersion('');
+    setSelectedDeployedBy('');
     setFormInputs({});
     setValidationErrors({});
   }, [selectedProcessName]);
@@ -213,15 +221,30 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     return [...new Set(processes.filter((p) => p.id === processName).map((p) => p.version))].sort();
   };
 
+  const getDeployedByForProcessVersion = (processName: string, version: string): string[] => {
+    return [
+      ...new Set(
+        processes
+          .filter((p) => p.id === processName && p.version === version)
+          .map((p) => p.deployedBy)
+      ),
+    ].sort();
+  };
+
   const loadProcessDetails = async () => {
-    if (!selectedProcessName || !selectedVersion) {
+    if (!selectedProcessName || !selectedVersion || !selectedDeployedBy) {
       setProcessDetails(null);
       return;
     }
 
     const selectedProcess = processes.find(
-      (p) => p.id === selectedProcessName && p.version === selectedVersion
+      (p) =>
+        p.id === selectedProcessName &&
+        p.version === selectedVersion &&
+        p.deployedBy === selectedDeployedBy
     );
+
+    console.log('Selected process: ', selectedProcess);
 
     if (!selectedProcess || !selectedProcess.processID) {
       setProcessDetails(null);
@@ -355,13 +378,9 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
   };
 
   const copySubmitNotebookCode = () => {
-    if (!validateInputs()) {
-      return;
-    }
-
     const inputParams = checkOptionalInputs();
     const data: JobExecution = {
-      processID: processDetails.processID.toString(),
+      processID: processDetails?.processID.toString() ?? null,
       tag: jobTag,
       queue: selectedQueue,
       inputs: inputParams,
@@ -370,7 +389,6 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
     const command = buildSubmitNotebookCode(data);
 
     copyTextToClipboard(command, 'Jupyter Notebook code copied to clipboard');
-    setValidationErrors({});
   };
 
   const handleSubmit = async () => {
@@ -464,6 +482,31 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                       </span>
                     }
                     placeholder="Select a version"
+                    size="small"
+                    error={!!validationErrors.version}
+                    helperText={validationErrors.version}
+                  />
+                )}
+              />
+            </div>
+
+            <div className="form-group">
+              <Autocomplete
+                disabled={!selectedProcessName || !selectedVersion}
+                options={availableDeployedBy}
+                value={selectedDeployedBy || null}
+                onChange={(_, value) => {
+                  setSelectedDeployedBy(value || '');
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={
+                      <span>
+                        Deployed By <span style={{ color: 'red' }}>*</span>
+                      </span>
+                    }
+                    placeholder="Select user process was deployed by"
                     size="small"
                     error={!!validationErrors.version}
                     helperText={validationErrors.version}

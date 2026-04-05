@@ -146,7 +146,6 @@ export const getOutputWorkspacePath = (output: JobResultObj): string | undefined
 };
 
 export const buildSubmitNotebookCode = (data: JobExecution) => {
-  data.inputs = {};
   const formattedInputs = JSON.stringify(data.inputs, null, 2).replace(/\n/g, '\n    ');
   return `maap.submit_job(process_id=${data.processID},\nqueue=${JSON.stringify(data.queue)},\ninputs=${formattedInputs}${data.tag ? `,\ntag=${JSON.stringify(data.tag)}` : ''})`;
 };

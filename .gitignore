@@ -42,3 +42,5 @@ maap.cfg
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/tests/*-snapshots
+/tests/jupyterlab-settings

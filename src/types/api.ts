@@ -104,6 +104,7 @@ export interface JobResponse {
  */
 export interface ProcessSummary {
   title?: string;
+  deployedBy?: string;
   description?: string;
   keywords?: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

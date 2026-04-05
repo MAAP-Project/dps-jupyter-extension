@@ -86,12 +86,14 @@
     "@jupyterlab/settingregistry": "^4.5.4",
     "@jupyterlab/statedb": "^4.5.4",
     "@jupyterlab/ui-components": "^4.5.4",
+    "@playwright/test": "^1.59.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@jupyterlab/builder": "^4.5.4",
+    "@jupyterlab/galata": "^5.5.0",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
     "@mui/x-date-pickers": "^7.20.0",
