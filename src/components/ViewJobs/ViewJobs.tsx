@@ -133,7 +133,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
 
   useEffect(() => {
     setSelectedJobResults(null);
-    
+
     if (!selectedJob) {
       return;
     }
