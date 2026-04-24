@@ -132,8 +132,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   }, [selectedJob, api]);
 
   useEffect(() => {
+    setSelectedJobResults(null);
+    
     if (!selectedJob) {
-      setSelectedJobResults(null);
       return;
     }
 
