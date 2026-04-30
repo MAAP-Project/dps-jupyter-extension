@@ -206,7 +206,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
    * @param jobId Fetch Job results
    * @returns
    */
-  async function fetchJobResults(jobId: string): Promise<JobResultResponse | unknown> {
+  async function fetchJobResults(jobId: string): Promise<JobResultResponse> {
     const endpoint = MAAP_API_ENDPOINTS.GET_JOB_RESULTS.replace('{JOB_ID}', jobId);
     return await request<JobResultResponse>({
       endpoint,

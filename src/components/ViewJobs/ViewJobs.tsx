@@ -14,6 +14,7 @@ import {
   JobOverviewResponse,
   JobResponse,
   JobResultObj,
+  JobResultResponseOutputs,
   JobsOverviewResponse,
   LinkObj,
   ProcessResponse,
@@ -142,9 +143,11 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
       if (!nonterminalJobStatuses.includes(selectedJob.status)) {
         setLoadingJobResults(true);
         try {
-          const results = await api.fetchJobResults(selectedJob.jobID);
-          if (results) {
-            setSelectedJobResults(results);
+          const { additionalProp1 }: JobResultResponseOutputs = await api.fetchJobResults(
+            selectedJob.jobID
+          );
+          if (additionalProp1) {
+            setSelectedJobResults(additionalProp1);
           }
         } catch (error) {
           const message = `Failed to fetch job results: ${error}`;
@@ -641,44 +644,39 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 <Box>
                   {loadingJobResults ? (
                     <p style={{ color: '#666' }}>Loading output data...</p>
-                  ) : selectedJobResults &&
-                    Object.keys(selectedJobResults).length > 0 &&
-                    !('detail' in selectedJobResults) ? (
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
-                      {Object.entries(selectedJobResults).map(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        ([outputKey, outputData]: [string, any]) => (
+                  ) : selectedJobResults ? (
+                    selectedJobResults.id &&
+                    selectedJobResults.links && (
+                      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
+                        <Box
+                          key={selectedJobResults.id}
+                          sx={{
+                            padding: 2,
+                            border: '1px solid #ddd',
+                            borderRadius: 1,
+                            backgroundColor: '#fafafa',
+                          }}
+                        >
                           <Box
-                            key={outputKey}
                             sx={{
-                              padding: 2,
-                              border: '1px solid #ddd',
-                              borderRadius: 1,
-                              backgroundColor: '#fafafa',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
                             }}
                           >
-                            {outputData.id && (
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'center',
-                                }}
-                              >
-                                Output ID: {outputData.id}
-                                <button
-                                  className="st-button"
-                                  onClick={() => navigateToFolder(outputData)}
-                                >
-                                  Open in Workspace
-                                </button>
-                              </Box>
-                            )}
-                            {outputData.links && Array.isArray(outputData.links) && (
-                              <Box sx={{ marginTop: 1 }}>
-                                Links:
-                                <Box sx={{ marginTop: 1, display: 'grid', gap: 1 }}>
-                                  {outputData.links.map((link: LinkObj, linkIndex: number) => (
+                            Output ID: {selectedJobResults.id}
+                            <button
+                              className="st-button"
+                              onClick={() => navigateToFolder(selectedJobResults.links)}
+                            >
+                              Open in Workspace
+                            </button>
+                          </Box>
+                          {Array.isArray(selectedJobResults.links) && (
+                            <Box sx={{ marginTop: 1 }}>
+                              <Box sx={{ marginTop: 1, display: 'grid', gap: 1 }}>
+                                {selectedJobResults.links.map(
+                                  (link: LinkObj, linkIndex: number) => (
                                     <Box
                                       key={linkIndex}
                                       sx={{
@@ -719,14 +717,14 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                                         <ContentCopyIcon sx={{ fontSize: '1rem' }} />
                                       </IconButton>
                                     </Box>
-                                  ))}
-                                </Box>
+                                  )
+                                )}
                               </Box>
-                            )}
-                          </Box>
-                        )
-                      )}
-                    </Box>
+                            </Box>
+                          )}
+                        </Box>
+                      </Box>
+                    )
                   ) : (
                     <p style={{ color: '#666' }}>No output data available</p>
                   )}

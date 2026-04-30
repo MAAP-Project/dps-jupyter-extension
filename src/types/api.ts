@@ -171,9 +171,12 @@ export interface ResourceResponse {
   queues?: string[];
 }
 
-export type JobResultResponse =
-  | Record<string, { links: JobLink[]; id: string }>
-  | { detail: string };
+export interface JobResultResponse {
+  details?: string;
+  additionalProp1 : { links?: JobLink[]; id?: string };
+}
+
+export type JobResultResponseOutputs = Pick<JobResultResponse, 'additionalProp1'>;
 
 export interface OgcApiError {
   type?: string | null;
