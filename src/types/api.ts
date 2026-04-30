@@ -173,7 +173,7 @@ export interface ResourceResponse {
 
 export interface JobResultResponse {
   details?: string;
-  additionalProp1 : { links?: JobLink[]; id?: string };
+  additionalProp1: { links?: JobLink[]; id?: string };
 }
 
 export type JobResultResponseOutputs = Pick<JobResultResponse, 'additionalProp1'>;
