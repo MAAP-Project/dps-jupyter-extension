@@ -130,22 +130,25 @@ export const calculateDuration = (
 
 export const getOutputWorkspacePath = (output: Record<string, unknown>[]): string | undefined => {
   // Find the S3 key to which the output was written
+  let s3Key = null;
   for (const item of output) {
-    const s3Key = Object.values(item).find(
+    s3Key = Object.values(item).find(
       (val): val is string => typeof val === 'string' && val.startsWith('s3://')
     );
-    if (!s3Key) continue;
+    if (s3Key) break;
+  }
 
-    // Jobs that have completed successfully will have their outputs written to a different
-    // bucket than jobs that have failed and are triaged
-    if (s3Key.includes('dps_output')) {
-      return 'my-private-bucket/' + s3Key.slice(s3Key.indexOf('dps_output'))
-    } else if (s3Key.includes('triaged_job')) {
-      return s3Key.slice(s3Key.indexOf('triaged_job'))
-    } else {
-      console.warn('Unexpected S3 key does not map to dps_output or triaged_job: ', s3Key);
-      return null;
-    }
+  if (!s3Key) return;
+
+  // Jobs that have completed successfully will have their outputs written to a different
+  // bucket than jobs that have failed and are triaged
+  if (s3Key.includes('dps_output')) {
+    return 'my-private-bucket/' + s3Key.slice(s3Key.indexOf('dps_output'));
+  } else if (s3Key.includes('triaged_job')) {
+    return s3Key.slice(s3Key.indexOf('triaged_job'));
+  } else {
+    console.warn('Unexpected S3 key does not map to dps_output or triaged_job: ', s3Key);
+    return null;
   }
 };
 
