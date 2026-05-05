@@ -1,6 +1,6 @@
 import { Notification } from '@jupyterlab/apputils';
 import { JUPYTER_EXT } from '../constants';
-import { JobResultObj, LinkObj, ProcessSummary } from '../types/api';
+import { ProcessSummary } from '../types/api';
 import { JobExecution } from '../types/types';
 
 /**
@@ -128,21 +128,17 @@ export const calculateDuration = (
   }
 };
 
-export const getOutputWorkspacePath = (output: JobResultObj): string | undefined => {
-  // Find the path the output was written to in the mounted bucket
-  const s3Link = Object.values(output.links).find((link: LinkObj) =>
-    link.href.startsWith('s3://')
-  )?.href;
-
-  if (!s3Link) return;
-
-  const workspacePath = s3Link.includes('dps_output')
-    ? 'my-private-bucket/' + s3Link.slice(s3Link.indexOf('dps_output'))
-    : s3Link;
-
-  console.log('Path: ', workspacePath);
-
-  return workspacePath;
+export const getOutputWorkspacePath = (output: Record<string, unknown>[]): string | undefined => {
+  // Find the S3 key to which the output was written
+  for (const item of output) {
+    const s3Key = Object.values(item).find(
+      (val): val is string => typeof val === 'string' && val.startsWith('s3://')
+    );
+    if (!s3Key) continue;
+    return s3Key.includes('dps_output')
+      ? 'my-private-bucket/' + s3Key.slice(s3Key.indexOf('dps_output'))
+      : s3Key;
+  }
 };
 
 export const buildSubmitNotebookCode = (data: JobExecution) => {

@@ -13,7 +13,6 @@ import { useMaapApi } from '../../hooks/useMaapApi';
 import {
   JobOverviewResponse,
   JobResponse,
-  JobResultObj,
   JobResultResponseOutputs,
   JobsOverviewResponse,
   LinkObj,
@@ -321,10 +320,12 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   //   const response = await api.cancelExecution(jobID);
   // };
 
-  async function navigateToFolder(outputObj: JobResultObj): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function navigateToFolder(outputObj: any[]): Promise<void> {
     const contents = app.serviceManager.contents;
 
     const outputPath = getOutputWorkspacePath(outputObj);
+    console.log('Output path: ', outputPath);
     if (outputPath) {
       contents
         .get(outputPath)
