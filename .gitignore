@@ -1,6 +1,7 @@
 # Jupyter
 .ipynb_checkpoints
 maap_dps_jupyter_extension/labextension
+maap_dps_jupyter_extension/_version.py
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -41,18 +42,5 @@ maap.cfg
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
-# IDE
-.vscode/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-.idea
-
-labextension.list
-junit.xml
-ui-tests/test-results
-ui-tests/playwright-report
-ui-tests/yarn.lock
-coverage/
+/tests/*-snapshots
+/tests/jupyterlab-settings

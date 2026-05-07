@@ -1,159 +1,166 @@
-import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application'
-import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils'
-import { JUPYTER_EXT } from './constants'
-import { ViewJobsReactAppWidget, SubmitJobsReactAppWidget } from './classes/App'
-import { reactIcon } from '@jupyterlab/ui-components';
+import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application';
+import { ICommandPalette, MainAreaWidget, WidgetTracker } from '@jupyterlab/apputils';
+import { JUPYTER_EXT } from './constants';
+import { maapIcon } from './icons/icons';
 import { ILauncher } from '@jupyterlab/launcher';
 import { IStateDB } from '@jupyterlab/statedb';
-import { IMainMenu } from '@jupyterlab/mainmenu';
-import { Menu } from '@lumino/widgets';
+import { SubmitJobsReactAppWidget, ViewJobsReactAppWidget } from './classes/App';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
+const sharedSettingsPluginId = 'maap-jupyter-server-extension:plugin';
+const jobsSettingsPluginId = 'maap-dps-jupyter-extension:plugin';
 
 /**
- * The command IDs used by the react-widget plugin.
+ * Load settings from the shared settings plugin, falling back to the jobs plugin settings.
+ * The MAAP Jupyter shared settings will be attempted first. If these settings do not exist,
+ * the settings for this collection of algorithm plugins will be loaded instead.
+ * Returns null if neither settings can be loaded.
  */
-namespace CommandIDs {
-  export const create = 'create-react-widget';
-}
+async function loadSettings(
+  registry: ISettingRegistry
+): Promise<ISettingRegistry.ISettings | null> {
+  let loadedId = sharedSettingsPluginId;
+  let settings: ISettingRegistry.ISettings | null = null;
 
-const profileId = 'maapsec-extension:IMaapProfile';
-
-
-// Add 'View Jobs' and 'Submit Jobs' plugins to the jupyter lab 'Jobs' menu
-const jobs_menu_plugin: JupyterFrontEndPlugin<void> = {
-  id: 'jobs-menu',
-  autoStart: true,
-  requires: [IMainMenu],
-  activate: (app: JupyterFrontEnd, mainMenu: IMainMenu) => {
-    const { commands } = app;
-    let jobsMenu = new Menu({ commands });
-    jobsMenu.id = 'jobs-menu';
-    jobsMenu.title.label = 'Jobs';
-    [
-      JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
-      JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND
-    ].forEach(command => {
-      jobsMenu.addItem({ command });
-    });
-    mainMenu.addMenu(jobsMenu)
+  try {
+    settings = await registry.load(loadedId);
+    console.log(`Settings loaded from: ${loadedId}`);
+    return settings;
+  } catch (err) {
+    console.warn(`Did not load settings for "${loadedId}": ${err}`);
   }
-};
 
-
-// View Jobs plugin
-const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
-  id: JUPYTER_EXT.VIEW_JOBS_PLUGIN_ID,
-  autoStart: true,
-  optional: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer],
-  activate: (app: JupyterFrontEnd, 
-             launcher: ILauncher, 
-             palette: ICommandPalette, 
-             state: IStateDB, 
-             restorer: ILayoutRestorer) => {
-
-    const { commands } = app;
-
-    let viewJobsWidget: MainAreaWidget<ViewJobsReactAppWidget> | null = null;
-
-    const viewJobsTracker = new WidgetTracker<MainAreaWidget<ViewJobsReactAppWidget>>({
-      namespace: 'view-jobs-tracker'
-    });
-
-    if (restorer) {
-      restorer.restore(viewJobsTracker, {
-        command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
-        name: () => 'view-jobs-tracker'
-      });
-    }
-
-    const command = JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND;
-    commands.addCommand(command, {
-      caption: JUPYTER_EXT.VIEW_JOBS_NAME,
-      label: JUPYTER_EXT.VIEW_JOBS_NAME,
-      icon: (args) => (args['isPalette'] ? null : reactIcon),
-      execute: () => {
-        const content = new ViewJobsReactAppWidget(app);
-        viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
-        viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
-        viewJobsWidget.title.icon = reactIcon;
-        app.shell.add(viewJobsWidget, 'main');
-
-        // Add widget to the tracker so it will persist on browser refresh
-        viewJobsTracker.save(viewJobsWidget)
-        viewJobsTracker.add(viewJobsWidget)
-      },
-    });
-
-    palette.addItem({command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, category: 'MAAP Extensions'});
-
-    if (launcher) {
-      launcher.add({
-        command,
-        category: "MAAP Extensions"
-      });
-    }
-
-    console.log('JupyterLab MAAP View Jobs extension is activated!');
-  },
-  
-};
+  loadedId = jobsSettingsPluginId;
+  try {
+    settings = await registry.load(loadedId);
+    console.log(`Settings loaded from: ${loadedId}`);
+    return settings;
+  } catch (err2) {
+    console.warn(`Failed to load fallback settings "${loadedId}": ${err2}`);
+    console.warn('Plugins will work without settings');
+    return null;
+  }
+}
 
 // Submit Jobs plugin
 const jobs_submit_plugin: JupyterFrontEndPlugin<void> = {
   id: JUPYTER_EXT.SUBMIT_JOBS_PLUGIN_ID,
   autoStart: true,
-  optional: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer],
-  activate: (app: JupyterFrontEnd, 
-             launcher: ILauncher, 
-             palette: ICommandPalette, 
-             state: IStateDB, 
-             restorer: ILayoutRestorer) => {
-
+  requires: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer, ISettingRegistry],
+  activate: async (
+    app: JupyterFrontEnd,
+    launcher: ILauncher,
+    palette: ICommandPalette,
+    state: IStateDB,
+    restorer: ILayoutRestorer,
+    settingRegistry: ISettingRegistry
+  ) => {
     const { commands } = app;
 
-    let submitJobsWidget: MainAreaWidget<SubmitJobsReactAppWidget> | null = null;
+    // Load settings on startup
+    const settings = await loadSettings(settingRegistry);
 
+    // Make sure plugin persists browser refresh
     const submitJobsTracker = new WidgetTracker<MainAreaWidget<SubmitJobsReactAppWidget>>({
-      namespace: 'submit-jobs-tracker'
+      namespace: 'submit-jobs-tracker',
     });
 
     if (restorer) {
       restorer.restore(submitJobsTracker, {
         command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND,
-        name: () => 'submit-jobs-tracker'
+        name: () => 'submit-jobs-tracker',
       });
     }
 
-    const command = JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND;
-
-    commands.addCommand(command, {
-      caption: JUPYTER_EXT.SUBMIT_JOBS_NAME,
+    commands.addCommand(JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, {
       label: JUPYTER_EXT.SUBMIT_JOBS_NAME,
-      icon: (args) => (args['isPalette'] ? null : reactIcon),
-      execute: () => {
-        const content = new SubmitJobsReactAppWidget("", app);
-        submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
+      icon: (args) => (args['isPalette'] ? null : maapIcon),
+      execute: async (args) => {
+        const initialData = args && typeof args === 'object' ? args : undefined;
+        const content = new SubmitJobsReactAppWidget(settings, app, initialData);
+        const submitJobsWidget = new MainAreaWidget<SubmitJobsReactAppWidget>({ content });
         submitJobsWidget.title.label = JUPYTER_EXT.SUBMIT_JOBS_NAME;
-        submitJobsWidget.title.icon = reactIcon;
+        submitJobsWidget.title.icon = maapIcon;
         app.shell.add(submitJobsWidget, 'main');
 
         // Add widget to the tracker so it will persist on browser refresh
-        submitJobsTracker.save(submitJobsWidget)
-        submitJobsTracker.add(submitJobsWidget)
+        submitJobsTracker.save(submitJobsWidget);
+        submitJobsTracker.add(submitJobsWidget);
       },
     });
 
-    palette.addItem({command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, category: 'MAAP Extensions'});
+    // Add plugin to the dropdown in the main ribbon
+    palette.addItem({ command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND, category: 'MAAP Plugins' });
 
+    // Add plugin to the launcher panel
     if (launcher) {
       launcher.add({
-        command,
-        category: "MAAP Extensions"
+        command: JUPYTER_EXT.SUBMIT_JOBS_OPEN_COMMAND,
+        category: 'MAAP Plugins',
+        rank: 0,
+      });
+    }
+    console.log('JupyterLab MAAP submit-jobs is activated!');
+  },
+};
+
+// View Jobs plugin
+const jobs_view_plugin: JupyterFrontEndPlugin<void> = {
+  id: JUPYTER_EXT.VIEW_JOBS_PLUGIN_ID,
+  autoStart: true,
+  requires: [ILauncher, ICommandPalette, IStateDB, ILayoutRestorer, ISettingRegistry],
+  activate: async (
+    app: JupyterFrontEnd,
+    launcher: ILauncher,
+    palette: ICommandPalette,
+    state: IStateDB,
+    restorer: ILayoutRestorer,
+    settingRegistry: ISettingRegistry
+  ) => {
+    const { commands } = app;
+
+    // Load settings on startup
+    const settings = await loadSettings(settingRegistry);
+
+    const viewJobsTracker = new WidgetTracker<MainAreaWidget<ViewJobsReactAppWidget>>({
+      namespace: 'view-jobs-tracker',
+    });
+
+    if (restorer) {
+      restorer.restore(viewJobsTracker, {
+        command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
+        name: () => 'view-jobs-tracker',
       });
     }
 
-    console.log('JupyterLab MAAP Submit Jobs plugin is activated!');
-  }
+    commands.addCommand(JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, {
+      label: JUPYTER_EXT.VIEW_JOBS_NAME,
+      icon: (args) => (args['isPalette'] ? null : maapIcon),
+      execute: async () => {
+        const content = new ViewJobsReactAppWidget(settings, app);
+        const viewJobsWidget = new MainAreaWidget<ViewJobsReactAppWidget>({ content });
+        viewJobsWidget.title.label = JUPYTER_EXT.VIEW_JOBS_NAME;
+        viewJobsWidget.title.icon = maapIcon;
+        app.shell.add(viewJobsWidget, 'main');
+
+        // Add widget to the tracker so it will persist on browser refresh
+        viewJobsTracker.save(viewJobsWidget);
+        viewJobsTracker.add(viewJobsWidget);
+      },
+    });
+
+    // Add plugin to the dropdown in the main ribbon
+    palette.addItem({ command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND, category: 'MAAP Plugins' });
+
+    // Add plugin to the launcher panel
+    if (launcher) {
+      launcher.add({
+        command: JUPYTER_EXT.VIEW_JOBS_OPEN_COMMAND,
+        category: 'MAAP Plugins',
+      });
+    }
+    console.log('JupyterLab MAAP plugin view-jobs is activated!');
+  },
 };
 
-export default [jobs_view_plugin, jobs_menu_plugin, jobs_submit_plugin];
+export default [jobs_submit_plugin, jobs_view_plugin];

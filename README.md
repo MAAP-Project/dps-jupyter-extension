@@ -1,24 +1,25 @@
-# DPS Jupyter Extension
+### OGC Build Status: 
+[![Build](https://github.com/MAAP-Project/dps-jupyter-extension/actions/workflows/build.yml/badge.svg?branch=feature%2Fv1-ogc)](https://github.com/MAAP-Project/dps-jupyter-extension/actions/workflows/build.yml)
 
-Frontend extension that allows users to interact with the Data Processing System (DPS) by viewing and submitting jobs.  
+# MAAP DPS Jupyter Extension
 
-To activate the UI, navigate to `View -> Activate Command Palette -> View & Submit Jobs`.
+Frontend extension that allows users to interact with the MAAP Data Processing System (DPS) by viewing and submitting jobs.  
+
+To activate the UIs, select `View My Jobs` or `Submit Jobs` from the launcher panel.
 
 ## Requirements
 
 | Package | Version |
 |---------|---------|
-| JupyterLab | v4.1.6 |
-| [jupyter-server-extension](https://github.com/MAAP-Project/jupyter-server-extension) |   v    |
-| NodeJS | v18.20.0 |
-| Python | >= v3.8 |
-
+| JupyterLab | 4.4 |
+| Node.js | 24.14.0 |
+| Python | >= 3.8 |
 
 These are the recommended versions. Others may be suitable, but are not actively supported.
 
 ## Install
 
-To install the extension, execute:
+To install the extension, run:
 
 ```bash
 pip install maap-dps-jupyter-extension
@@ -26,7 +27,7 @@ pip install maap-dps-jupyter-extension
 
 ## Uninstall
 
-To remove the extension, execute:
+To remove the extension, run:
 
 ```bash
 pip uninstall maap-dps-jupyter-extension
@@ -92,10 +93,6 @@ To test using the interactive UI, run the following instead:
 ```
 jlpm run start & jlpm run test --ui
 ```
-
-## Release
-
-See [RELEASE](RELEASE.md)
 
 ## Contribute
 

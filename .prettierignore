@@ -1,0 +1,7 @@
+lib/
+node_modules/
+dist/
+build/
+maap_dps_jupyter_extension/
+*.d.ts
+*.json

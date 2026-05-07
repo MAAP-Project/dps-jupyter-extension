@@ -1,0 +1,31 @@
+{
+  "eslint.enable": true,
+  "eslint.run": "onSave",
+  "eslint.format.enable": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.formatDocument": "explicit"
+  },
+  "prettier.enable": true,
+  "cSpell.words": [
+    "apputils",
+    "coreutils",
+    "cpticket",
+    "jlpm",
+    "maap",
+    "nonterminal",
+    "settingregistry"
+  ]
+}

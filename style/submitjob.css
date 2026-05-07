@@ -1,5 +1,3 @@
-@import url('base.css');
-
 /* Submit Jobs Form Styling */
 .submit-jobs-container {
   padding: calc(var(--st-grid-unit) * 4);
@@ -35,13 +33,12 @@
   font-weight: var(--st-typography-label-font-weight);
   font-size: var(--st-typography-label-font-size);
   color: var(--st-typography-label-color);
-  text-transform: capitalize;
 }
 
 .form-description {
   margin: 0 0 calc(var(--st-grid-unit) * 1.25) 0;
   font-size: 11px;
-  color: var(--st-gray-40);
+  color: var(--st-gray-60);
   line-height: 1.4;
 }
 
@@ -50,6 +47,67 @@
   max-width: 100%;
   height: 32px;
   padding: 6px 8px !important;
+}
+
+.form-group .MuiTextField-root {
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-group .MuiTextField-root .MuiOutlinedInput-root {
+  background-color: var(--st-input-background-color);
+  border-radius: 4px;
+  font-size: var(--st-input-font-size);
+  height: 32px;
+}
+
+.form-group .MuiTextField-root .MuiOutlinedInput-root input {
+  padding: 6px 8px !important;
+  color: var(--st-input-color);
+  font-family: var(--st-input-font-family);
+  font-size: var(--st-input-font-size);
+}
+
+.form-group .MuiTextField-root .MuiOutlinedInput-root fieldset {
+  border-color: var(--st-gray-20) !important;
+}
+
+.form-group .MuiTextField-root .MuiOutlinedInput-root:hover fieldset {
+  border-color: var(--st-gray-30) !important;
+}
+
+.form-group .MuiTextField-root .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: var(--st-primary-50) !important;
+  border-width: 2px !important;
+}
+
+.form-group .MuiTextField-root .MuiInputLabel-root {
+  font-size: var(--st-typography-label-font-size);
+  font-weight: var(--st-typography-label-font-weight);
+  color: var(--st-typography-label-color);
+}
+
+.form-group .MuiInputLabel-shrink {
+  transform: translate(14px, -9px) scale(0.85) !important;
+}
+
+.form-group .MuiFormHelperText-root {
+  margin: 4px 0 0 0 !important;
+  font-size: 11px !important;
+}
+
+.form-group .MuiFormControlLabel-root {
+  margin: 0 !important;
+  margin-left: -8px !important;
+}
+
+.form-group .MuiSwitch-root {
+  margin-right: 8px;
+}
+
+.process-inputs-card .MuiFormControlLabel-root {
+  margin: 0 !important;
+  margin-left: -8px !important;
 }
 
 /* MUI TextField and Autocomplete styling */
@@ -94,7 +152,6 @@
   font-size: var(--st-typography-label-font-size);
   font-weight: var(--st-typography-label-font-weight);
   color: var(--st-typography-label-color);
-  text-transform: capitalize;
 }
 
 .form-group .MuiInputLabel-shrink {
@@ -163,10 +220,22 @@
 .form-actions {
   margin-top: calc(var(--st-grid-unit) * 5);
   display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
   gap: calc(var(--st-grid-unit) * 1.5);
-  justify-content: flex-start;
   padding-top: calc(var(--st-grid-unit) * 2.5);
   border-top: 1px solid var(--st-gray-20);
+}
+
+.form-actions-left {
+  display: flex;
+  gap: calc(var(--st-grid-unit) * 1.5);
+}
+
+.form-actions-right {
+  display: flex;
+  gap: calc(var(--st-grid-unit) * 1.5);
 }
 
 .submit-jobs-container .st-button {
@@ -179,15 +248,13 @@
   font-family: var(--st-button-font-family);
   cursor: pointer;
   background-color: var(--st-button-primary-background-color);
-  color: var(--st-button-primary-color);
+  color: white;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .submit-jobs-container .st-button:hover:not(:disabled) {
   background-color: var(--st-button-primary-hover-background-color);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
 }
 
 .submit-jobs-container .st-button:active:not(:disabled) {
@@ -210,8 +277,6 @@
 
 .submit-jobs-container .st-button.secondary:hover:not(:disabled) {
   background-color: var(--st-button-secondary-hover-background-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
 }
 
 .submit-jobs-container .st-button.secondary:active:not(:disabled) {
@@ -219,21 +284,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.jp-ThemedContainer a {
-  color: #1976d2 !important;
-}
-
-.jp-ThemedContainer a.github-link:visited,
-a.github-link:visited {
-  color: #1976d2 !important;
-}
-
-.jp-ThemedContainer a.github-link:hover,
-a.github-link:hover {
-  color: #115293 !important;
-}
-
-.jp-ThemedContainer a.github-link:active,
-a.github-link:active {
-  color: #1565c0 !important;
+.form-group input::placeholder {
+  color: var(--st-gray-60);
+  opacity: 1;
+  font-style: italic;
 }
