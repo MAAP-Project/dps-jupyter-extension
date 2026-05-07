@@ -325,7 +325,6 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     const contents = app.serviceManager.contents;
 
     const outputPath = getOutputWorkspacePath(outputObj);
-    console.log('Output path: ', outputPath);
     if (outputPath) {
       contents
         .get(outputPath)
