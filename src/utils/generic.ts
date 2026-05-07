@@ -145,8 +145,7 @@ export const getOutputWorkspacePath = (output: Record<string, unknown>[]): strin
   if (s3Key.includes('dps_output')) {
     return 'my-private-bucket/' + s3Key.slice(s3Key.indexOf('dps_output'));
   } else if (s3Key.includes('triaged_job')) {
-    // mounted path uses 'triaged-jobs' instead of 'triaged_job'
-    return 'triaged-jobs/' + s3Key.slice(s3Key.indexOf('triaged_job') - 1);
+    return 'triaged-jobs/' + s3Key.slice(s3Key.indexOf('triaged_job') + 'triaged_job/'.length);
   } else {
     console.warn('Unexpected S3 key does not map to dps_output or triaged_job: ', s3Key);
     return null;
