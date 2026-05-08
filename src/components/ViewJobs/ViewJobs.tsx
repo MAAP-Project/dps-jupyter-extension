@@ -13,7 +13,7 @@ import { useMaapApi } from '../../hooks/useMaapApi';
 import {
   JobOverviewResponse,
   JobResponse,
-  JobResultResponseOutputs,
+  JobResultResponse,
   JobsOverviewResponse,
   LinkObj,
   ProcessResponse,
@@ -142,11 +142,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
       if (!nonterminalJobStatuses.includes(selectedJob.status)) {
         setLoadingJobResults(true);
         try {
-          const { additionalProp1 }: JobResultResponseOutputs = await api.fetchJobResults(
-            selectedJob.jobID
-          );
-          if (additionalProp1) {
-            setSelectedJobResults(additionalProp1);
+          const result: JobResultResponse = await api.fetchJobResults(selectedJob.jobID);
+          if (result) {
+            setSelectedJobResults(result);
           }
         } catch (error) {
           const message = `Failed to fetch job results: ${error}`;
@@ -644,12 +642,12 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 <Box>
                   {loadingJobResults ? (
                     <p style={{ color: '#666' }}>Loading output data...</p>
-                  ) : selectedJobResults ? (
-                    selectedJobResults.id &&
-                    selectedJobResults.links && (
+                  ) : selectedJobResults?.additionalProp1 ? (
+                    selectedJobResults.additionalProp1.id &&
+                    selectedJobResults.additionalProp1.links && (
                       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
                         <Box
-                          key={selectedJobResults.id}
+                          key={selectedJobResults.additionalProp1.id}
                           sx={{
                             padding: 2,
                             border: '1px solid #ddd',
@@ -664,18 +662,20 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                               alignItems: 'center',
                             }}
                           >
-                            Output ID: {selectedJobResults.id}
+                            Output ID: {selectedJobResults.additionalProp1.id}
                             <button
                               className="st-button"
-                              onClick={() => navigateToFolder(selectedJobResults.links)}
+                              onClick={() =>
+                                navigateToFolder(selectedJobResults.additionalProp1.links)
+                              }
                             >
                               Open in Workspace
                             </button>
                           </Box>
-                          {Array.isArray(selectedJobResults.links) && (
+                          {Array.isArray(selectedJobResults.additionalProp1.links) && (
                             <Box sx={{ marginTop: 1 }}>
                               <Box sx={{ marginTop: 1, display: 'grid', gap: 1 }}>
-                                {selectedJobResults.links.map(
+                                {selectedJobResults.additionalProp1.links.map(
                                   (link: LinkObj, linkIndex: number) => (
                                     <Box
                                       key={linkIndex}
@@ -735,9 +735,9 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 <Box>
                   {loadingJobResults ? (
                     <p style={{ color: '#666' }}>Loading error information...</p>
-                  ) : selectedJobResults && Object.keys(selectedJobResults).length > 0 ? (
+                  ) : selectedJobResults?.detail ? (
                     <>
-                      {'detail' in selectedJobResults ? (
+                      {selectedJobResults?.detail ? (
                         <Box
                           sx={{
                             padding: 2,

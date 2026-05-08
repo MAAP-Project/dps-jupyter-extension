@@ -172,7 +172,7 @@ export interface ResourceResponse {
 }
 
 export interface JobResultResponse {
-  details?: string;
+  detail?: string;
   additionalProp1: { links?: JobLink[]; id?: string };
 }
 
