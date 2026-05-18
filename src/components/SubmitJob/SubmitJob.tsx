@@ -692,9 +692,12 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                     onChange={(e) => {
                       setFormInputs((prev) => ({
                         ...prev,
-                        [inputKey]: input.type?.toLowerCase() === 'number'
-                          ? e.target.value === '' ? null : Number(e.target.value)
-                          : e.target.value,
+                        [inputKey]:
+                          input.type?.toLowerCase() === 'number'
+                            ? e.target.value === ''
+                              ? null
+                              : Number(e.target.value)
+                            : e.target.value,
                       }));
                       if (validationErrors[inputKey]) {
                         setValidationErrors((prev) => {
