@@ -328,8 +328,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
 
         // Make sure required fields are not null
         if (!input?.optional && value == null) {
-          console.log('Value is null and should not be: ', key, value);
-          errors[key] = `Input value required. Cannot be null.`;
+          errors[key] = `Valid value required.`;
         }
 
         // Validate process inputs against their types defined in the process definition
@@ -661,7 +660,6 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                           ...prev,
                           [inputKey]: e.target.checked ? true : false,
                         }));
-                        // Clear error for this field when user toggles
                         if (validationErrors[inputKey]) {
                           setValidationErrors((prev) => {
                             const updated = { ...prev };
@@ -686,7 +684,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                 ) : (
                   <TextField
                     id={inputKey}
-                    type="text"
+                    type={input.type?.toLowerCase() === 'number' ? 'number' : 'text'}
                     placeholder={input.placeholder}
                     size="small"
                     defaultValue={input.default ?? null}
@@ -694,7 +692,12 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                     onChange={(e) => {
                       setFormInputs((prev) => ({
                         ...prev,
-                        [inputKey]: e.target.value,
+                        [inputKey]:
+                          input.type?.toLowerCase() === 'number'
+                            ? e.target.value === ''
+                              ? null
+                              : Number(e.target.value)
+                            : e.target.value,
                       }));
                       if (validationErrors[inputKey]) {
                         setValidationErrors((prev) => {
