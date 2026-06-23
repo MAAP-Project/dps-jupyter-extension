@@ -102,7 +102,10 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any
   ): Promise<ProcessExecutionSuccessResponse | ProcessExecutionFailureResponse> {
-    const endpoint = MAAP_API_ENDPOINTS.PROCESSES_PROCESSID_EXECUTION.replace('{PROCESS_ID}', processId);
+    const endpoint = MAAP_API_ENDPOINTS.PROCESSES_PROCESSID_EXECUTION.replace(
+      '{PROCESS_ID}',
+      processId
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await request<any>({
@@ -136,9 +139,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     id?: string | number
   ): Promise<ProcessListResponse | ProcessResponse | unknown> {
     try {
-      const endpoint = id
-        ? `${MAAP_API_ENDPOINTS.PROCESSES}/${id}`
-        : MAAP_API_ENDPOINTS.PROCESSES;
+      const endpoint = id ? `${MAAP_API_ENDPOINTS.PROCESSES}/${id}` : MAAP_API_ENDPOINTS.PROCESSES;
 
       if (id) {
         return await request<ProcessResponse>({

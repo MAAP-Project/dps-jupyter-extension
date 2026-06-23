@@ -146,7 +146,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
           if (result) {
             setSelectedJobResults(result);
           }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.error('Failed to fetch results for selected job: ', error);
           const message = error?.detail || JSON.stringify(error);
@@ -319,7 +319,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     try {
       await api.cancelExecution(jobID);
       Notification.success(`Submitted request to cancel job ${jobID}`, { autoClose: false });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Failed to cancel job: ', error);
       const message = error?.detail || JSON.stringify(error);
@@ -396,10 +396,15 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <h3 style={{ margin: 0 }}>Job Details</h3>
                 {selectedJob && nonterminalJobStatuses.includes(selectedJob.status) ? (
-                  <button className="st-button" onClick={(e) => {
-                    handleCancelJob(selectedJob.jobID);
-                    e.currentTarget.blur();
-                  }}>Cancel Job</button>
+                  <button
+                    className="st-button"
+                    onClick={(e) => {
+                      handleCancelJob(selectedJob.jobID);
+                      e.currentTarget.blur();
+                    }}
+                  >
+                    Cancel Job
+                  </button>
                 ) : null}
               </Box>
               <IconButton size="small" onClick={() => setSelectedJob(null)} sx={{ color: '#666' }}>
