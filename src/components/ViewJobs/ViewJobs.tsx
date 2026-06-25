@@ -34,7 +34,7 @@ interface ViewJobsProps {
 
 export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   const api = useMaapApi();
-  const [jobs, setJobs] = useState<JobOverviewResponse[]>([]);
+  const [jobsCache, setJobsCache] = useState<Map<number, JobOverviewResponse[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobOverviewResponse | null>(null);
@@ -48,22 +48,43 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   const [activeTab, setActiveTab] = useState(0);
   const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
   const [showTokenModal, setShowTokenModal] = useState(false);
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [rowCount, setRowCount] = useState(0);
+  const [jobsFullyLoaded, setJobsFullyLoaded] = useState(false);
+  const [isLoadingAllJobs, setIsLoadingAllJobs] = useState(false);
+  const API_PAGE_SIZE = 10; //graceal change this to 100
 
   const nonterminalJobStatuses = ['accepted', 'running', 'queued'];
 
-  const loadJobs = async () => {
+  const loadJobs = async (apiOffset: number) => {
     setLoading(true);
     setError(null);
     try {
       const result: JobsOverviewResponse = await api.fetchJobs({
         fields: 'created,started,finished,tags',
+        pageSize: API_PAGE_SIZE.toString(),
+        offset: apiOffset.toString(),
       }); // TODO: add processName.
       console.log('Fetching jobs', result.jobs);
       if (result) {
-        setJobs(result.jobs);
+        // Cache the fetched jobs
+        setJobsCache(prev => new Map(prev).set(apiOffset, result.jobs));
         setLastRefreshTime(new Date());
+        // Calculate total count based on API response
+        // If we got fewer jobs than API_PAGE_SIZE, we know the exact total and all jobs are loaded
+        if (result.jobs.length < API_PAGE_SIZE) {
+          setRowCount(apiOffset + result.jobs.length);
+          setJobsFullyLoaded(true);
+        } else {
+          // We got a full batch, so there might be more
+          // Set row count to show we have at least this batch plus potentially more
+          setRowCount(apiOffset + API_PAGE_SIZE);
+          setJobsFullyLoaded(false);
+        }
       } else {
-        setJobs(null);
         setError('Failed to load jobs');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,13 +103,107 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     }
   };
 
+  const loadAllJobs = async () => {
+    setIsLoadingAllJobs(true);
+    setError(null);
+    try {
+      let offset = 0;
+      let hasMore = true;
+      const newCache = new Map<number, JobOverviewResponse[]>();
+
+      while (hasMore) {
+        const result: JobsOverviewResponse = await api.fetchJobs({
+          fields: 'created,started,finished,tags',
+          pageSize: API_PAGE_SIZE.toString(),
+          offset: offset.toString(),
+        });
+
+        if (result && result.jobs.length > 0) {
+          newCache.set(offset, result.jobs);
+          
+          if (result.jobs.length < API_PAGE_SIZE) {
+            // Last batch - we know the exact total
+            setRowCount(offset + result.jobs.length);
+            setJobsFullyLoaded(true);
+            hasMore = false;
+          } else {
+            offset += API_PAGE_SIZE;
+          }
+        } else {
+          hasMore = false;
+        }
+      }
+
+      setJobsCache(newCache);
+      setLastRefreshTime(new Date());
+      
+      // Navigate to the last page
+      const totalJobs = offset + (newCache.get(offset)?.length || 0);
+      const lastPageIndex = Math.max(0, Math.ceil(totalJobs / pagination.pageSize) - 1);
+      setPagination(prev => ({ ...prev, pageIndex: lastPageIndex }));
+      
+    } catch (error: any) {
+      console.error(error);
+      if (error?.code === 401) {
+        setShowTokenModal(true);
+      } else {
+        const message = error?.message || JSON.stringify(error);
+        Notification.error(`Failed to load all jobs: ${message}`, {
+          autoClose: false,
+        });
+      }
+    } finally {
+      setIsLoadingAllJobs(false);
+    }
+  };
+
   useEffect(() => {
-    loadJobs();
-  }, [api]);
+    // Calculate which API batch we need based on UI page
+    const absoluteJobIndex = pagination.pageIndex * pagination.pageSize;
+    const apiBatchIndex = Math.floor(absoluteJobIndex / API_PAGE_SIZE);
+    const apiOffset = apiBatchIndex * API_PAGE_SIZE;
+    
+    // Check if we need to fetch this batch
+    if (!jobsCache.has(apiOffset)) {
+      loadJobs(apiOffset);
+    }
+    
+    // Check if we're near the end and should prefetch next batch
+    const endOfCurrentPage = absoluteJobIndex + pagination.pageSize;
+    const nextApiOffset = apiOffset + API_PAGE_SIZE;
+    const currentBatch = jobsCache.get(apiOffset);
+    const isNearEndOfBatch = !jobsFullyLoaded && 
+      currentBatch && 
+      endOfCurrentPage >= (apiOffset + currentBatch.length) &&
+      currentBatch.length === API_PAGE_SIZE &&
+      !jobsCache.has(nextApiOffset);
+    
+    if (isNearEndOfBatch) {
+      // User navigated to last page of current batch, fetch next batch
+      loadJobs(nextApiOffset);
+    }
+  }, [api, pagination.pageIndex, pagination.pageSize, jobsCache]);
+
+  // Get the jobs for the current UI page from the cached batch
+  const jobs = useMemo(() => {
+    const absoluteJobIndex = pagination.pageIndex * pagination.pageSize;
+    const apiBatchIndex = Math.floor(absoluteJobIndex / API_PAGE_SIZE);
+    const apiOffset = apiBatchIndex * API_PAGE_SIZE;
+    const relativeIndex = absoluteJobIndex - apiOffset;
+    
+    const batch = jobsCache.get(apiOffset);
+    if (!batch) return [];
+    
+    return batch.slice(relativeIndex, relativeIndex + pagination.pageSize);
+  }, [jobsCache, pagination.pageIndex, pagination.pageSize]);
 
   const handleTokenSubmitted = () => {
     setShowTokenModal(false);
-    loadJobs();
+    // Reset to first page and fetch
+    setPagination({ pageIndex: 0, pageSize: 10 });
+    setJobsCache(new Map());
+    setJobsFullyLoaded(false);
+    loadJobs(0);
   };
 
   useEffect(() => {
@@ -246,8 +361,29 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
   const table = useMaterialReactTable({
     columns,
     data: jobs,
+    manualPagination: true,
+    rowCount,
     state: {
-      isLoading: loading,
+      isLoading: loading || isLoadingAllJobs,
+      pagination,
+    },
+    onPaginationChange: (updater) => {
+      setPagination(prev => {
+        const next = typeof updater === 'function' ? updater(prev) : updater;
+        
+        // Check if user clicked last page button
+        const isGoingToLastPage = next.pageIndex > prev.pageIndex && 
+          next.pageIndex === Math.ceil(rowCount / next.pageSize) - 1 &&
+          !jobsFullyLoaded;
+        
+        if (isGoingToLastPage) {
+          // Load all jobs instead of just navigating
+          loadAllJobs();
+          return prev; // Don't update pagination yet, loadAllJobs will do it
+        }
+        
+        return next;
+      });
     },
     initialState: {
       density: 'compact',
@@ -256,7 +392,14 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     enableFullScreenToggle: false,
     renderTopToolbarCustomActions: () => (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <button className="st-button" onClick={loadJobs} disabled={loading}>
+        <button className="st-button" onClick={() => {
+          setJobsCache(new Map());
+          setJobsFullyLoaded(false);
+          const absoluteJobIndex = pagination.pageIndex * pagination.pageSize;
+          const apiBatchIndex = Math.floor(absoluteJobIndex / API_PAGE_SIZE);
+          const apiOffset = apiBatchIndex * API_PAGE_SIZE;
+          loadJobs(apiOffset);
+        }} disabled={loading}>
           Refresh
         </button>
         {lastRefreshTime && (
