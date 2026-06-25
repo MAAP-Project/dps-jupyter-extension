@@ -146,10 +146,11 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
           if (result) {
             setSelectedJobResults(result);
           }
-        } catch (error) {
-          const message = `Failed to fetch job results: ${error}`;
-          console.error(message);
-          Notification.error(message, { autoClose: false });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          console.error('Failed to fetch results for selected job: ', error);
+          const message = error?.detail || JSON.stringify(error);
+          Notification.error(`${message}`, { autoClose: false });
         } finally {
           setLoadingJobResults(false);
         }
@@ -188,6 +189,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
             running: 'info',
             queued: 'warning',
             accepted: 'warning',
+            dismissed: 'secondary',
           };
           const color = statusColors[status?.toLowerCase()] || 'default';
           return (
@@ -313,10 +315,17 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     }
   };
 
-  // TODO: API endpoint needs to be updated
-  // const handleCancelJob = async (jobID: string) => {
-  //   const response = await api.cancelExecution(jobID);
-  // };
+  const handleCancelJob = async (jobID: string) => {
+    try {
+      await api.cancelExecution(jobID);
+      Notification.success(`Submitted request to cancel job ${jobID}`, { autoClose: false });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Failed to cancel job: ', error);
+      const message = error?.detail || JSON.stringify(error);
+      Notification.error(`Failed to cancel job ${jobID}: ${message}`, { autoClose: false });
+    }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function navigateToFolder(outputObj: any[]): Promise<void> {
@@ -384,15 +393,20 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
                 alignItems: 'center',
               }}
             >
-              <h3 style={{ margin: 0 }}>Job Details</h3>
-              {/* {selectedJob && !cancelableStatuses.includes(selectedJob.status) ? (
-            <button className="st-button" onClick={(e) => {
-                console.log('testing button');
-                handleCancelJob(selectedJob.jobID)
-                e.currentTarget.blur();
-            }
-              }>Cancel Job</button>
-          ) : null} */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <h3 style={{ margin: 0 }}>Job Details</h3>
+                {selectedJob && nonterminalJobStatuses.includes(selectedJob.status) ? (
+                  <button
+                    className="st-button"
+                    onClick={(e) => {
+                      handleCancelJob(selectedJob.jobID);
+                      e.currentTarget.blur();
+                    }}
+                  >
+                    Cancel Job
+                  </button>
+                ) : null}
+              </Box>
               <IconButton size="small" onClick={() => setSelectedJob(null)} sx={{ color: '#666' }}>
                 <CloseIcon />
               </IconButton>

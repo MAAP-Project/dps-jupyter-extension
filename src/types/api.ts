@@ -48,7 +48,7 @@ export interface Job {
   jobID: string;
   type: string;
   status: string;
-  processID: number;
+  processID?: number;
 }
 
 export interface JobOverviewResponse extends Job {
@@ -194,8 +194,3 @@ export interface JobResultObj {
   id: string;
   links: LinkObj[];
 }
-
-//TODO: dps/job/cancel/ endpoint currently returns WPS style response, which we want to move away from.
-// export interface CancelExecutionResponse {
-
-// }

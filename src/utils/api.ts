@@ -102,7 +102,10 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any
   ): Promise<ProcessExecutionSuccessResponse | ProcessExecutionFailureResponse> {
-    const endpoint = MAAP_API_ENDPOINTS.SUBMIT_JOB.replace('{PROCESS_ID}', processId);
+    const endpoint = MAAP_API_ENDPOINTS.PROCESSES_PROCESSID_EXECUTION.replace(
+      '{PROCESS_ID}',
+      processId
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await request<any>({
@@ -136,9 +139,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     id?: string | number
   ): Promise<ProcessListResponse | ProcessResponse | unknown> {
     try {
-      const endpoint = id
-        ? `${MAAP_API_ENDPOINTS.GET_PROCESSES}/${id}`
-        : MAAP_API_ENDPOINTS.GET_PROCESSES;
+      const endpoint = id ? `${MAAP_API_ENDPOINTS.PROCESSES}/${id}` : MAAP_API_ENDPOINTS.PROCESSES;
 
       if (id) {
         return await request<ProcessResponse>({
@@ -168,7 +169,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
   async function fetchJobs(params: Record<string, string> = {}): Promise<any> {
     const searchParams = new URLSearchParams(params);
     const queryString = searchParams.toString();
-    const endpoint = MAAP_API_ENDPOINTS.GET_JOBS + (queryString ? `?${queryString}` : '');
+    const endpoint = MAAP_API_ENDPOINTS.JOBS + (queryString ? `?${queryString}` : '');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return await request<any>({
@@ -191,7 +192,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
     const searchParams = new URLSearchParams(params);
     const queryString = searchParams.toString();
     const endpoint =
-      MAAP_API_ENDPOINTS.GET_JOB_BY_ID.replace('{JOB_ID}', jobId) +
+      MAAP_API_ENDPOINTS.JOBS_JOBID.replace('{JOB_ID}', jobId) +
       (queryString ? `?${queryString}` : '');
 
     return await request<JobResponse>({
@@ -207,7 +208,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
    * @returns
    */
   async function fetchJobResults(jobId: string): Promise<JobResultResponse> {
-    const endpoint = MAAP_API_ENDPOINTS.GET_JOB_RESULTS.replace('{JOB_ID}', jobId);
+    const endpoint = MAAP_API_ENDPOINTS.JOBS_JOBID_RESULTS.replace('{JOB_ID}', jobId);
     return await request<JobResultResponse>({
       endpoint,
       method: 'GET',
@@ -220,7 +221,7 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
    * @returns Fetch resources
    */
   async function fetchResources(): Promise<ResourceResponse | unknown> {
-    const endpoint = MAAP_API_ENDPOINTS.GET_RESOURCES;
+    const endpoint = MAAP_API_ENDPOINTS.ALGORITHM_RESOURCE;
     return await request<ResourceResponse>({
       endpoint,
       method: 'GET',
@@ -233,16 +234,15 @@ export function createMaapApi(getLatestSettings: GetLatestSettings) {
    * @param jobId
    * @returns
    */
-  // TODO: update response type
   async function cancelExecution(
     jobId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any | unknown> {
-    const endpoint = MAAP_API_ENDPOINTS.CANCEL_EXECUTION.replace('{JOB_ID}', jobId);
+    const endpoint = MAAP_API_ENDPOINTS.JOBS_JOBID.replace('{JOB_ID}', jobId);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return await request<any>({
       endpoint,
-      method: 'POST',
+      method: 'DELETE',
       auth: true,
     });
   }
