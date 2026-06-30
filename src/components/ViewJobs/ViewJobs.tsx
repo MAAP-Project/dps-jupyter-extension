@@ -57,7 +57,7 @@ export const ViewJobs = ({ app }: ViewJobsProps): JSX.Element => {
     try {
       const result: JobsOverviewResponse = await api.fetchJobs({
         fields: 'created,started,finished,tags',
-        limit: '250',
+        limit: '200',
       }); // TODO: add processName.
       console.log('Fetching jobs', result.jobs);
       if (result) {
