@@ -33,4 +33,7 @@ export const MAAP_API_ENDPOINTS = {
 /*******************************
  * MAAP General
  *******************************/
-export const MAAP_PROFILE_URL = 'https://{MAAP_ENV}.maap-project.org/profile/';
+export const MAAP_PROFILE_TOKENS_URL =
+  'https://console.maap-project.org/profile/tokens';
+export const MAAP_PROFILE_TOKENS_URL_UAT =
+  'https://console.uat.maap-project.org/profile/tokens';
