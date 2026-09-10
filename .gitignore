@@ -44,3 +44,5 @@ maap.cfg
 /playwright/.cache/
 /tests/*-snapshots
 /tests/jupyterlab-settings
+junit.xml
+coverage/

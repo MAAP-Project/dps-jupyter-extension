@@ -1,8 +1,23 @@
 import { test, expect } from './fixtures';
 
+// Minimal MAAP API responses, so the form can be tested without a live MAAP API
+const PROCESS_LIST = {
+  processes: [{ id: 'test-process', version: '1.0.0', deployedBy: 'test-user', links: [] }],
+  links: [],
+};
+const RESOURCES = { queues: ['test-queue'] };
+
+// The MAAP API is on a different origin than JupyterLab
+const CORS_HEADERS = { 'Access-Control-Allow-Origin': '*' };
+
 test.describe('SubmitJob Form', () => {
   test.beforeEach(async ({ page }) => {
-    console.log('test');
+    await page.route('**/api/ogc/processes', (route) =>
+      route.fulfill({ json: PROCESS_LIST, headers: CORS_HEADERS })
+    );
+    await page.route('**/api/mas/algorithm/resource', (route) =>
+      route.fulfill({ json: RESOURCES, headers: CORS_HEADERS })
+    );
   });
 
   test('should display the form with all required fields', async ({ pluginSubmitJobs }) => {
@@ -44,8 +59,19 @@ test.describe('SubmitJob Form', () => {
     await expect(versionField).toBeEnabled();
   });
 
-  test('should have View Jobs button and clicking it should open view jobs', async ({ page }) => {
-    const viewJobsButton = page.locator('button').filter({ hasText: 'View Jobs' });
+  test('should have View Jobs button and clicking it should open view jobs', async ({
+    page,
+    pluginSubmitJobs,
+  }) => {
+    const viewJobsButton = pluginSubmitJobs.locator('button').filter({ hasText: 'View Jobs' });
     await expect(viewJobsButton).toBeVisible();
+
+    await viewJobsButton.click();
+
+    await expect(page.getByRole('tab', { name: 'View My Jobs' })).toBeVisible();
+    // Shown once the jobs have loaded (or failed to load)
+    await expect(page.getByRole('heading', { name: 'My MAAP Jobs' })).toBeVisible({
+      timeout: 30000,
+    });
   });
 });

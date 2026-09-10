@@ -36,6 +36,9 @@ jobs:
       - name: Run Prettier
         run: jlpm run format:check
 
+      - name: Run unit tests
+        run: jlpm run test:unit
+
   build:
     runs-on: ubuntu-24.04
     needs: pre_build

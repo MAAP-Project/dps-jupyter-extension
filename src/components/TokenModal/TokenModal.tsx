@@ -8,10 +8,7 @@ import {
   Button,
   TextField,
 } from '@mui/material';
-import {
-  MAAP_PROFILE_TOKENS_URL,
-  MAAP_PROFILE_TOKENS_URL_UAT
-} from '../../constants';
+import { MAAP_PROFILE_TOKENS_URL, MAAP_PROFILE_TOKENS_URL_UAT } from '../../constants';
 import { useMaapContext } from '../../MaapContext';
 
 type TokenModalProps = {
@@ -50,9 +47,7 @@ export const TokenModal = ({ open, message, onClose, onSubmit }: TokenModalProps
       try {
         const { maapApiUrl } = await getLatestSettings();
         setProfileUrl(
-          maapApiUrl.includes('uat')
-            ? MAAP_PROFILE_TOKENS_URL_UAT
-            : MAAP_PROFILE_TOKENS_URL
+          maapApiUrl.includes('uat') ? MAAP_PROFILE_TOKENS_URL_UAT : MAAP_PROFILE_TOKENS_URL
         );
       } catch (err) {
         console.error('Failed to resolve MAAP profile URL:', err);
@@ -100,11 +95,7 @@ export const TokenModal = ({ open, message, onClose, onSubmit }: TokenModalProps
 
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={!token.trim()}
-          >
+          <Button onClick={handleSubmit} variant="contained" disabled={!token.trim()}>
             Set Token
           </Button>
         </DialogActions>

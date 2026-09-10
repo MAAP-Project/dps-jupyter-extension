@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 
-type MaapSettings = {
+export type MaapSettings = {
   maapApiUrl: string;
   maapToken: string;
 };
