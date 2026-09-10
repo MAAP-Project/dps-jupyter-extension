@@ -52,59 +52,67 @@ const DEFAULTS: MaapSettings = {
   maapToken: '',
 };
 
+/**
+ * Reads a single setting, preferring the value saved in the user settings.
+ * An empty saved value falls back to the schema default rather than masking it.
+ */
+function readSetting(settings: ISettingRegistry.ISettings, key: keyof MaapSettings): string {
+  const { user } = settings.get(key);
+  if (typeof user === 'string' && user.trim() !== '') {
+    return user;
+  }
+  const schemaDefault = settings.default(key);
+  return typeof schemaDefault === 'string' ? schemaDefault : DEFAULTS[key];
+}
+
+function readSettings(settings: ISettingRegistry.ISettings): MaapSettings {
+  return {
+    maapApiUrl: readSetting(settings, 'maapApiUrl'),
+    maapToken: readSetting(settings, 'maapToken'),
+  };
+}
+
 export const MaapProvider: React.FC<IMaapProviderProps> = ({ children, settings }) => {
-  const [state, setState] = useState<MaapSettings>(DEFAULTS);
+  const [state, setState] = useState<MaapSettings>(() => readSettings(settings));
 
-  // Load initial values from settings once on mount
   useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const apiUrlRes = await settings.get('maapApiUrl');
-        const tokenRes = await settings.get('maapToken');
-
-        const maapApiUrl = (apiUrlRes.composite as string) ?? DEFAULTS.maapApiUrl;
-        const maapToken = (tokenRes.composite as string) ?? DEFAULTS.maapToken;
-
-        if (!cancelled) {
-          setState({ maapApiUrl, maapToken });
-        }
-      } catch (err) {
-        console.error('Failed to load MAAP settings:', err);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+    setState(readSettings(settings));
   }, [settings]);
 
-  const setMaapApiUrl = useCallback(
-    async (maapApiUrl: string) => {
-      await settings.set('maapApiUrl', maapApiUrl);
-      setState((prev) => ({ ...prev, maapApiUrl }));
+  /**
+   * Saves a setting to the user settings. Empty values are ignored so an
+   * existing user setting is never overwritten with an empty value.
+   */
+  const saveSetting = useCallback(
+    async (key: keyof MaapSettings, value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return;
+      }
+      await settings.set(key, trimmed);
+      // Keep local state consistent for UI consumers
+      setState((prev) => ({ ...prev, [key]: trimmed }));
     },
     [settings]
+  );
+
+  const setMaapApiUrl = useCallback(
+    (maapApiUrl: string) => saveSetting('maapApiUrl', maapApiUrl),
+    [saveSetting]
   );
 
   const setMaapToken = useCallback(
-    async (maapToken: string) => {
-      await settings.set('maapToken', maapToken);
-      setState((prev) => ({ ...prev, maapToken }));
-    },
-    [settings]
+    (maapToken: string) => saveSetting('maapToken', maapToken),
+    [saveSetting]
   );
 
   const getLatestSettings = useCallback(async (): Promise<MaapSettings> => {
-    const apiUrlRes = settings.get('maapApiUrl');
-    const tokenRes = settings.get('maapToken');
+    const latest = readSettings(settings);
 
-    const maapApiUrl = (apiUrlRes.composite as string) ?? DEFAULTS.maapApiUrl;
-    const maapToken = (tokenRes.composite as string) ?? DEFAULTS.maapToken;
-    setState({ maapApiUrl, maapToken });
+    // Update local state so UI reflects latest values
+    setState(latest);
 
-    return { maapApiUrl, maapToken };
+    return latest;
   }, [settings]);
 
   const value = useMemo<IMaapContextType>(
