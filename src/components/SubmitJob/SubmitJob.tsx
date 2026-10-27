@@ -17,6 +17,7 @@ import {
   copyTextToClipboard,
   getProcessIdFromLinks,
 } from '../../utils/generic';
+import { isEmptyInputValue, validateProcessInputs } from '../../utils/validation';
 
 interface SubmitJobsProps {
   app?: JupyterFrontEnd;
@@ -322,39 +323,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       setShowTokenModal(true);
     }
 
-    if (processDetails && processDetails.inputs) {
-      Object.entries(processDetails.inputs).forEach(([key, input]) => {
-        const value = formInputs[key] || null;
-
-        // Make sure required fields are not null
-        if (!input?.optional && value == null) {
-          errors[key] = `Valid value required.`;
-        }
-
-        // Validate process inputs against their types defined in the process definition
-        if (value) {
-          switch (input.type?.toLowerCase()) {
-            case 'number':
-              if (isNaN(Number(value))) {
-                errors[key] = `Incorrect type: expected number`;
-              }
-              break;
-            case 'boolean':
-              if (typeof value !== 'boolean') {
-                errors[key] = `Incorrect type: expected boolean`;
-              }
-              break;
-            case 'text':
-              if (typeof value !== 'string') {
-                errors[key] = `Incorrect type: expected string`;
-              }
-              break;
-            default:
-              break;
-          }
-        }
-      });
-    }
+    Object.assign(errors, validateProcessInputs(processDetails?.inputs, formInputs));
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -368,7 +337,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       const isOptional = inputDef?.optional === true;
 
       // If value is null/empty and field is optional, skip it
-      if ((value === null || value === '' || value === undefined) && isOptional) {
+      if (isEmptyInputValue(value) && isOptional) {
         return;
       }
       inputParams[key] = value;
