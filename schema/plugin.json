@@ -9,12 +9,12 @@
       "type": "string",
       "title": "MAAP API URL",
       "description": "e.g. https://api.maap-project.org/",
-      "default": ""
+      "default": "https://api.maap-project.org/"
     },
     "maapToken": {
       "type": "string",
-      "title": "MAAP PGT Token",
-      "description": "e.g. PGT-XXXXXXX",
+      "title": "MAAP Token",
+      "description": "e.g. jwt:XXXXXXX",
       "default": ""
     }
   }

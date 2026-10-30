@@ -1,48 +1,13 @@
-const fs = require('fs/promises');
-const path = require('path');
-
+/**
+ * Checks that the MAAP settings needed by the tests are set. The values are
+ * passed to JupyterLab through galata's mocked settings in tests/fixtures.ts.
+ */
 module.exports = async () => {
-  const apiUrl = process.env.MAAP_API_URL;
-  const token = process.env.MAAP_TOKEN;
-
-  if (!apiUrl) {
+  if (!process.env.MAAP_API_URL) {
     throw new Error('Missing required environment variable: MAAP_API_URL');
   }
 
-  if (!token) {
+  if (!process.env.MAAP_TOKEN) {
     throw new Error('Missing required environment variable: MAAP_TOKEN');
   }
-
-  const pluginPackage = 'maap_dps_jupyter_extension';
-  const pluginName = 'jobs_submit';
-
-  // Use a test-local JupyterLab settings dir
-  const settingsRoot = path.resolve(__dirname, 'tests', 'jupyterlab-settings');
-  const pluginDir = path.join(settingsRoot, pluginPackage);
-  const settingsFile = path.join(
-    pluginDir,
-    `${pluginName}.jupyterlab-settings`
-  );
-
-  await fs.mkdir(pluginDir, { recursive: true });
-
-  // User settings file: values only, not schema
-  await fs.writeFile(
-    settingsFile,
-    JSON.stringify(
-      {
-        maapApiUrl: apiUrl,
-        maapToken: token,
-      },
-      null,
-      2
-    ),
-    'utf8'
-  );
-
-  // Make sure the Playwright/JupyterLab process sees this directory
-  process.env.JUPYTERLAB_SETTINGS_DIR = settingsRoot;
-
-  console.log(`Wrote JupyterLab test settings to: ${settingsFile}`);
-  console.log(`Set JUPYTERLAB_SETTINGS_DIR=${settingsRoot}`);
 };
