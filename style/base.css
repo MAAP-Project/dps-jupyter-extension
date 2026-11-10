@@ -18,6 +18,6 @@
 @import url('./stellar-maap-extend.css');
 @import url('./submitjob.css');
 
-.lm-Widget {
-  overflow: scroll !important;
+.lm-Widget.maap-ScrollableWidget {
+  overflow: auto;
 }
