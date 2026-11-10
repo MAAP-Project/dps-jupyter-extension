@@ -13,6 +13,7 @@ export class ViewJobsReactAppWidget extends ReactWidget {
 
   constructor(settings: ISettingRegistry.ISettings | null, app: JupyterFrontEnd) {
     super();
+    this.addClass('maap-ScrollableWidget');
     this.settings = settings;
     this.app = app;
   }
@@ -40,6 +41,7 @@ export class SubmitJobsReactAppWidget extends ReactWidget {
     initialData?: InitialJobData
   ) {
     super();
+    this.addClass('maap-ScrollableWidget');
     this.settings = settings;
     this.app = app;
     this.initialData = initialData;
