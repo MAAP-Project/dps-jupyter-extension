@@ -17,3 +17,7 @@
 @import url('./stellar/variables.css');
 @import url('./stellar-maap-extend.css');
 @import url('./submitjob.css');
+
+.lm-Widget.maap-ScrollableWidget {
+  overflow: auto;
+}
