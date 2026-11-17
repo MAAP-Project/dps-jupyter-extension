@@ -1,7 +1,7 @@
 /* Submit Jobs Form Styling */
 .submit-jobs-container {
   padding: calc(var(--st-grid-unit) * 4);
-  max-width: 800px;
+  overflow: scroll;
   border-radius: 8px;
 }
 
