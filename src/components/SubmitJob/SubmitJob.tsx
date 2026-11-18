@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Notification } from '@jupyterlab/apputils';
 import { JupyterFrontEnd } from '@jupyterlab/application';
-import { Autocomplete, TextField, Tooltip, Switch, Box } from '@mui/material';
+import { Autocomplete, TextField, Tooltip, MenuItem } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { useMaapApi } from '../../hooks/useMaapApi';
 import {
@@ -17,7 +17,14 @@ import {
   copyTextToClipboard,
   getProcessIdFromLinks,
 } from '../../utils/generic';
-import { isEmptyInputValue, validateProcessInputs } from '../../utils/validation';
+import {
+  BOOLEAN_OPTIONS,
+  booleanToOption,
+  getInputDefaultValue,
+  isEmptyInputValue,
+  optionToBoolean,
+  validateProcessInputs,
+} from '../../utils/validation';
 
 interface SubmitJobsProps {
   app?: JupyterFrontEnd;
@@ -276,20 +283,7 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const initialInputs: Record<string, any> = {};
       Object.entries(processDetails.inputs).forEach(([key, input]) => {
-        if (input.default !== undefined && input.default !== null) {
-          switch (input.type?.toLowerCase()) {
-            case 'boolean':
-              initialInputs[key] = String(input.default).toLowerCase() === 'true' ? true : false;
-              break;
-            case 'number':
-              initialInputs[key] = Number(input.default);
-              break;
-            default:
-              initialInputs[key] = String(input.default);
-          }
-        } else {
-          initialInputs[key] = null;
-        }
+        initialInputs[key] = getInputDefaultValue(input);
       });
       setFormInputs((prev) => ({
         ...initialInputs,
@@ -621,35 +615,34 @@ export const SubmitJobs = ({ app, initialData }: SubmitJobsProps): JSX.Element =
                   )}
                 </label>
                 {input.type?.toLowerCase() === 'boolean' ? (
-                  <Box>
-                    <Switch
-                      checked={Boolean(formInputs[inputKey])}
-                      onChange={(e) => {
-                        setFormInputs((prev) => ({
-                          ...prev,
-                          [inputKey]: e.target.checked ? true : false,
-                        }));
-                        if (validationErrors[inputKey]) {
-                          setValidationErrors((prev) => {
-                            const updated = { ...prev };
-                            delete updated[inputKey];
-                            return updated;
-                          });
-                        }
-                      }}
-                    />
-                    {validationErrors[inputKey] && (
-                      <p
-                        style={{
-                          margin: '4px 0 0 0',
-                          fontSize: '11px',
-                          color: '#ef5350',
-                        }}
-                      >
-                        {validationErrors[inputKey]}
-                      </p>
-                    )}
-                  </Box>
+                  <TextField
+                    id={inputKey}
+                    select
+                    size="small"
+                    value={booleanToOption(formInputs[inputKey])}
+                    onChange={(e) => {
+                      setFormInputs((prev) => ({
+                        ...prev,
+                        [inputKey]: optionToBoolean(e.target.value),
+                      }));
+                      if (validationErrors[inputKey]) {
+                        setValidationErrors((prev) => {
+                          const updated = { ...prev };
+                          delete updated[inputKey];
+                          return updated;
+                        });
+                      }
+                    }}
+                    error={!!validationErrors[inputKey]}
+                    helperText={validationErrors[inputKey]}
+                    sx={{ width: '100%' }}
+                  >
+                    {BOOLEAN_OPTIONS.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 ) : (
                   <TextField
                     id={inputKey}
